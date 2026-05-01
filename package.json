@@ -1,0 +1,57 @@
+{
+  "name": "local-agent-workstation",
+  "version": "0.1.0",
+  "description": "Local-first AI control plane MVP",
+  "main": "main.js",
+  "scripts": {
+    "dev": "concurrently \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && electron .\"",
+    "build": "vite build",
+    "preview": "vite preview",
+    "electron": "electron .",
+    "pack": "npm run build && electron-builder --dir",
+    "dist:linux": "npm run build && electron-builder --linux AppImage deb",
+    "dist:linux:dir": "npm run build && electron-builder --linux dir"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "concurrently": "latest",
+    "electron": "latest",
+    "electron-builder": "^26.8.1",
+    "wait-on": "latest"
+  },
+  "build": {
+    "appId": "local.ai.workstation",
+    "productName": "Local AI Workstation",
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "main.js",
+      "preload.js",
+      "src/backend/**/*",
+      "package.json"
+    ],
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        },
+        {
+          "target": "deb",
+          "arch": ["x64"]
+        }
+      ],
+      "category": "Development",
+      "synopsis": "Local-first AI workstation",
+      "description": "GUI desktop control plane for local model backends, agent workflows, and Obsidian session logs."
+    }
+  }
+}
