@@ -97,7 +97,7 @@ export default function App() {
 
   async function dockerAction(action, options = {}) {
     const result = await window.workstation.docker[action]()
-    const output = result.stdout || result.stderr || 'no output'
+    const output = [result.command, result.stdout || result.stderr || 'no output'].filter(Boolean).join('\n')
     const label = `docker ${action}: ${result.ok ? 'ok' : 'failed'}`
 
     setDocker((current) => ({

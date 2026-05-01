@@ -5,21 +5,23 @@ const path = require('node:path')
 function runDockerCompose(args, options) {
   return new Promise((resolve) => {
     const composeFile = options.composeFile
+    const command = ['docker', 'compose', '-f', composeFile, ...args].join(' ')
 
     if (!fs.existsSync(composeFile)) {
       resolve({
         ok: false,
         code: 1,
         stdout: '',
-        stderr: `Missing compose file: ${composeFile}`
+        stderr: `Missing compose file: ${composeFile}`,
+        command
       })
       return
     }
 
-    // boots docker thing
+    // boots docker thing, no shell path nonsense
     const child = spawn('docker', ['compose', '-f', composeFile, ...args], {
       cwd: path.dirname(composeFile),
-      shell: true
+      shell: false
     })
 
     let stdout = ''
@@ -27,8 +29,8 @@ function runDockerCompose(args, options) {
 
     child.stdout.on('data', (data) => stdout += data.toString())
     child.stderr.on('data', (data) => stderr += data.toString())
-    child.on('error', (error) => resolve({ ok: false, code: 1, stdout, stderr: error.message }))
-    child.on('close', (code) => resolve({ ok: code === 0, code, stdout, stderr, composeFile }))
+    child.on('error', (error) => resolve({ ok: false, code: 1, stdout, stderr: error.message, composeFile, command }))
+    child.on('close', (code) => resolve({ ok: code === 0, code, stdout, stderr, composeFile, command }))
   })
 }
 
