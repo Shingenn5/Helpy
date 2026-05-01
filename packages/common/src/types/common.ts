@@ -303,6 +303,17 @@ export interface CloudflareTunnelStatus {
   url?: string;
 }
 
+export interface HelpyBackendResult {
+  ok: boolean;
+  command?: string;
+  output?: string;
+  error?: string;
+  status?: string;
+  endpoint?: string;
+  composeFile?: string;
+  envFile?: string;
+}
+
 export interface WindowState {
   width: number;
   height: number;

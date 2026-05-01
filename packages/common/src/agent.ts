@@ -388,17 +388,18 @@ export const DEFAULT_PROVIDER_MODELS: Partial<Record<LlmProviderName, string>> =
   'zai-plan': 'glm-5.1',
   minimax: 'MiniMax-M2.7',
   mistral: 'mistral-large-latest',
+  'openai-compatible': 'Qwen3.6-35B-A3B-UD-IQ2_M.gguf',
 };
 
-export const DEFAULT_AIDER_MAIN_MODEL = `anthropic/${DEFAULT_PROVIDER_MODELS.anthropic}`;
+export const DEFAULT_AIDER_MAIN_MODEL = `helpy-local/${DEFAULT_PROVIDER_MODELS['openai-compatible']}`;
 
 const DEFAULT_AGENT_PROFILE_ID = 'default';
 
 export const DEFAULT_AGENT_PROFILE: AgentProfile = {
   id: DEFAULT_AGENT_PROFILE_ID,
   name: 'Default Agent',
-  provider: 'anthropic',
-  model: DEFAULT_PROVIDER_MODELS.anthropic!,
+  provider: 'openai-compatible',
+  model: DEFAULT_PROVIDER_MODELS['openai-compatible']!,
   maxIterations: 250,
   minTimeBetweenToolCalls: 0,
   toolApprovals: {

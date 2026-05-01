@@ -1,37 +1,39 @@
 # Helpy
 
-Helpy is a local-first coding agent workbench derived from [AiderDesk](https://github.com/hotovo/aider-desk).
+Helpy is a local-first desktop coding-agent workbench. It is based on [AiderDesk](https://github.com/hotovo/aider-desk), but the goal is different: Helpy should feel like a professional GUI control plane for local agent workflows, not a cloud-provider setup wizard.
 
-The current direction is simple: keep AiderDesk's professional workflow foundation, then adapt it for this machine and workflow:
+The current target stack is:
 
-- Ubuntu/WSL2 with WSLg
-- local llama.cpp Docker backend
-- Qwen GGUF models
-- project roots under `/home/shingen/Tech Projects`
-- Obsidian Markdown session logging
-- a GUI-first replacement for AiderDesk tuned for local-first coding-agent work
+- Electron, React, TypeScript, Vite, and Node for the desktop app
+- Aider/AiderDesk workflow primitives for coding tasks, diffs, project tabs, context files, tasks, and logs
+- Docker Compose managed llama.cpp server for local model inference
+- OpenAI-compatible endpoint at `http://127.0.0.1:8080/v1`
+- Qwen GGUF model default: `Qwen3.6-35B-A3B-UD-IQ2_M.gguf`
+- WSL2/Ubuntu/WSLg as the expected development environment
+- Markdown/Obsidian session logging as a first-class direction
 
-## Current State
+## What Works Now
 
-`main` is now based on upstream AiderDesk.
+- Helpy starts from the mature AiderDesk UI and task workflow instead of the earlier scratch prototype.
+- New installs default to a local OpenAI-compatible provider called `Local llama.cpp`.
+- The default model path points at the Qwen GGUF model name used on this machine.
+- Telemetry and app auto-update defaults are disabled.
+- The header now has local backend controls:
+  - start llama.cpp Docker Compose backend
+  - stop backend
+  - health check `/v1/models`
+  - show Docker logs
+- Root `docker-compose.yml` and `.env.example` are included for the local CUDA llama.cpp backend.
 
-The previous from-scratch Helpy prototype is preserved on:
+## Install In WSL
+
+Clone inside your project folder:
 
 ```bash
-helpy-prototype
+cd "/home/shingen/Tech Projects"
+git clone https://github.com/Shingenn5/Helpy.git
+cd Helpy
 ```
-
-That branch contains the earlier Docker Compose controls, GGUF picker, and Markdown logging prototype. Those ideas should be ported into this AiderDesk-derived base deliberately.
-
-## Attribution
-
-Helpy is based on AiderDesk by Hotovo and keeps the upstream MIT license. Upstream project:
-
-```text
-https://github.com/hotovo/aider-desk
-```
-
-## Development
 
 Install dependencies:
 
@@ -39,24 +41,57 @@ Install dependencies:
 npm install
 ```
 
-Run in development:
+Create your local env file:
+
+```bash
+cp .env.example .env
+```
+
+The default `.env.example` already points at:
+
+```text
+/home/shingen/AI_Core/models/Qwen3.6-35B-A3B-UD-IQ2_M.gguf
+```
+
+Run the desktop app:
 
 ```bash
 npm run dev
 ```
 
-Build:
+In the top-right Helpy backend strip, hit the bolt button to start the local llama.cpp server. The health indicator may show `HTTP 503` or `offline` while the GGUF is still loading; that is normal for large models. Once `/v1/models` responds, it will switch to online.
+
+## Manual Backend Commands
+
+The app uses these under the hood:
 
 ```bash
-npm run build
+docker compose -f docker-compose.yml up -d
+docker compose -f docker-compose.yml ps
+docker compose -f docker-compose.yml logs --tail 160
+docker compose -f docker-compose.yml down
 ```
 
-## Next Helpy Work
+## Building A Linux App
 
-- Verify upstream AiderDesk builds and runs in WSLg.
-- Rebrand the UI from AiderDesk to Helpy without breaking package internals.
-- Port local llama.cpp Docker controls from `helpy-prototype`.
-- Port GGUF model picker from `helpy-prototype`.
-- Add Obsidian Markdown session logging.
-- Set local OpenAI-compatible provider defaults for `http://127.0.0.1:8080/v1`.
-- Remove or hide cloud/provider features that do not fit the local-first workflow.
+For a local Linux package:
+
+```bash
+npm run build:linux
+```
+
+Output lands in `dist/`.
+
+## Direction
+
+Helpy is meant to become a replacement for AiderDesk in this local-first workflow. Near-term work:
+
+- make the model picker browse GGUF files visually
+- write every task/chat/session to an Obsidian-friendly Markdown database as it happens
+- hide or soften cloud-provider-first onboarding
+- tune layout/resizing so the UI feels more like a serious workstation
+- keep AiderDesk's useful task, diff, context, and git workflow pieces
+
+## Attribution
+
+Helpy is based on AiderDesk by Hotovo and keeps the upstream MIT license.

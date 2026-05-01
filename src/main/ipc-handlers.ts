@@ -22,6 +22,7 @@ import { EventsHandler } from './events-handler';
 
 import { PythonDependenciesInstaller } from '@/python-dependencies-installer';
 import { ServerController } from '@/server';
+import { helpyLocalBackend } from '@/helpy/local-backend';
 
 export const setupIpcHandlers = (eventsHandler: EventsHandler, serverController: ServerController, pythonInstaller: PythonDependenciesInstaller) => {
   // Voice handlers
@@ -534,6 +535,30 @@ export const setupIpcHandlers = (eventsHandler: EventsHandler, serverController:
 
   ipcMain.handle('get-cloudflare-tunnel-status', () => {
     return eventsHandler.getCloudflareTunnelStatus();
+  });
+
+  ipcMain.handle('helpy-backend-config', () => {
+    return helpyLocalBackend.config();
+  });
+
+  ipcMain.handle('helpy-backend-start', async () => {
+    return await helpyLocalBackend.start();
+  });
+
+  ipcMain.handle('helpy-backend-stop', async () => {
+    return await helpyLocalBackend.stop();
+  });
+
+  ipcMain.handle('helpy-backend-status', async () => {
+    return await helpyLocalBackend.status();
+  });
+
+  ipcMain.handle('helpy-backend-logs', async () => {
+    return await helpyLocalBackend.logs();
+  });
+
+  ipcMain.handle('helpy-backend-health', async () => {
+    return await helpyLocalBackend.health();
   });
 
   ipcMain.handle('get-provider-models', async (_, reload = false) => {

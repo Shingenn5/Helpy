@@ -38,32 +38,43 @@ import { migrateSettingsV16toV17 } from '@/store/migrations/v16-to-v17';
 import { migrateSettingsV17toV18 } from '@/store/migrations/v17-to-v18';
 import { migrateSettingsV18toV19 } from '@/store/migrations/v18-to-v19';
 
+export const HELPY_LOCAL_PROVIDER: ProviderProfile = {
+  id: 'helpy-local',
+  name: 'Local llama.cpp',
+  provider: {
+    name: 'openai-compatible',
+    apiKey: 'local',
+    baseUrl: 'http://127.0.0.1:8080/v1',
+  },
+};
+
 export const DEFAULT_SETTINGS: SettingsData = {
   language: 'en',
-  startupMode: ProjectStartMode.Empty,
+  startupMode: ProjectStartMode.Last,
   zoomLevel: 1,
   notificationsEnabled: false,
   theme: 'dark',
   font: 'Sono',
   renderMarkdown: true,
   virtualizedRendering: false,
-  aiderDeskAutoUpdate: true,
+  aiderDeskAutoUpdate: false,
   messageViewMode: MessageViewMode.Compact,
   diffViewMode: DiffViewMode.SideBySide,
   aider: {
-    options: '',
-    environmentVariables: '',
+    options: '--no-show-model-warnings',
+    environmentVariables: 'OPENAI_API_BASE=http://127.0.0.1:8080/v1\nOPENAI_API_KEY=local',
     addRuleFiles: true,
     autoCommits: true,
     cachingEnabled: false,
     watchFiles: false,
     confirmBeforeEdit: false,
   },
-  preferredModels: [],
+  preferredModels: ['helpy-local/Qwen3.6-35B-A3B-UD-IQ2_M.gguf'],
   mcpServers: {},
   llmProviders: {},
-  telemetryEnabled: true,
-  windowTitleTemplate: 'AiderDesk - {project}',
+  telemetryEnabled: false,
+  telemetryInformed: true,
+  windowTitleTemplate: 'Helpy - {project}',
   promptBehavior: {
     suggestionMode: SuggestionMode.Automatically,
     suggestionDelay: 100,
@@ -101,7 +112,7 @@ export const DEFAULT_SETTINGS: SettingsData = {
     contextCompactingThreshold: 0,
     contextCompactionType: ContextCompactionType.Compact,
     defaultWorkingMode: 'local',
-    worktreeBranchPrefix: 'aider-desk/task/',
+    worktreeBranchPrefix: 'helpy/task/',
     renameBranchOnNameGeneration: true,
   },
   extensions: {
@@ -456,7 +467,11 @@ export class Store {
   }
 
   getProviders(): ProviderProfile[] {
-    return this.store.get('providers') || [];
+    const providers = this.store.get('providers') || [];
+    if (providers.some((provider) => provider.id === HELPY_LOCAL_PROVIDER.id)) {
+      return providers;
+    }
+    return [HELPY_LOCAL_PROVIDER, ...providers];
   }
 
   setProviders(providers: ProviderProfile[]): void {

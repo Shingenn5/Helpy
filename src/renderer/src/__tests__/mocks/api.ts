@@ -30,6 +30,7 @@ import {
   OpenDialogResult,
   SystemLogsResponse,
   AiderConnectorStatus,
+  HelpyBackendResult,
 } from '@common/types';
 
 /**
@@ -55,6 +56,12 @@ export const createMockApi = (overrides: Partial<ApplicationAPI> = {}): MockedOb
     startCloudflareTunnel: vi.fn((): Promise<boolean> => Promise.resolve(true)),
     stopCloudflareTunnel: vi.fn((): Promise<void> => Promise.resolve()),
     getCloudflareTunnelStatus: vi.fn((): Promise<CloudflareTunnelStatus> => Promise.resolve({ isRunning: false })),
+    getHelpyBackendConfig: vi.fn((): Promise<HelpyBackendResult> => Promise.resolve({ ok: true, status: 'mock' })),
+    startHelpyBackend: vi.fn((): Promise<HelpyBackendResult> => Promise.resolve({ ok: true, status: 'started' })),
+    stopHelpyBackend: vi.fn((): Promise<HelpyBackendResult> => Promise.resolve({ ok: true, status: 'stopped' })),
+    getHelpyBackendStatus: vi.fn((): Promise<HelpyBackendResult> => Promise.resolve({ ok: true, status: 'running' })),
+    getHelpyBackendLogs: vi.fn((): Promise<HelpyBackendResult> => Promise.resolve({ ok: true, output: '' })),
+    checkHelpyBackendHealth: vi.fn((): Promise<HelpyBackendResult> => Promise.resolve({ ok: true, status: 'online' })),
 
     // Project operations
     startProject: vi.fn((): Promise<void> => Promise.resolve()),

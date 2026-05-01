@@ -63,6 +63,7 @@ import {
   AvailableExtension,
   ExtensionConfigComponent,
   ExtensionUIComponent,
+  HelpyBackendResult,
   ModalOverlayUrlData,
   AiderConnectorStatus,
   ChangeRequestItem,
@@ -979,6 +980,30 @@ export class BrowserApi implements ApplicationAPI {
 
   getCloudflareTunnelStatus(): Promise<CloudflareTunnelStatus> {
     throw new UnsupportedError('Cloudflare tunnel not supported in browser mode');
+  }
+
+  getHelpyBackendConfig(): Promise<HelpyBackendResult> {
+    return Promise.resolve({ ok: false, status: 'desktop-only', endpoint: 'http://127.0.0.1:8080/v1' });
+  }
+
+  startHelpyBackend(): Promise<HelpyBackendResult> {
+    return Promise.resolve({ ok: false, status: 'desktop-only', error: 'Helpy backend control only works in the Electron app' });
+  }
+
+  stopHelpyBackend(): Promise<HelpyBackendResult> {
+    return Promise.resolve({ ok: false, status: 'desktop-only', error: 'Helpy backend control only works in the Electron app' });
+  }
+
+  getHelpyBackendStatus(): Promise<HelpyBackendResult> {
+    return Promise.resolve({ ok: false, status: 'desktop-only', error: 'Helpy backend control only works in the Electron app' });
+  }
+
+  getHelpyBackendLogs(): Promise<HelpyBackendResult> {
+    return Promise.resolve({ ok: false, status: 'desktop-only', error: 'Helpy backend control only works in the Electron app' });
+  }
+
+  checkHelpyBackendHealth(): Promise<HelpyBackendResult> {
+    return Promise.resolve({ ok: false, status: 'desktop-only', endpoint: 'http://127.0.0.1:8080/v1' });
   }
 
   // Worktree merge operations

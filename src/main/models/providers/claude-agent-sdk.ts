@@ -240,7 +240,7 @@ export const createClaudeAgentSdkLlm = (
     logger.debug(`Adding ${Object.keys(toolSet).length} tools to Claude Agent SDK`, {
       tools: Object.keys(toolSet),
     });
-    settings.aiSdkTools = normalizeAiSdkToolSet(toolSet);
+    (settings as ClaudeCodeSettings & { aiSdkTools?: unknown }).aiSdkTools = normalizeAiSdkToolSet(toolSet);
     settings.allowedTools = ['mcp__ai-sdk'];
   } else {
     settings.allowedTools = [];

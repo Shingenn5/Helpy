@@ -28,6 +28,7 @@ import { useApi } from '@/contexts/ApiContext';
 import { ModelLibrary } from '@/components/ModelLibrary';
 import { URL_PARAMS, encodeBaseDir, decodeBaseDir, ROUTES } from '@/utils/routes';
 import { useBooleanState } from '@/hooks/useBooleanState';
+import { HelpyBackendPanel } from '@/components/helpy/HelpyBackendPanel';
 
 let hasShownUpdateNotification = false;
 
@@ -555,6 +556,7 @@ export const Home = () => {
             onReorderProjects={handleReorderProjects}
           />
           <div className="flex items-center flex-shrink-0">
+            <HelpyBackendPanel />
             <ExtensionComponentWrapper placement="header-right" />
             {showUpdateIcon && (
               <IconButton
