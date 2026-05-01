@@ -13,6 +13,7 @@ export default function App() {
   const [messages, setMessages] = useState([
     { role: 'assistant', content: 'Helpy is ready. Start the local backend, pick context, then run an Aider-style pass.' }
   ])
+  const [taskTitle, setTaskTitle] = useState('Untitled task')
   const [stream, setStream] = useState('')
   const [logs, setLogs] = useState(['Helpy booted. Markdown session logging is active.'])
   const [session, setSession] = useState(null)
@@ -27,9 +28,9 @@ export default function App() {
 
       if (payload.done) {
         const finalText = assistantDraft.current
-        setMessages((items) => [...items, { role: 'assistant', content: finalText }])
+        if (finalText.trim()) setMessages((items) => [...items, { role: 'assistant', content: finalText }])
         addLog('Agent pass finished and logged.')
-        logMarkdown({ role: 'assistant', content: finalText })
+        if (finalText.trim()) logMarkdown({ role: 'assistant', content: finalText })
         assistantDraft.current = ''
         setStream('')
       }
@@ -89,10 +90,24 @@ export default function App() {
     setStream('')
     assistantDraft.current = ''
     setMessages((items) => [...items, { role: 'user', content: text }])
+    if (taskTitle === 'Untitled task') setTaskTitle(text.slice(0, 64))
     setPrompt('')
     addLog(`Agent pass queued: ${mode} on ${activeProject}`)
     await logMarkdown({ role: 'user', content: text })
-    await window.workstation.agent.mockStream(text)
+
+    const history = [...messages, { role: 'user', content: text }]
+      .slice(-12)
+      .map((message) => ({
+        role: message.role === 'assistant' ? 'assistant' : 'user',
+        content: message.content
+      }))
+
+    if (health.ok) {
+      await window.workstation.agent.chatStream({ mode, messages: history })
+    } else {
+      addLog('Backend is not online yet, using local mock fallback.')
+      await window.workstation.agent.mockStream(text)
+    }
   }
 
   async function dockerAction(action, options = {}) {
@@ -177,6 +192,7 @@ export default function App() {
           <div>
             <span className="eyebrow">Current Aider Workspace</span>
             <h1>{activeProject}</h1>
+            <small>{taskTitle}</small>
           </div>
           <button className={`health-pill ${health.ok ? 'good' : 'bad'}`} onClick={refreshHealth}>
             <span />{health.label}
@@ -184,7 +200,7 @@ export default function App() {
         </header>
 
         <section className="status-strip">
-          <StatusCard title="Local Model" value={health.ok ? 'Online' : 'Offline'} detail="llama.cpp /v1/models" good={health.ok} />
+          <StatusCard title="Local Model" value={health.ok ? 'Online' : health.loading ? 'Loading' : 'Offline'} detail={health.label} good={health.ok} />
           <StatusCard title="Docker Backend" value={docker.ok ? 'Ready' : 'Needs attention'} detail={docker.label} good={docker.ok} />
           <StatusCard title="Aider Runner" value="Scaffolded" detail="PTY runner next" />
           <StatusCard title="Markdown DB" value="Writing" detail="session timeline active" good />
@@ -213,11 +229,14 @@ export default function App() {
             </div>
 
             <div className="composer">
-              <input
+              <textarea
                 value={prompt}
                 onChange={(event) => setPrompt(event.target.value)}
                 onKeyDown={(event) => {
-                  if (event.key === 'Enter') runAgentPass()
+                  if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault()
+                    runAgentPass()
+                  }
                 }}
                 placeholder="Tell Helpy what to change, inspect, explain, or plan..."
               />

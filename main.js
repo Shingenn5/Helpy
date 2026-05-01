@@ -4,12 +4,14 @@ const { createDockerService } = require('./src/backend/services/dockerService')
 const { createHealthService } = require('./src/backend/services/healthService')
 const { createSessionLogger } = require('./src/backend/services/sessionLogger')
 const { createSettingsService } = require('./src/backend/services/settingsService')
+const { createAgentService } = require('./src/backend/services/agentService')
 
 const isDev = !app.isPackaged
 const docker = createDockerService()
 const health = createHealthService('http://127.0.0.1:8080/v1')
 const logger = createSessionLogger()
 const settings = createSettingsService()
+const agent = createAgentService('http://127.0.0.1:8080/v1')
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -82,5 +84,9 @@ function wireIpc() {
     })
 
     return { ok: true }
+  })
+
+  ipcMain.handle('agent:chat-stream', async (event, payload) => {
+    return agent.streamChat(event, payload)
   })
 }

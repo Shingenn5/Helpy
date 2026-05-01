@@ -34,13 +34,15 @@ This is not the right place to run model inference directly inside the UI. Helpy
 
 - Left sidebar with project picker, modes, and settings placeholder
 - Top bar with active project and local backend health indicator
-- Main chat/agent conversation view with mocked Aider-style live response stream
+- Main chat/agent conversation view with OpenAI-compatible streaming from local llama.cpp
 - Right panel placeholders for context files and diffs
 - Bottom drawer for terminal, Docker, and Aider logs
 - Electron IPC bridge between React and the Node backend
 - Backend health check for `http://127.0.0.1:8080/v1/models`
 - Docker Compose `start`, `stop`, `status`, and `logs` controls for the local llama.cpp backend
+- Loading-aware backend health checks so model startup is not treated as a hard failure
 - Markdown session logger that appends user messages, assistant responses, health checks, and Docker events
+- Responsive workbench layout with a multiline prompt composer and larger log drawer
 - Linux AppImage and `.deb` packaging through `electron-builder`
 
 ## Local Backend Setup
@@ -173,8 +175,10 @@ https://github.com/Shingenn5/Helpy
 
 ## Next Engineering Steps
 
-- Replace mocked stream with real llama.cpp/OpenAI-compatible chat streaming.
 - Add an Aider process runner with PTY streaming.
+- Add project/task management, task duplication, and task history controls.
+- Add context file commands such as `/add`, `/drop`, `/read-only`, `/run`, and `/test`.
+- Add review gates and a real diff approval flow before applying changes.
 - Add configurable backend URL, model name, workspace root, and Obsidian vault path.
 - Add settings UI for the Markdown vault and project roots.
 - Make Docker Compose controls project-aware instead of using the app cwd.

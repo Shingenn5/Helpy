@@ -19,6 +19,7 @@ contextBridge.exposeInMainWorld('workstation', {
   },
   agent: {
     mockStream: (prompt) => ipcRenderer.invoke('agent:mock-stream', prompt),
+    chatStream: (payload) => ipcRenderer.invoke('agent:chat-stream', payload),
     onStreamChunk: (callback) => {
       const listener = (_event, payload) => callback(payload)
       ipcRenderer.on('agent:stream-chunk', listener)
