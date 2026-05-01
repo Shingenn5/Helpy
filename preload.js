@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('workstation', {
     stop: () => ipcRenderer.invoke('docker:stop')
   },
   session: {
+    start: (payload) => ipcRenderer.invoke('session:start', payload),
     log: (payload) => ipcRenderer.invoke('session:log', payload)
   },
   agent: {

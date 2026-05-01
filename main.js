@@ -16,7 +16,7 @@ function createWindow() {
     minWidth: 1100,
     minHeight: 720,
     backgroundColor: '#101217',
-    title: 'Local AI Workstation',
+    title: 'Helpy',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -50,6 +50,7 @@ function wireIpc() {
   ipcMain.handle('docker:status', async () => docker.status())
   ipcMain.handle('docker:start', async () => docker.start())
   ipcMain.handle('docker:stop', async () => docker.stop())
+  ipcMain.handle('session:start', async (_event, payload) => logger.start(payload))
   ipcMain.handle('session:log', async (_event, payload) => logger.append(payload))
 
   ipcMain.handle('agent:mock-stream', async (event, prompt) => {
