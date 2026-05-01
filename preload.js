@@ -5,7 +5,9 @@ contextBridge.exposeInMainWorld('workstation', {
   docker: {
     status: () => ipcRenderer.invoke('docker:status'),
     start: () => ipcRenderer.invoke('docker:start'),
-    stop: () => ipcRenderer.invoke('docker:stop')
+    stop: () => ipcRenderer.invoke('docker:stop'),
+    logs: () => ipcRenderer.invoke('docker:logs'),
+    config: () => ipcRenderer.invoke('docker:config')
   },
   session: {
     start: (payload) => ipcRenderer.invoke('session:start', payload),

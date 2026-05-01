@@ -35,6 +35,8 @@
       "dist/**/*",
       "main.js",
       "preload.js",
+      "docker-compose.yml",
+      ".env.example",
       "src/backend/**/*",
       "package.json"
     ],

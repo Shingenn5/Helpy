@@ -50,6 +50,8 @@ function wireIpc() {
   ipcMain.handle('docker:status', async () => docker.status())
   ipcMain.handle('docker:start', async () => docker.start())
   ipcMain.handle('docker:stop', async () => docker.stop())
+  ipcMain.handle('docker:logs', async () => docker.logs())
+  ipcMain.handle('docker:config', async () => docker.config())
   ipcMain.handle('session:start', async (_event, payload) => logger.start(payload))
   ipcMain.handle('session:log', async (_event, payload) => logger.append(payload))
 

@@ -4,7 +4,7 @@ Helpy is a local-first desktop coding-agent workbench for running Aider-style wo
 
 Helpy is intended to replace AiderDesk for this setup. The core job is to make the coding loop feel like a real desktop tool: pick a project, talk to the agent, review context files, watch diffs, stream terminal/Aider logs, control the local model backend, and keep a durable Markdown record of the whole session.
 
-This repo currently contains the MVP v0.1 scaffold: Electron shell, React UI layout, IPC bridge, backend service stubs, mocked Aider-style streaming, Docker Compose hooks, real Markdown session logging, and Linux packaging config.
+This repo currently contains the MVP v0.1 scaffold: Electron shell, React UI layout, IPC bridge, backend service stubs, mocked Aider-style streaming, Docker Compose backend control, real Markdown session logging, and Linux packaging config.
 
 ## Target Setup
 
@@ -39,9 +39,49 @@ This is not the right place to run model inference directly inside the UI. Helpy
 - Bottom drawer for terminal, Docker, and Aider logs
 - Electron IPC bridge between React and the Node backend
 - Backend health check for `http://127.0.0.1:8080/v1/models`
-- Docker Compose `start`, `stop`, and `status` service hooks
+- Docker Compose `start`, `stop`, `status`, and `logs` controls for the local llama.cpp backend
 - Markdown session logger that appends user messages, assistant responses, health checks, and Docker events
 - Linux AppImage and `.deb` packaging through `electron-builder`
+
+## Local Backend Setup
+
+Helpy now includes a `docker-compose.yml` for the local llama.cpp server. The app's **Start Backend**, **Status**, **Logs**, and **Stop** buttons call Docker Compose against that file.
+
+The default Compose setup expects:
+
+```bash
+/home/shingen/Models/qwen2.5-coder-14b.gguf
+```
+
+Create a local `.env` from the example and edit it for your actual GGUF filename:
+
+```bash
+cd "/home/shingen/Tech Projects/Helpy"
+cp .env.example .env
+nano .env
+```
+
+Important values:
+
+```bash
+LLAMA_MODEL_DIR=/home/shingen/Models
+LLAMA_MODEL_FILE=qwen2.5-coder-14b.gguf
+LLAMA_PORT=8080
+LLAMA_CONTEXT=8192
+LLAMA_GPU_LAYERS=999
+```
+
+You can test the backend without the UI:
+
+```bash
+docker compose up -d
+curl http://127.0.0.1:8080/v1/models
+docker compose logs --tail 80
+```
+
+Or start it from Helpy using **Start Backend**. If the model file path is wrong, Docker logs will show that error in the bottom drawer.
+
+The Compose file uses `ghcr.io/ggml-org/llama.cpp:server-cuda`, matching llama.cpp's Docker server pattern. You still need Docker Desktop/WSL integration, NVIDIA container support, and a GGUF model on disk.
 
 ## Markdown Session Database
 
@@ -79,6 +119,12 @@ The current logger is intentionally simple. It appends to Markdown first; search
 ```bash
 npm install
 npm run dev
+```
+
+If you want Markdown notes to go straight into Obsidian:
+
+```bash
+HELPY_VAULT_PATH="/home/shingen/Obsidian" npm run dev
 ```
 
 ## Build A Linux Installable

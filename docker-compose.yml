@@ -1,0 +1,21 @@
+services:
+  llama-cpp:
+    image: ${LLAMA_CPP_IMAGE:-ghcr.io/ggml-org/llama.cpp:server-cuda}
+    container_name: helpy-llama-cpp
+    ports:
+      - "${LLAMA_PORT:-8080}:8080"
+    volumes:
+      - "${LLAMA_MODEL_DIR:-/home/shingen/Models}:/models:ro"
+    command:
+      - "-m"
+      - "/models/${LLAMA_MODEL_FILE:-qwen2.5-coder-14b.gguf}"
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "8080"
+      - "-c"
+      - "${LLAMA_CONTEXT:-8192}"
+      - "-ngl"
+      - "${LLAMA_GPU_LAYERS:-999}"
+    gpus: all
+    restart: unless-stopped
