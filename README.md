@@ -47,13 +47,15 @@ This is not the right place to run model inference directly inside the UI. Helpy
 
 Helpy now includes a `docker-compose.yml` for the local llama.cpp server. The app's **Start Backend**, **Status**, **Logs**, and **Stop** buttons call Docker Compose against that file.
 
-The default Compose setup expects:
+The default Compose setup now expects your current model:
 
 ```bash
-/home/shingen/Models/qwen2.5-coder-14b.gguf
+/home/shingen/AI_Core/models/Qwen3.6-35B-A3B-UD-IQ2_M.gguf
 ```
 
-Create a local `.env` from the example and edit it for your actual GGUF filename:
+Helpy also has a **Choose Model** button in the right panel. Use that to browse to a `.gguf` file visually. It writes a local `.env` file for Docker Compose so you do not have to edit paths by hand.
+
+Manual setup still works:
 
 ```bash
 cd "/home/shingen/Tech Projects/Helpy"
@@ -64,8 +66,8 @@ nano .env
 Important values:
 
 ```bash
-LLAMA_MODEL_DIR=/home/shingen/Models
-LLAMA_MODEL_FILE=qwen2.5-coder-14b.gguf
+LLAMA_MODEL_DIR=/home/shingen/AI_Core/models
+LLAMA_MODEL_FILE=Qwen3.6-35B-A3B-UD-IQ2_M.gguf
 LLAMA_PORT=8080
 LLAMA_CONTEXT=8192
 LLAMA_GPU_LAYERS=999

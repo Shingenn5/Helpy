@@ -13,6 +13,10 @@ contextBridge.exposeInMainWorld('workstation', {
     start: (payload) => ipcRenderer.invoke('session:start', payload),
     log: (payload) => ipcRenderer.invoke('session:log', payload)
   },
+  settings: {
+    get: () => ipcRenderer.invoke('settings:get'),
+    chooseModel: () => ipcRenderer.invoke('settings:choose-model')
+  },
   agent: {
     mockStream: (prompt) => ipcRenderer.invoke('agent:mock-stream', prompt),
     onStreamChunk: (callback) => {

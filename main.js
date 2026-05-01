@@ -1,13 +1,15 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const path = require('node:path')
 const { createDockerService } = require('./src/backend/services/dockerService')
 const { createHealthService } = require('./src/backend/services/healthService')
 const { createSessionLogger } = require('./src/backend/services/sessionLogger')
+const { createSettingsService } = require('./src/backend/services/settingsService')
 
 const isDev = !app.isPackaged
 const docker = createDockerService()
 const health = createHealthService('http://127.0.0.1:8080/v1')
 const logger = createSessionLogger()
+const settings = createSettingsService()
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -54,6 +56,20 @@ function wireIpc() {
   ipcMain.handle('docker:config', async () => docker.config())
   ipcMain.handle('session:start', async (_event, payload) => logger.start(payload))
   ipcMain.handle('session:log', async (_event, payload) => logger.append(payload))
+  ipcMain.handle('settings:get', async () => settings.get())
+  ipcMain.handle('settings:choose-model', async () => {
+    const result = await dialog.showOpenDialog({
+      title: 'Choose GGUF model',
+      properties: ['openFile'],
+      filters: [
+        { name: 'GGUF models', extensions: ['gguf'] },
+        { name: 'All files', extensions: ['*'] }
+      ]
+    })
+
+    if (result.canceled || !result.filePaths[0]) return { ok: false, canceled: true }
+    return settings.setModel(result.filePaths[0])
+  })
 
   ipcMain.handle('agent:mock-stream', async (event, prompt) => {
     // baby stream for ui smoke test

@@ -8,6 +8,7 @@ export default function App() {
   const [mode, setMode] = useState('Code')
   const [health, setHealth] = useState({ ok: false, label: 'Checking backend...' })
   const [docker, setDocker] = useState({ ok: false, label: 'Docker not checked', composeFile: '' })
+  const [settings, setSettings] = useState({ modelDir: '', modelFile: '', envPath: '' })
   const [prompt, setPrompt] = useState('')
   const [messages, setMessages] = useState([
     { role: 'assistant', content: 'Helpy is ready. Start the local backend, pick context, then run an Aider-style pass.' }
@@ -38,6 +39,7 @@ export default function App() {
 
   async function boot() {
     await startSession()
+    await loadSettings()
     await loadDockerConfig()
     await refreshHealth()
     await dockerAction('status', { quiet: true })
@@ -57,6 +59,20 @@ export default function App() {
   async function loadDockerConfig() {
     const result = await window.workstation.docker.config()
     setDocker((current) => ({ ...current, composeFile: result.composeFile }))
+  }
+
+  async function loadSettings() {
+    const result = await window.workstation.settings.get()
+    setSettings(result)
+    addLog(`Model config: ${result.modelDir}/${result.modelFile}`)
+  }
+
+  async function chooseModel() {
+    const result = await window.workstation.settings.chooseModel()
+    if (!result.ok) return
+    setSettings((current) => ({ ...current, ...result }))
+    addLog(`Model selected: ${result.modelPath}`)
+    await logMarkdown({ role: 'event', content: `Model selected: ${result.modelPath}` })
   }
 
   async function refreshHealth() {
@@ -210,6 +226,15 @@ export default function App() {
           </section>
 
           <aside className="right-panel">
+            <section className="panel">
+              <div className="panel-title">Model</div>
+              <div className="model-card">
+                <strong>{settings.modelFile || 'No model selected'}</strong>
+                <span>{settings.modelDir || 'Choose a GGUF model to create .env'}</span>
+              </div>
+              <button onClick={chooseModel}>Choose Model</button>
+            </section>
+
             <section className="panel">
               <div className="panel-title">Backend Control</div>
               <div className="backend-actions">
