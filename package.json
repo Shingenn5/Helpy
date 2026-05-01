@@ -1,7 +1,7 @@
 {
-  "name": "local-agent-workstation",
+  "name": "helpy",
   "version": "0.1.0",
-  "description": "Local-first AI control plane MVP",
+  "description": "Local-first desktop AI workstation for WSL/Linux agent workflows",
   "main": "main.js",
   "scripts": {
     "dev": "concurrently \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && electron .\"",
@@ -25,8 +25,8 @@
     "wait-on": "latest"
   },
   "build": {
-    "appId": "local.ai.workstation",
-    "productName": "Local AI Workstation",
+    "appId": "ai.helpy.workstation",
+    "productName": "Helpy",
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "directories": {
       "output": "release"
@@ -50,7 +50,7 @@
         }
       ],
       "category": "Development",
-      "synopsis": "Local-first AI workstation",
+      "synopsis": "Local-first desktop AI workstation",
       "description": "GUI desktop control plane for local model backends, agent workflows, and Obsidian session logs."
     }
   }
