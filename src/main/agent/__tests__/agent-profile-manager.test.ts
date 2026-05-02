@@ -20,6 +20,7 @@ import { homedir } from 'os';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AgentProfile } from '@common/types';
+import { DEFAULT_AGENT_PROFILE } from '@common/agent';
 
 import { AgentProfileManager } from '../agent-profile-manager';
 
@@ -61,6 +62,22 @@ describe('AgentProfileManager', () => {
 
     // Create manager instance
     agentProfileManager = new AgentProfileManager(mockEventManager, mockExtensionManager);
+  });
+
+  describe('Helpy local defaults', () => {
+    it('heals stale stock profiles back to the local provider', () => {
+      const staleProfile = createMockAgentProfile({
+        id: DEFAULT_AGENT_PROFILE.id,
+        name: DEFAULT_AGENT_PROFILE.name,
+        provider: 'openai',
+        model: 'gpt-4o',
+      });
+
+      const sanitized = (agentProfileManager as any).sanitizeAgentProfile(staleProfile, 'power-tools') as AgentProfile;
+
+      expect(sanitized.provider).toBe(DEFAULT_AGENT_PROFILE.provider);
+      expect(sanitized.model).toBe(DEFAULT_AGENT_PROFILE.model);
+    });
   });
 
   describe('Core Bug - updateProfile does not call notifyListeners', () => {

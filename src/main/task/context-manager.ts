@@ -45,6 +45,8 @@ export class ContextManager {
   ) {
     this.messages = initialMessages;
     this.files = initialFiles;
+    // got handed state already, don't sneakily reload old disk junk
+    this.loaded = initialMessages.length > 0 || initialFiles.length > 0;
 
     // Task-specific storage path - single context per task
     this.storagePath = path.join(task.getProjectDir(), AIDER_DESK_TASKS_DIR, taskId, 'context.json');

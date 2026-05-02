@@ -398,7 +398,7 @@ const DEFAULT_AGENT_PROFILE_ID = 'default';
 export const DEFAULT_AGENT_PROFILE: AgentProfile = {
   id: DEFAULT_AGENT_PROFILE_ID,
   name: 'Default Agent',
-  provider: 'openai-compatible',
+  provider: 'helpy-local',
   model: DEFAULT_PROVIDER_MODELS['openai-compatible']!,
   maxIterations: 250,
   minTimeBetweenToolCalls: 0,

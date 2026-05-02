@@ -46,6 +46,8 @@ const getRuleFilesForAgent = async (agentDirName: string, agentsDir: string): Pr
   return ruleFiles;
 };
 
+const getHelpyDefaultProfile = (profileId: string): AgentProfile | undefined => DEFAULT_AGENT_PROFILES.find((profile) => profile.id === profileId);
+
 const getAllRuleFilesForProfile = async (profile: AgentProfile, dirName: string): Promise<string[]> => {
   const ruleFiles: string[] = [];
 
@@ -396,12 +398,14 @@ export class AgentProfileManager {
   }
 
   private sanitizeAgentProfile(loadedProfile: AgentProfile, agentDirName: string): AgentProfile {
+    const helpyDefault = !loadedProfile.projectDir ? getHelpyDefaultProfile(loadedProfile.id) : undefined;
+
     return {
       ...loadedProfile,
       id: loadedProfile.id || uuidv4(),
       name: loadedProfile.name || agentDirName,
-      provider: loadedProfile.provider || DEFAULT_AGENT_PROFILE.provider,
-      model: loadedProfile.model || DEFAULT_AGENT_PROFILE.model,
+      provider: helpyDefault?.provider || loadedProfile.provider || DEFAULT_AGENT_PROFILE.provider,
+      model: helpyDefault?.model || loadedProfile.model || DEFAULT_AGENT_PROFILE.model,
       maxIterations: loadedProfile.maxIterations ?? DEFAULT_AGENT_PROFILE.maxIterations,
       minTimeBetweenToolCalls: loadedProfile.minTimeBetweenToolCalls ?? DEFAULT_AGENT_PROFILE.minTimeBetweenToolCalls,
       enabledServers: loadedProfile.enabledServers ?? [],

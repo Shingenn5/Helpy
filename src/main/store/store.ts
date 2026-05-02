@@ -38,15 +38,25 @@ import { migrateSettingsV16toV17 } from '@/store/migrations/v16-to-v17';
 import { migrateSettingsV17toV18 } from '@/store/migrations/v17-to-v18';
 import { migrateSettingsV18toV19 } from '@/store/migrations/v18-to-v19';
 
+const DEFAULT_HELPY_ENDPOINT = 'http://127.0.0.1:8080/v1';
+
 export const HELPY_LOCAL_PROVIDER: ProviderProfile = {
   id: 'helpy-local',
   name: 'Local llama.cpp',
   provider: {
     name: 'openai-compatible',
     apiKey: 'local',
-    baseUrl: 'http://127.0.0.1:8080/v1',
+    baseUrl: DEFAULT_HELPY_ENDPOINT,
   },
 };
+
+export const getHelpyLocalProvider = (settings?: SettingsData): ProviderProfile => ({
+  ...HELPY_LOCAL_PROVIDER,
+  provider: {
+    ...HELPY_LOCAL_PROVIDER.provider,
+    baseUrl: settings?.helpy?.endpoint || DEFAULT_HELPY_ENDPOINT,
+  },
+});
 
 export const DEFAULT_SETTINGS: SettingsData = {
   language: 'en',
@@ -478,11 +488,26 @@ export class Store {
   }
 
   getProviders(): ProviderProfile[] {
+    const localProvider = getHelpyLocalProvider(this.getSettings());
     const providers = this.store.get('providers') || [];
-    if (providers.some((provider) => provider.id === HELPY_LOCAL_PROVIDER.id)) {
-      return providers;
+    const existingLocalProvider = providers.find((provider) => provider.id === HELPY_LOCAL_PROVIDER.id);
+
+    if (existingLocalProvider) {
+      return providers.map((provider) =>
+        provider.id === HELPY_LOCAL_PROVIDER.id
+          ? {
+              ...provider,
+              ...localProvider,
+              provider: {
+                ...provider.provider,
+                ...localProvider.provider,
+              },
+            }
+          : provider,
+      );
     }
-    return [HELPY_LOCAL_PROVIDER, ...providers];
+
+    return [localProvider, ...providers];
   }
 
   setProviders(providers: ProviderProfile[]): void {
