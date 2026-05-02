@@ -24,14 +24,14 @@ npx @aiderdesk/extensions install questions
 
 ### Manual Installation
 
-Copy the `questions` folder to your AiderDesk extensions directory:
+Copy the `questions` folder to your Helpy extensions directory:
 
 ```bash
 # For project-level installation
-cp -r questions/ /path/to/your/project/.aider-desk/extensions/
+cp -r questions/ /path/to/your/project/.helpy/extensions/
 
 # For global installation
-cp -r questions/ ~/.aider-desk/extensions/
+cp -r questions/ ~/.helpy/extensions/
 ```
 
 ## Usage
@@ -123,7 +123,7 @@ The questionnaire component:
 - Placement: `task-input-above` (above the prompt field)
 - Local state management for answers (stored in component, not extension)
 - Real-time progress tracking (answered count)
-- Uses AiderDesk UI components (Button, TextArea)
+- Uses Helpy UI components (Button, TextArea)
 - Styled with Tailwind CSS
 - Keyboard shortcut (`Ctrl/Cmd + Enter`) for quick navigation
 - Submit All button enabled when all questions are answered

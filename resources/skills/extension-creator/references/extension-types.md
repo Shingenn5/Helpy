@@ -1,6 +1,6 @@
 # Extension Types
 
-AiderDesk supports two types of extensions: single-file and folder extensions.
+Helpy supports two types of extensions: single-file and folder extensions.
 
 ## Single-File Extensions
 

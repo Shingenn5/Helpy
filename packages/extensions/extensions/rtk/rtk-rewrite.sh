@@ -1,5 +1,5 @@
 #!/bin/bash
-# RTK auto-rewrite hook for AiderDesk Extension
+# RTK auto-rewrite hook for Helpy Extension
 # Transparently rewrites raw commands to their rtk equivalents.
 # Outputs JSON with updatedInput to modify the command before execution.
 

@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
-echo "=== AiderDesk Package Build ==="
+echo "=== Helpy Package Build ==="
 echo "Root: $ROOT_DIR"
 echo ""
 
@@ -36,7 +36,7 @@ echo ""
 # Step 4: Build and copy MCP server
 echo "--- Building MCP server ---"
 cd "$ROOT_DIR"
-npx esbuild src/mcp-server/aider-desk-mcp-server.ts --bundle --platform=node --outdir=out/mcp-server
+npx esbuild src/mcp-server/helpy-mcp-server.ts --bundle --platform=node --outdir=out/mcp-server
 mkdir -p "$SCRIPT_DIR/out/resources/mcp-server"
 cp -r "$ROOT_DIR/out/mcp-server/." "$SCRIPT_DIR/out/resources/mcp-server/"
 echo "MCP server built and copied successfully."

@@ -1,6 +1,6 @@
 import { resolve, dirname } from 'path';
 
-export const READY_PATTERN = /AiderDesk Runner is ready and running on port (\d+)/;
+export const READY_PATTERN = /Helpy Runner is ready and running on port (\d+)/;
 export const DEFAULT_PORT = 24337;
 export const MAX_LOG_LINES = 500;
 
@@ -10,7 +10,7 @@ export const rendererDir = resolve(pkgRoot, 'out', 'renderer');
 export const runnerPath = resolve(pkgRoot, 'out', 'runner.js');
 
 export function getPortFromEnv(): number | null {
-  const envPort = process.env.AIDER_DESK_PORT;
+  const envPort = process.env.HELPY_PORT || process.env.AIDER_DESK_PORT;
   if (envPort) {
     const port = parseInt(envPort, 10);
     if (port >= 1 && port <= 65535) return port;

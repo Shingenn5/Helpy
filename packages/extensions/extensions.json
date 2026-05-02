@@ -36,7 +36,7 @@
     {
       "id": "theme",
       "name": "Theme Switcher",
-      "description": "Adds /theme command to switch AiderDesk themes",
+      "description": "Adds /theme command to switch Helpy themes",
       "file": "theme.ts",
       "type": "single",
       "capabilities": ["commands"]
@@ -183,7 +183,7 @@
     {
       "id": "ui-placement-demo",
       "name": "UI Placement Demo",
-      "description": "Demonstrates all available UI component placement locations in AiderDesk",
+      "description": "Demonstrates all available UI component placement locations in Helpy",
       "file": "ui-placement-demo.ts",
       "type": "single",
       "capabilities": ["ui", "example"]

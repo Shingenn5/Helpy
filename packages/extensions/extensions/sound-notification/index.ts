@@ -10,7 +10,7 @@ import type { Extension, ExtensionContext, PromptFinishedEvent, QuestionAskedEve
 const execAsync = promisify(exec);
 
 const PACKS_URL = 'https://raw.githubusercontent.com/PeonPing/og-packs/main';
-const CACHE_DIR = join(tmpdir(), 'aider-desk-sound-notification');
+const CACHE_DIR = join(tmpdir(), 'helpy-sound-notification');
 const CONFIG_COMPONENT_ID = 'sound-config';
 
 interface PackSound {
@@ -48,7 +48,7 @@ export default class SoundNotificationExtension implements Extension {
     name: 'Sound Notification',
     version: '2.0.0',
     description: 'Plays sound notifications using packs from og-packs',
-    icon: 'https://raw.githubusercontent.com/hotovo/aider-desk/refs/heads/main/packages/extensions/extensions/sound-notification/icon.png',
+    icon: 'https://raw.githubusercontent.com/Shingenn5/Helpy/refs/heads/main/packages/extensions/extensions/sound-notification/icon.png',
     capabilities: ['notifications'],
   };
 
@@ -370,7 +370,7 @@ export default class SoundNotificationExtension implements Extension {
 
   private fetchJson(url: string): Promise<unknown> {
     return new Promise((resolve, reject) => {
-      https.get(url, { headers: { 'User-Agent': 'AiderDesk' } }, (res) => {
+      https.get(url, { headers: { 'User-Agent': 'Helpy' } }, (res) => {
         let data = '';
         res.on('data', (chunk) => { data += chunk; });
         res.on('end', () => {

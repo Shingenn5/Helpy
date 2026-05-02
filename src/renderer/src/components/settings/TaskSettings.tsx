@@ -279,7 +279,7 @@ export const TaskSettings = ({ settings, setSettings }: Props) => {
 
             <div className="flex flex-col gap-1 items-start">
               <Input
-                value={settings.taskSettings.worktreeBranchPrefix ?? 'aider-desk/task/'}
+                value={settings.taskSettings.worktreeBranchPrefix ?? 'helpy/task/'}
                 label={
                   <div className="flex items-center gap-1">
                     <label className="text-xs text-text-primary font-medium">{t('settings.tasks.worktreeBranchPrefix')}</label>

@@ -65,7 +65,7 @@ class ScrollableLog {
   }
 }
 
-class AiderDeskCli implements Component {
+class HelpyCli implements Component {
   private tui: TUI;
   private state: AppState = 'idle';
   private childProcess: ChildProcess | null = null;
@@ -455,7 +455,7 @@ class AiderDeskCli implements Component {
 function runTui(port: number): void {
   const terminal = new ProcessTerminal();
   const tui = new TUI(terminal);
-  const cli = new AiderDeskCli(tui, port);
+  const cli = new HelpyCli(tui, port);
   tui.addChild(cli);
   tui.setFocus(cli);
   process.stdout.write('\x1b[2J\x1b[H');

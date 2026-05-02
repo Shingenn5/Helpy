@@ -8,7 +8,7 @@ const metadata = {
   version: '1.1.0',
   description: 'Execute JavaScript code in a sandbox with access to all tools as async functions',
   author: 'wladimiiir',
-  iconUrl: 'https://raw.githubusercontent.com/hotovo/aider-desk/refs/heads/main/packages/extensions/extensions/programmatic-tool-calls/icon.png',
+  iconUrl: 'https://raw.githubusercontent.com/Shingenn5/Helpy/refs/heads/main/packages/extensions/extensions/programmatic-tool-calls/icon.png',
   capabilities: ['tools'],
 };
 

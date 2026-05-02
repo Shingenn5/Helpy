@@ -1,6 +1,6 @@
 # Providers Quota Extension
 
-Displays API quota information for **Synthetic** and **Z.AI** providers in the AiderDesk task status bar. The extension automatically shows the relevant quota based on the active agent profile's provider.
+Displays API quota information for **Synthetic** and **Z.AI** providers in the Helpy task status bar. The extension automatically shows the relevant quota based on the active agent profile's provider.
 
 ## Features
 
@@ -11,14 +11,14 @@ Displays API quota information for **Synthetic** and **Z.AI** providers in the A
 
 ## Installation
 
-1. Copy this extension folder to your AiderDesk extensions directory:
+1. Copy this extension folder to your Helpy extensions directory:
    ```bash
-   cp -r providers-quota-extension ~/.aider-desk/extensions/
+   cp -r providers-quota-extension ~/.helpy/extensions/
    ```
 
 2. Create a `.env` file in the extension folder with your API key(s):
    ```bash
-   cd ~/.aider-desk/extensions/providers-quota-extension
+   cd ~/.helpy/extensions/providers-quota-extension
    echo "SYNTHETIC_API_KEY=your_synthetic_key_here" > .env
    echo "ZAI_API_KEY=your_zai_key_here" >> .env
    ```
@@ -28,7 +28,7 @@ Displays API quota information for **Synthetic** and **Z.AI** providers in the A
    npm install
    ```
 
-4. Restart AiderDesk
+4. Restart Helpy
 
 ## Usage
 
@@ -45,7 +45,7 @@ If the agent profile's provider doesn't match a configured provider, no quota is
 
 ### Environment Variables
 
-Create a `.env` file in the extension folder (`~/.aider-desk/extensions/providers-quota-extension/.env`):
+Create a `.env` file in the extension folder (`~/.helpy/extensions/providers-quota-extension/.env`):
 
 ```env
 # For Synthetic provider (optional)
@@ -118,7 +118,7 @@ The extension supports multiple `.env` files loaded in priority order (later fil
 
 1. Verify that the correct API key is set in `.env`
 2. Ensure the agent profile's provider matches (`synthetic` or `zai-plan`)
-3. Check AiderDesk logs for error messages
+3. Check Helpy logs for error messages
 4. Verify network connectivity to the API endpoints
 
 ### "Quota unavailable" message (Synthetic)
@@ -132,13 +132,13 @@ The extension supports multiple `.env` files loaded in priority order (later fil
 1. Ensure the extension folder is named correctly: `providers-quota-extension`
 2. Verify `index.ts` exists in the extension folder
 3. Run `npm install` in the extension folder
-4. Check AiderDesk logs for loading errors
+4. Check Helpy logs for loading errors
 
 ### Quota not updating
 
 Quota data is cached for 1 minute. To force a refresh:
 - Wait for the cache to expire
-- Restart AiderDesk
+- Restart Helpy
 
 ## Development
 
@@ -157,7 +157,7 @@ providers-quota-extension/
 
 1. Edit `index.ts` to change API logic or data fetching
 2. Edit `StatusBarComponent.jsx` to customize the UI
-3. Restart AiderDesk to see changes
+3. Restart Helpy to see changes
 
 ### Data Structure
 

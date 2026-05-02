@@ -117,21 +117,21 @@ jq --version
 
 ## Installation
 
-1. Copy the extension folder to your AiderDesk extensions directory:
+1. Copy the extension folder to your Helpy extensions directory:
 
 ```bash
-cp -r . ~/.aider-desk/extensions/rtk
+cp -r . ~/.helpy/extensions/rtk
 ```
 
 2. Make the rewrite script executable (macOS/Linux only):
 
 ```bash
-chmod +x ~/.aider-desk/extensions/rtk/rtk-rewrite.sh
+chmod +x ~/.helpy/extensions/rtk/rtk-rewrite.sh
 ```
 
-On Windows, this step is not required because AiderDesk runs the script via `bash`.
+On Windows, this step is not required because Helpy runs the script via `bash`.
 
-3. Restart AiderDesk
+3. Restart Helpy
 
 ## How It Works
 
@@ -226,15 +226,15 @@ On Windows, the bundled shell script is still used; it is just launched through 
    bash --version
    ```
 
-4. Check AiderDesk logs for extension errors
+4. Check Helpy logs for extension errors
 
 5. Test the rewrite script manually:
    ```bash
    # macOS / Linux
-   echo '{"tool_input":{"command":"git status"}}' | ~/.aider-desk/extensions/rtk/rtk-rewrite.sh
+   echo '{"tool_input":{"command":"git status"}}' | ~/.helpy/extensions/rtk/rtk-rewrite.sh
 
    # Windows (Git Bash / bash in PATH)
-   echo '{"tool_input":{"command":"git status"}}' | bash ~/.aider-desk/extensions/rtk/rtk-rewrite.sh
+   echo '{"tool_input":{"command":"git status"}}' | bash ~/.helpy/extensions/rtk/rtk-rewrite.sh
    ```
 
 ### Wrong RTK installed

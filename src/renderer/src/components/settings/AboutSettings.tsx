@@ -54,7 +54,7 @@ export const AboutSettings = ({ settings, setSettings, onShowLogs }: Props) => {
 
   return (
     <div className="space-y-6">
-      <Section title="AiderDesk">
+      <Section title="Helpy">
         <div className="p-6 space-y-2">
           <div className="flex  text-sm text-text-primary gap-2">
             <span>{t('settings.about.version')}:</span>

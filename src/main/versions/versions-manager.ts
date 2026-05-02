@@ -38,7 +38,7 @@ export class VersionsManager {
     }
 
     logger.info('Checking for version updates...');
-    // Get AiderDesk version using app.getVersion()
+    // Get Helpy version using app.getVersion()
     const aiderDeskCurrentVersion = app.getVersion();
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -76,7 +76,7 @@ export class VersionsManager {
             aiderDeskAvailableVersion = null;
           }
         }
-        logger.error('Failed to check for AiderDesk updates', { error });
+        logger.error('Failed to check for Helpy updates', { error });
       }
 
       // Check if auto-update is enabled and a new version was found
@@ -128,7 +128,7 @@ export class VersionsManager {
     autoUpdater.autoInstallOnAppQuit = true; // Install on quit after download
     if (isDev()) {
       autoUpdater.forceDevUpdateConfig = true;
-      process.env.APPIMAGE = path.join(__dirname, 'dist', `aider-desk-${app.getVersion()}.AppImage`);
+      process.env.APPIMAGE = path.join(__dirname, 'dist', `helpy-${app.getVersion()}.AppImage`);
     }
 
     autoUpdater.on('download-progress', (progressObj) => {
@@ -185,14 +185,14 @@ export class VersionsManager {
   public async downloadLatestAiderDesk(): Promise<void> {
     const app = getElectronApp();
     if (!app) {
-      logger.info('Electron app not available, skipping AiderDesk update download.');
+      logger.info('Electron app not available, skipping Helpy update download.');
       return;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const autoUpdater = require('electron-updater').autoUpdater;
 
-    logger.info('Starting AiderDesk update download...');
+    logger.info('Starting Helpy update download...');
     try {
       // Check for updates first to ensure we have the latest info
       const updateCheckResult = await autoUpdater.checkForUpdates();
@@ -208,7 +208,7 @@ export class VersionsManager {
         logger.info('No new update found or update check failed.');
       }
     } catch (error) {
-      logger.error('Failed to download AiderDesk update', { error });
+      logger.error('Failed to download Helpy update', { error });
       this.updateVersionsInfo({
         aiderDeskDownloadProgress: undefined,
       });

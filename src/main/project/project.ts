@@ -194,7 +194,7 @@ export class Project {
     // Migrate sessions to tasks before starting
     await migrateSessionsToTasks(this);
 
-    const tasksDir = path.join(this.baseDir, '.aider-desk', 'tasks');
+    const tasksDir = path.join(this.baseDir, '.helpy', 'tasks');
 
     try {
       if (!(await fileExists(tasksDir))) {
@@ -381,7 +381,7 @@ export class Project {
   }
 
   private async deleteTaskInternal(taskId: string): Promise<void> {
-    const taskDir = path.join(this.baseDir, '.aider-desk', 'tasks', taskId);
+    const taskDir = path.join(this.baseDir, '.helpy', 'tasks', taskId);
 
     // Close the task if it's loaded
     const task = this.tasks.get(taskId);

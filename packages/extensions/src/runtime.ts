@@ -1,5 +1,5 @@
 /**
- * Runtime module for AiderDesk extensions
+ * Runtime module for Helpy extensions
  * 
  * This module provides runtime values for TypeScript enums that are needed
  * when extensions are loaded at runtime. These enums are also available as

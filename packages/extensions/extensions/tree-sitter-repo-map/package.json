@@ -9,7 +9,7 @@
     "tree-sitter",
     "repo-map"
   ],
-  "author": "AiderDesk",
+  "author": "Helpy",
   "license": "MIT",
   "dependencies": {
     "@aiderdesk/tree-sitter-utils": "^0.1.0"

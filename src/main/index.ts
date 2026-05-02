@@ -283,7 +283,7 @@ export const getCreateNewWindow = () => createNewWindow;
 
 app.whenReady().then(async () => {
   try {
-    electronApp.setAppUserModelId('com.hotovo.aider-desk');
+    electronApp.setAppUserModelId('ai.helpy.workbench');
 
     if (!HEADLESS_MODE) {
       // Setup custom menu only in GUI mode - pass createNewWindow function
@@ -294,7 +294,7 @@ app.whenReady().then(async () => {
       });
     }
 
-    logger.info('------------ Starting AiderDesk... ------------');
+    logger.info('------------ Starting Helpy... ------------');
     logger.info('Initializing fix-path...');
     (await import('fix-path')).default();
 
@@ -306,7 +306,7 @@ app.whenReady().then(async () => {
         icon,
         splashImage,
       });
-      progressBar.setDetail('Launching AiderDesk...');
+      progressBar.setDetail('Launching Helpy...');
 
       await new Promise((resolve) => {
         progressBar?.on('ready', () => {
@@ -421,7 +421,7 @@ app.whenReady().then(async () => {
       });
     }
   } catch (error) {
-    logger.error('Failed to start AiderDesk:', error);
+    logger.error('Failed to start Helpy:', error);
     app.quit();
   }
 });

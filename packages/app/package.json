@@ -1,9 +1,9 @@
 {
-  "name": "@aiderdesk/aiderdesk",
+  "name": "@helpy/workbench",
   "version": "0.63.0",
-  "description": "AiderDesk - AI-Powered Development Platform",
+  "description": "Helpy - Local-first coding agent workbench",
   "bin": {
-    "aiderdesk": "./bin/aiderdesk.js"
+    "helpy": "./bin/helpy.js"
   },
   "files": [
     "bin/",
@@ -22,14 +22,14 @@
     "aider",
     "llm"
   ],
-  "author": "wladimiiir",
-  "homepage": "https://aiderdesk.hotovo.com",
+  "author": "Shingenn5",
+  "homepage": "https://github.com/Shingenn5/Helpy",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hotovo/aider-desk.git"
+    "url": "https://github.com/Shingenn5/Helpy.git"
   },
   "bugs": {
-    "url": "https://github.com/hotovo/aider-desk/issues"
+    "url": "https://github.com/Shingenn5/Helpy/issues"
   },
   "license": "MIT",
   "dependencies": {

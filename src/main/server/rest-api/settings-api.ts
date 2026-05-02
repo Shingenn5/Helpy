@@ -136,7 +136,7 @@ export class SettingsApi extends BaseApi {
       }),
     );
 
-    // Download latest AiderDesk
+    // Download latest Helpy
     router.post(
       '/download-latest',
       this.handleRequest(async (req, res) => {

@@ -1,6 +1,6 @@
 # Extension Interface
 
-Full TypeScript interface for AiderDesk extensions.
+Full TypeScript interface for Helpy extensions.
 
 ## Extension Interface
 
@@ -99,7 +99,7 @@ interface ExtensionContext {
 
 ## MemoryContext
 
-Provides access to AiderDesk's memory system — the same underlying vector store used by the built-in memory tools. Available via `context.getMemoryContext()` in any extension method.
+Provides access to Helpy's memory system — the same underlying vector store used by the built-in memory tools. Available via `context.getMemoryContext()` in any extension method.
 
 ```typescript
 interface MemoryContext {

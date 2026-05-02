@@ -3,7 +3,7 @@
  *
  * Provides a 'chunkhound-search' tool via getTools() that uses ChunkHound
  * for semantic code search. This demonstrates how to register custom tools
- * that extend AiderDesk's capabilities.
+ * that extend Helpy's capabilities.
  *
  * ChunkHound provides:
  * - Better semantic understanding of code
@@ -336,7 +336,7 @@ export default class ChunkhoundSearchExtension implements Extension {
     version: '1.0.0',
     description: 'Replaces power semantic_search tool with ChunkHound for semantic code search',
     author: 'wladimiiir',
-    iconUrl: 'https://raw.githubusercontent.com/hotovo/aider-desk/refs/heads/main/packages/extensions/extensions/chunkhound-search/icon.png',
+    iconUrl: 'https://raw.githubusercontent.com/Shingenn5/Helpy/refs/heads/main/packages/extensions/extensions/chunkhound-search/icon.png',
     capabilities: ['search'],
   };
 

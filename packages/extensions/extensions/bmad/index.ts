@@ -12,7 +12,7 @@
  *
  * Usage:
  * 1. This extension automatically registers the 'bmad' mode
- * 2. Select 'BMAD' mode from the mode selector in AiderDesk
+ * 2. Select 'BMAD' mode from the mode selector in Helpy
  * 3. Use the welcome page to start workflows
  * 4. Task actions show current workflow progress and next steps
  */
@@ -120,7 +120,7 @@ export default class BmadExtension implements Extension {
     version: '1.0.0',
     description: 'Provides BMAD mode with structured workflows for planning, designing, and implementing software projects',
     author: 'wladimiiir',
-    iconUrl: 'https://raw.githubusercontent.com/hotovo/aider-desk/refs/heads/main/packages/extensions/extensions/bmad/icon.png',
+    iconUrl: 'https://raw.githubusercontent.com/Shingenn5/Helpy/refs/heads/main/packages/extensions/extensions/bmad/icon.png',
     capabilities: ['modes', 'ui', 'workflows'],
   };
 

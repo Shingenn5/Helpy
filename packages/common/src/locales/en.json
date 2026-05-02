@@ -55,8 +55,8 @@
     "nextResult": "Next result (F3)"
   },
   "onboarding": {
-    "title": "Welcome to AiderDesk",
-    "description": "AiderDesk is your desktop companion for AI-assisted coding. This application brings the power of Aider's AI coding assistant to a user-friendly interface, helping you:",
+    "title": "Welcome to Helpy",
+    "description": "Helpy is your desktop companion for AI-assisted coding. This application brings the power of Aider's AI coding assistant to a user-friendly interface, helping you:",
     "skipForNow": "Skip for now",
     "finish": "Finish Setup",
     "features": {
@@ -98,7 +98,7 @@
       "description": "Configure your LLM providers for use with both Aider and Agent modes. You can set up API keys and additional settings for various providers.",
       "configureLater": "You can configure these later in the Settings if you prefer.",
       "connectTitle": "Connect Your AI Model",
-      "connectDescription": "AiderDesk supports multiple AI providers including OpenAI, Anthropic, Google Gemini, and more. Your API keys are stored securely on your local machine and never shared.",
+      "connectDescription": "Helpy supports multiple AI providers including OpenAI, Anthropic, Google Gemini, and more. Your API keys are stored securely on your local machine and never shared.",
       "advancedUsersNote": "Advanced users: You can also configure providers using environment variables in the next step's Aider configuration section.",
       "advancedSettings": "Advanced settings",
       "order": "Order",
@@ -121,7 +121,7 @@
     },
     "agent": {
       "title": "Meet Your AI Agent",
-      "description": "Discover the power of autonomous AI assistance with AiderDesk's Agent mode. Your AI agent can work independently to complete complex tasks.",
+      "description": "Discover the power of autonomous AI assistance with Helpy's Agent mode. Your AI agent can work independently to complete complex tasks.",
       "capabilities": "Agent Capabilities:",
       "autonomousPlanning": "Autonomous Task Planning:",
       "autonomousPlanningDesc": "Breaks down complex requests into manageable steps and executes them systematically.",
@@ -136,9 +136,9 @@
     },
     "complete": {
       "title": "Setup Complete!",
-      "description": "Congratulations! You've successfully set up AiderDesk. You're now ready to start coding with AI assistance.",
+      "description": "Congratulations! You've successfully set up Helpy. You're now ready to start coding with AI assistance.",
       "ready": "Click 'Finish Setup' to begin your coding journey.",
-      "success": "Onboarding completed successfully! Welcome to AiderDesk."
+      "success": "Onboarding completed successfully! Welcome to Helpy."
     },
     "errors": {
       "navigationFailed": "Navigation failed. Please try again.",
@@ -604,8 +604,8 @@
       "addSymlinkFolder": "Add",
       "removeSymlinkFolder": "Remove folder",
       "worktreeBranchPrefix": "Branch Prefix",
-      "worktreeBranchPrefixTooltip": "Prefix used when creating worktree branch names. For example, 'aider-desk/task/' will create branches like 'aider-desk/task/my-feature'.",
-      "worktreeBranchPrefixPlaceholder": "e.g. aider-desk/task/",
+      "worktreeBranchPrefixTooltip": "Prefix used when creating worktree branch names. For example, 'helpy/task/' will create branches like 'helpy/task/my-feature'.",
+      "worktreeBranchPrefixPlaceholder": "e.g. helpy/task/",
       "renameBranchOnNameGeneration": "Rename Branch on Task Name Generation",
       "renameBranchOnNameGenerationTooltip": "When enabled, the worktree branch will be automatically renamed to match the generated task name. Disable this to keep the original branch name.",
       "auxiliaryModelsTitle": "Auxiliary Models",
@@ -628,7 +628,7 @@
       "title": "Window Title"
     },
     "windowTitleTemplateLabel": "Window title template",
-    "windowTitleTemplateTooltip": "Use {project} for project name and {task} for current task name. Example: 'AiderDesk - {project}' or '{project} - {task}'",
+    "windowTitleTemplateTooltip": "Use {project} for project name and {task} for current task name. Example: 'Helpy - {project}' or '{project} - {task}'",
     "agent": {
       "mcpServers": "MCP Servers",
       "provider": "Provider",
@@ -642,7 +642,7 @@
       "customInstructions": "Additional Rules",
       "rules": "Rules",
       "rulesInfo": "You can use Rules to add specific instructions for specific MCP servers or to control flow of the agent.",
-      "ruleFilesInfo": "Any file in your project's <file>.aider-desk/rules</file> directory is automatically included in the Rules. See example <a>here</a>.",
+      "ruleFilesInfo": "Any file in your project's <file>.helpy/rules</file> directory is automatically included in the Rules. See example <a>here</a>.",
       "noServersConfigured": "No MCP servers configured.",
       "computationalResources": "Maximum number of iterations for the agent per run. Helps control computational resources.",
       "rateLimiting": "Sets the minimum time between tool calls to prevent rate limiting (e.g. for Brave or other API-constrained services).",
@@ -743,7 +743,7 @@
       "optionsDocumentation": "Check the documentation for available options at",
       "envVarsDocumentation": "Check the documentation for environment variables at",
       "context": "Context",
-      "addRuleFiles": "Add rule files from project's <file>.aider-desk/rules</file> directory as read-only files.",
+      "addRuleFiles": "Add rule files from project's <file>.helpy/rules</file> directory as read-only files.",
       "confirmBeforeEdit": "Confirm before editing files"
     },
     "common": {
@@ -812,11 +812,11 @@
       "version": "Version",
       "notAvailable": "N/A",
       "checkForUpdates": "Check for updates",
-      "newAiderVersionAvailable": "New Aider version ({{version}}) is available - restart AiderDesk to install.",
+      "newAiderVersionAvailable": "New Aider version ({{version}}) is available - restart Helpy to install.",
       "updateAvailable": "Update is available",
       "downloadUpdate": "Download",
       "downloadingUpdate": "Downloading update",
-      "newAiderDeskVersionReady": "A new version is ready. Restart AiderDesk to apply the update.",
+      "newAiderDeskVersionReady": "A new version is ready. Restart Helpy to apply the update.",
       "downloadAutomatically": "Download update automatically",
       "releaseNotes": "Release notes",
       "openLogsDirectory": "Open logs directory",
@@ -855,7 +855,7 @@
       "proxyUrlDescription": "HTTP or SOCKS5 proxy server address"
     },
     "server": {
-      "description": "Enable server on port 24337 to access AiderDesk from external applications",
+      "description": "Enable server on port 24337 to access Helpy from external applications",
       "status": "Status",
       "running": "Running",
       "enableBasicAuth": "Enable Basic Authentication",
@@ -873,7 +873,7 @@
       "tunnelDescription": "Create a Cloudflare tunnel to securely access your server from external networks. Make sure to use Authentication when exposing the server externally.",
       "cors": "CORS",
       "enableCors": "Enable CORS",
-      "enableCorsDescription": "Allow cross-origin requests from external websites. By default, only same-origin requests from the AiderDesk UI are permitted.",
+      "enableCorsDescription": "Allow cross-origin requests from external websites. By default, only same-origin requests from the Helpy UI are permitted.",
       "corsOrigins": "Allowed Origins",
       "corsOriginPlaceholder": "https://example.com",
       "addCorsOrigin": "Add origin",
@@ -1530,7 +1530,7 @@
   },
   "telemetry": {
     "title": "Telemetry Information",
-    "message": "To help us improve AiderDesk, anonymous telemetry data is collected. This includes information like mode usage (agent, code, ask...) and some specifics when Agent mode is used. No personal data or prompts are ever collected.",
+    "message": "To help us improve Helpy, anonymous telemetry data is collected. This includes information like mode usage (agent, code, ask...) and some specifics when Agent mode is used. No personal data or prompts are ever collected.",
     "fullInfo": "Full information about what is collected can be found <a>here</a>.",
     "enabledLabel": "Enable anonymous telemetry"
   },
@@ -1725,7 +1725,7 @@
     "basedOn": "Based on"
   },
   "welcomeMessage": {
-    "title": "AiderDesk",
+    "title": "Helpy",
     "subtitle": "Your AI-powered coding assistant",
     "features": {
       "title": "What you can do",

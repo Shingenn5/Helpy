@@ -17,9 +17,9 @@ const __dirname = dirname(__filename);
 const EXTENSIONS_JSON_PATH = join(__dirname, '..', 'extensions.json');
 const EXTENSIONS_DIR = join(__dirname, '..', 'extensions');
 const PACKAGE_VERSION = require('../package.json').version;
-const CACHE_FILE = join(homedir(), '.aider-desk', 'extension-cache.json');
+const CACHE_FILE = join(homedir(), '.helpy', 'extension-cache.json');
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour in milliseconds
-const GITHUB_API_URL = 'https://api.github.com/repos/hotovo/aider-desk/contents/packages/extensions/extensions';
+const GITHUB_API_URL = 'https://api.github.com/repos/Shingenn5/Helpy/contents/packages/extensions/extensions';
 
 interface Extension {
   id: string;
@@ -222,11 +222,11 @@ function getInstallDirectory(options: { global?: boolean; directory?: string }):
   }
 
   if (options.global) {
-    return join(homedir(), '.aider-desk', 'extensions');
+    return join(homedir(), '.helpy', 'extensions');
   }
 
   // Default to project-local extensions
-  return join(process.cwd(), '.aider-desk', 'extensions');
+  return join(process.cwd(), '.helpy', 'extensions');
 }
 
 function isUrl(str: string): boolean {
@@ -258,8 +258,8 @@ async function installExtensionById(extId: string, extensions: Extension[], targ
   const spinner = ora(`Installing ${ext.name}...`).start();
 
   try {
-    const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/hotovo/aider-desk/main/packages/extensions/extensions';
-    const GITHUB_REPO = 'https://github.com/hotovo/aider-desk';
+    const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/Shingenn5/Helpy/main/packages/extensions/extensions';
+    const GITHUB_REPO = 'https://github.com/Shingenn5/Helpy';
 
     if (ext.type === 'single' && ext.file) {
       // Try local file first (for development)
@@ -343,8 +343,8 @@ async function installExtensionById(extId: string, extensions: Extension[], targ
     }
 
     console.log(chalk.cyan('\n✨ Installation complete!\n'));
-    console.log(chalk.gray('Extensions will be automatically loaded when you restart AiderDesk.'));
-    console.log(chalk.gray('Or they will hot-reload if AiderDesk is already running.\n'));
+    console.log(chalk.gray('Extensions will be automatically loaded when you restart Helpy.'));
+    console.log(chalk.gray('Or they will hot-reload if Helpy is already running.\n'));
   } catch (error) {
     spinner.fail(chalk.red(`✗ Failed to install ${ext.name}: ${error}`));
     process.exit(1);
@@ -458,7 +458,7 @@ async function installFromUrl(url: string, targetDir: string): Promise<void> {
 }
 
 async function installFromExamples(extensions: Extension[], targetDir: string): Promise<void> {
-  console.log(chalk.cyan('\n📦 Available AiderDesk Extensions\n'));
+  console.log(chalk.cyan('\n📦 Available Helpy Extensions\n'));
 
   const choices = extensions.map((ext) => ({
     name: ext.description ? `${ext.name} - ${ext.description}` : ext.name,
@@ -523,18 +523,18 @@ function runCommand(command: string, args: string[], options?: { cwd?: string })
 async function main() {
   const program = new Command();
 
-  program.name('aiderdesk-extensions').description('CLI tool for installing AiderDesk extensions').version(PACKAGE_VERSION);
+  program.name('aiderdesk-extensions').description('CLI tool for installing Helpy extensions').version(PACKAGE_VERSION);
 
   program
     .command('install [extension]')
-    .description('Install AiderDesk extensions interactively, by ID, or from a URL')
+    .description('Install Helpy extensions interactively, by ID, or from a URL')
     .option('-d, --directory <path>', 'Custom installation directory')
-    .option('-g, --global', 'Install to global directory (~/.aider-desk/extensions)')
+    .option('-g, --global', 'Install to global directory (~/.helpy/extensions)')
     .action(async (extension: string | undefined, options: { directory?: string; global?: boolean }) => {
       const targetDir = getInstallDirectory(options);
       const examples = await loadExtensions();
 
-      console.log(chalk.cyan.bold('\n🚀 AiderDesk Extension Installer\n'));
+      console.log(chalk.cyan.bold('\n🚀 Helpy Extension Installer\n'));
 
       if (extension) {
         // Check if it's a URL or an extension ID
@@ -556,7 +556,7 @@ async function main() {
     .action(async () => {
       const examples = await loadExtensions();
 
-      console.log(chalk.cyan.bold('\n📦 Available AiderDesk Extensions\n'));
+      console.log(chalk.cyan.bold('\n📦 Available Helpy Extensions\n'));
 
       examples.extensions.forEach((ext) => {
         console.log(chalk.white.bold(`  ${ext.name}`));

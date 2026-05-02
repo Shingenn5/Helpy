@@ -1,6 +1,6 @@
 # Project / Global Installation Flow
 
-This flow covers installing extensions to **Current Project** (`.aider-desk/extensions/`) or **Global** (`~/.aider-desk/extensions/`).
+This flow covers installing extensions to **Current Project** (`.helpy/extensions/`) or **Global** (`~/.helpy/extensions/`).
 
 These two targets share the same creation process — only the destination directory differs.
 
@@ -19,14 +19,14 @@ That's it. No registry updates, no manifest files, no documentation changes.
 ### Single-File Extension
 
 ```
-{targetDir}/                              # .aider-desk/extensions/ or ~/.aider-desk/extensions/
+{targetDir}/                              # .helpy/extensions/ or ~/.helpy/extensions/
 └── my-extension.ts                        # Everything in one file
 ```
 
 ### Folder Extension
 
 ```
-{targetDir}/                              # .aider-desk/extensions/ or ~/.aider-desk/extensions/
+{targetDir}/                              # .helpy/extensions/ or ~/.helpy/extensions/
 └── my-extension/
     ├── index.ts                           # Main extension file
     ├── package.json                       # npm dependencies
@@ -66,11 +66,11 @@ Reference: [extension-interface.md](extension-interface.md)
 
 ### Step 4: Verify
 
-The extension will be auto-discovered by AiderDesk from the target directory. No restart needed — extensions are watched and loaded dynamically.
+The extension will be auto-discovered by Helpy from the target directory. No restart needed — extensions are watched and loaded dynamically.
 
 ## What NOT to do (Project/Global)
 
 - Do NOT modify `packages/extensions/extensions.json` — that registry is only for In-Repo extensions
 - Do NOT update `docs-site/docs/extensions/examples.md` — that's for documenting built-in extensions
-- Do NOT use `@/` imports — they won't resolve outside the AiderDesk monorepo
-- Do NOT add to `packages/common/src/` or any other AiderDesk source directory
+- Do NOT use `@/` imports — they won't resolve outside the Helpy monorepo
+- Do NOT add to `packages/common/src/` or any other Helpy source directory

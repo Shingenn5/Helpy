@@ -1,6 +1,6 @@
 # Examples Gallery
 
-Real extension examples from the AiderDesk repository.
+Real extension examples from the Helpy repository.
 
 ## Single-File Examples
 
@@ -14,7 +14,7 @@ const AVAILABLE_THEMES = ['dark', 'light', 'ocean', 'forest'];
 
 const THEME_COMMAND: CommandDefinition = {
   name: 'theme',
-  description: 'Switch the AiderDesk theme',
+  description: 'Switch the Helpy theme',
   arguments: [
     { description: 'Theme name', required: true, options: AVAILABLE_THEMES }
   ],

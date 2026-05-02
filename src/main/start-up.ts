@@ -26,7 +26,7 @@ export type UpdateProgressFunction = (data: UpdateProgressData) => void;
  * @returns true if the app should proceed (always true now — errors are handled async)
  */
 export const performStartUp = async (pythonInstaller: PythonDependenciesInstaller, updateProgress?: UpdateProgressFunction): Promise<boolean> => {
-  logger.info('Starting AiderDesk setup process (fast path)');
+  logger.info('Starting Helpy setup process (fast path)');
 
   // Setup MCP server
   updateProgress?.({
@@ -55,7 +55,7 @@ export const performStartUp = async (pythonInstaller: PythonDependenciesInstalle
 
   // Ensure data dir exists (fast, synchronous)
   if (!fs.existsSync(AIDER_DESK_DATA_DIR)) {
-    logger.info(`Creating AiderDesk directory: ${AIDER_DESK_DATA_DIR}`);
+    logger.info(`Creating Helpy directory: ${AIDER_DESK_DATA_DIR}`);
     fs.mkdirSync(AIDER_DESK_DATA_DIR, { recursive: true });
   }
 
@@ -67,7 +67,7 @@ export const performStartUp = async (pythonInstaller: PythonDependenciesInstalle
 
 const setupMcpServerInternal = async (): Promise<void> => {
   if (isDev()) {
-    logger.info('Skipping AiderDesk MCP server setup in dev mode');
+    logger.info('Skipping Helpy MCP server setup in dev mode');
     return;
   }
 

@@ -1,17 +1,17 @@
 ---
 name: extension-creator
-description: Create AiderDesk extensions by setting up extension files, defining metadata, implementing Extension interface methods, and updating documentation. Use when building a new extension, creating extension commands, tools, or event handlers.
+description: Create Helpy extensions by setting up extension files, defining metadata, implementing Extension interface methods, and updating documentation. Use when building a new extension, creating extension commands, tools, or event handlers.
 ---
 
 # Extension Creator
 
-Create AiderDesk extensions that extend functionality through events, commands, tools, agents, and modes.
+Create Helpy extensions that extend functionality through events, commands, tools, agents, and modes.
 
 ## When to Use
 
 Use this skill when:
 
-- Building a new AiderDesk extension
+- Building a new Helpy extension
 - Creating extension commands, tools, or event handlers
 - Implementing the Extension interface
 - Setting up extension metadata and documentation
@@ -30,18 +30,18 @@ Do not use when:
 
 **Then:** Ask the user where to install the extension
 
-**If:** Working inside the AiderDesk project (the current project is the aider-desk repository)
+**If:** Working inside the Helpy project
 
 **Then:** Offer three options:
-1. **Current Project** — Install to `.aider-desk/extensions/` in the current project (project-scoped)
-2. **Global** — Install to `~/.aider-desk/extensions/` (available in all projects)
-3. **In-Repo** — Create inside `packages/extensions/extensions/` (ships with AiderDesk app)
+1. **Current Project** — Install to `.helpy/extensions/` in the current project (project-scoped)
+2. **Global** — Install to `~/.helpy/extensions/` (available in all projects)
+3. **In-Repo** — Create inside `packages/extensions/extensions/` (ships with Helpy app)
 
-**If:** Working outside the AiderDesk project
+**If:** Working outside the Helpy project
 
 **Then:** Offer two options:
-1. **Current Project** — Install to `.aider-desk/extensions/` in the current project (project-scoped)
-2. **Global** — Install to `~/.aider-desk/extensions/` (available in all projects)
+1. **Current Project** — Install to `.helpy/extensions/` in the current project (project-scoped)
+2. **Global** — Install to `~/.helpy/extensions/` (available in all projects)
 
 **Must:** Wait for user's choice before proceeding. The chosen target determines the entire workflow.
 
@@ -55,7 +55,7 @@ Do not use when:
 
 **Then:** Follow the [Project / Global Flow](references/project-global-flow.md):
 1. Determine extension type (single-file or folder)
-2. Create extension file(s) in the target directory (`.aider-desk/extensions/` or `~/.aider-desk/extensions/`)
+2. Create extension file(s) in the target directory (`.helpy/extensions/` or `~/.helpy/extensions/`)
 3. Implement Extension interface methods
 4. Export metadata and default class
 5. Verify the extension loads (auto-discovered, no registry needed)
@@ -184,7 +184,7 @@ Do not use when:
 
 ### For In-Repo target:
 
-1. Confirm user wants In-Repo (only available in aider-desk project)
+1. Confirm user wants In-Repo (only available in the Helpy app project)
 2. Determine extension type (single-file or folder)
 3. Create extension file or directory structure in `packages/extensions/extensions/`
 4. Implement Extension interface methods
@@ -208,7 +208,7 @@ Before using this skill, verify:
 
 If any precondition fails:
 
-- Review [packages/common/src/extensions.ts](https://raw.githubusercontent.com/hotovo/aider-desk/refs/heads/main/packages/common/src/extensions.ts) for types
+- Review [packages/common/src/extensions.ts](https://raw.githubusercontent.com/Shingenn5/Helpy/refs/heads/main/packages/common/src/extensions.ts) for types
 - Check [references/install-targets.md](references/install-targets.md) for target options
 - Check [references/event-types.md](references/event-types.md) for event types
 - Check [references/command-definition.md](references/command-definition.md) for command structure
@@ -325,7 +325,7 @@ After completing this skill, verify:
 
 ### Technical Reference (all targets)
 
-- [packages/common/src/extensions.ts](https://raw.githubusercontent.com/hotovo/aider-desk/refs/heads/main/packages/common/src/extensions.ts) - Extension types and interfaces
+- [packages/common/src/extensions.ts](https://raw.githubusercontent.com/Shingenn5/Helpy/refs/heads/main/packages/common/src/extensions.ts) - Extension types and interfaces
 - [extension-interface.md](references/extension-interface.md) - Full Extension interface, ExtensionContext, TaskContext, Metadata
 - [extension-types.md](references/extension-types.md) - Single-file vs folder extensions, examples, extensions.json format
 - [event-types.md](references/event-types.md) - All event types and payloads

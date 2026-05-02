@@ -147,7 +147,7 @@ export class PythonDependenciesInstaller {
 
     // Create data dir if needed
     if (!fs.existsSync(AIDER_DESK_DATA_DIR)) {
-      logger.info(`Creating AiderDesk directory: ${AIDER_DESK_DATA_DIR}`);
+      logger.info(`Creating Helpy directory: ${AIDER_DESK_DATA_DIR}`);
       fs.mkdirSync(AIDER_DESK_DATA_DIR, { recursive: true });
     }
 

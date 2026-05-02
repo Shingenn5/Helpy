@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Displays Synthetic API quota information in the task status bar",
   "main": "index.js",
-  "author": "AiderDesk",
+  "author": "Helpy",
   "license": "ISC",
   "scripts": {
     "postinstall": "cp -n .env.template .env || true"

@@ -1,6 +1,6 @@
 # Tree-Sitter Repo Map Extension
 
-Provides an enhanced repository map using tree-sitter parsing with PageRank-based symbol ranking for AiderDesk.
+Provides an enhanced repository map using tree-sitter parsing with PageRank-based symbol ranking for Helpy.
 
 ## Features
 
@@ -32,14 +32,14 @@ Provides an enhanced repository map using tree-sitter parsing with PageRank-base
 
 ### 1. Copy Extension
 
-Copy the entire `tree-sitter-repo-map` directory to your AiderDesk extensions folder:
+Copy the entire `tree-sitter-repo-map` directory to your Helpy extensions folder:
 
 ```bash
 # Global extensions (available to all projects)
-cp -r tree-sitter-repo-map ~/.aider-desk/extensions/
+cp -r tree-sitter-repo-map ~/.helpy/extensions/
 
 # Project-specific extensions
-cp -r tree-sitter-repo-map .aider-desk/extensions/
+cp -r tree-sitter-repo-map .helpy/extensions/
 ```
 
 ### 2. Install Dependencies
@@ -47,7 +47,7 @@ cp -r tree-sitter-repo-map .aider-desk/extensions/
 Navigate to the extension directory and install dependencies:
 
 ```bash
-cd ~/.aider-desk/extensions/tree-sitter-repo-map
+cd ~/.helpy/extensions/tree-sitter-repo-map
 npm install
 ```
 

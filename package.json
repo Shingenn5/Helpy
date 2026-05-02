@@ -1,9 +1,9 @@
 {
   "name": "helpy",
   "version": "0.64.0-dev",
-  "description": "Local-first AiderDesk-derived coding agent workbench",
+  "description": "Local-first Helpy coding agent workbench",
   "main": "./out/main/index.js",
-  "author": "Shingenn5, based on AiderDesk by Hotovo",
+  "author": "Shingenn5",
   "homepage": "https://github.com/Shingenn5/Helpy",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "start": "electron-vite preview",
     "dev": "electron-vite dev",
     "dev:no-hmr": "NO_HMR=true electron-vite dev",
-    "build:mcp": "esbuild src/mcp-server/aider-desk-mcp-server.ts --bundle --platform=node --outdir=out/mcp-server",
+    "build:mcp": "esbuild src/mcp-server/helpy-mcp-server.ts --bundle --platform=node --outdir=out/mcp-server",
     "build:extensions": "npm run build --workspace=packages/extensions",
     "publish:extensions": "npm publish --workspace=packages/extensions",
     "build:tree-sitter-utils": "npm run build --workspace=packages/tree-sitter-utils",

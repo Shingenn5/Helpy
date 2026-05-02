@@ -1,10 +1,10 @@
 # UI Components Reference
 
-This document describes how to create UI extensions that add React components to the AiderDesk interface.
+This document describes how to create UI extensions that add React components to the Helpy interface.
 
 ## Overview
 
-UI extensions allow you to add custom React components to various locations in the AiderDesk interface. Components are defined as JSX/TSX strings and rendered using the `string-to-react-component` library.
+UI extensions allow you to add custom React components to various locations in the Helpy interface. Components are defined as JSX/TSX strings and rendered using the `string-to-react-component` library.
 
 ## Registering UI Components
 
@@ -34,7 +34,7 @@ getUIComponents(context: ExtensionContext): UIComponentDefinition[] {
 
 ## Available Placements
 
-UI components can be placed in various locations throughout the AiderDesk interface. Each placement has specific characteristics and recommended use cases.
+UI components can be placed in various locations throughout the Helpy interface. Each placement has specific characteristics and recommended use cases.
 
 ### Task Page - Top Section
 
@@ -228,7 +228,7 @@ For components placed in `task-message-above`, `task-message-below`, or `task-me
 
 ## Available UI Components
 
-The `ui` prop provides pre-built AiderDesk components:
+The `ui` prop provides pre-built Helpy components:
 
 ### Button
 ```jsx

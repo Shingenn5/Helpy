@@ -1,11 +1,11 @@
 # Helpy
 
-Helpy is a local-first desktop coding-agent workbench. It is based on [AiderDesk](https://github.com/hotovo/aider-desk), but the goal is different: Helpy should feel like a professional GUI control plane for local agent workflows, not a cloud-provider setup wizard.
+Helpy is a local-first desktop coding-agent workbench. It uses Aider-compatible coding workflows, but the app identity is Helpy: a professional GUI control plane for local agent work, not a cloud-provider setup wizard.
 
 The current target stack is:
 
 - Electron, React, TypeScript, Vite, and Node for the desktop app
-- Aider/AiderDesk workflow primitives for coding tasks, diffs, project tabs, context files, tasks, and logs
+- Aider workflow primitives for coding tasks, diffs, project tabs, context files, tasks, and logs
 - Docker Compose managed llama.cpp server for local model inference
 - OpenAI-compatible endpoint at `http://127.0.0.1:8080/v1`
 - Qwen GGUF model default: `Qwen3.6-35B-A3B-UD-IQ2_M.gguf`
@@ -14,7 +14,7 @@ The current target stack is:
 
 ## What Works Now
 
-- Helpy starts from the mature AiderDesk UI and task workflow instead of the earlier scratch prototype.
+- Helpy starts from a mature desktop UI and task workflow instead of the earlier scratch prototype.
 - New installs default to a local OpenAI-compatible provider called `Local llama.cpp`.
 - The default model path points at the Qwen GGUF model name used on this machine.
 - Telemetry and app auto-update defaults are disabled.
@@ -84,14 +84,14 @@ Output lands in `dist/`.
 
 ## Direction
 
-Helpy is meant to become a replacement for AiderDesk in this local-first workflow. Near-term work:
+Helpy is meant to be the local-first coding agent workstation for this workflow. Near-term work:
 
 - make the model picker browse GGUF files visually
 - write every task/chat/session to an Obsidian-friendly Markdown database as it happens
 - hide or soften cloud-provider-first onboarding
 - tune layout/resizing so the UI feels more like a serious workstation
-- keep AiderDesk's useful task, diff, context, and git workflow pieces
+- keep useful task, diff, context, and git workflow pieces
 
 ## Attribution
 
-Helpy is based on AiderDesk by Hotovo and keeps the upstream MIT license.
+Helpy keeps the upstream MIT license and is being reshaped into its own local-first app.

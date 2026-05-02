@@ -17,10 +17,10 @@ export const AIDER_DESK_CONNECTOR_DIR = path.join(AIDER_DESK_DATA_DIR, 'aider-co
 export const AIDER_DESK_MCP_SERVER_DIR = path.join(AIDER_DESK_DATA_DIR, 'mcp-server');
 export const AIDER_DESK_BIN_DIR = path.join(AIDER_DESK_DATA_DIR, 'bin');
 export const UV_EXECUTABLE = process.platform === 'win32' ? path.join(AIDER_DESK_BIN_DIR, 'uv.exe') : path.join(AIDER_DESK_BIN_DIR, 'uv');
-export const SERVER_PORT = process.env.AIDER_DESK_PORT ? parseInt(process.env.AIDER_DESK_PORT) : 24337;
+export const SERVER_PORT = process.env.HELPY_PORT ? parseInt(process.env.HELPY_PORT) : process.env.AIDER_DESK_PORT ? parseInt(process.env.AIDER_DESK_PORT) : 24337;
 export const PID_FILES_DIR = path.join(AIDER_DESK_DATA_DIR, 'aider-processes');
 // constants for project directory files
-export const AIDER_DESK_DIR = '.aider-desk';
+export const AIDER_DESK_DIR = '.helpy';
 export const AIDER_DESK_TASKS_DIR = path.join(AIDER_DESK_DIR, 'tasks');
 export const AIDER_DESK_TODOS_FILE = 'todos.json';
 export const AIDER_DESK_RULES_DIR = 'rules';
@@ -36,17 +36,17 @@ export const AIDER_DESK_GLOBAL_PROMPTS_DIR = path.join(homedir(), AIDER_DESK_DIR
 export const AIDER_DESK_AGENTS_DIR = path.join(AIDER_DESK_DIR, 'agents');
 export const AIDER_DESK_TMP_DIR = path.join(AIDER_DESK_DIR, 'tmp');
 export const AIDER_DESK_WATCH_FILES_LOCK = path.join(AIDER_DESK_DIR, 'watch-files.lock');
-export const WORKTREE_BRANCH_PREFIX = 'aider-desk/task/';
+export const WORKTREE_BRANCH_PREFIX = 'helpy/task/';
 export const AIDER_DESK_MEMORY_FILE = path.join(AIDER_DESK_DATA_DIR, 'memory.db');
 export const EXTENSIONS_REPOS_CACHE_DIR = path.join(AIDER_DESK_CACHE_DIR, 'extensions');
 
 export const POSTHOG_PUBLIC_API_KEY = 'phc_AF4zkjrcziXLh8PBFsRSvVr4VZ38p3ezsdX0KDYuElI';
 export const POSTHOG_HOST = 'https://eu.i.posthog.com';
 
-export const HEADLESS_MODE = process.env.AIDER_DESK_HEADLESS === 'true';
-export const AUTH_USERNAME = process.env.AIDER_DESK_USERNAME;
-export const AUTH_PASSWORD = process.env.AIDER_DESK_PASSWORD;
-export const CORS_ALLOWED_ORIGINS = process.env.AIDER_DESK_CORS_ALLOWED_ORIGINS;
+export const HEADLESS_MODE = process.env.HELPY_HEADLESS === 'true' || process.env.AIDER_DESK_HEADLESS === 'true';
+export const AUTH_USERNAME = process.env.HELPY_USERNAME || process.env.AIDER_DESK_USERNAME;
+export const AUTH_PASSWORD = process.env.HELPY_PASSWORD || process.env.AIDER_DESK_PASSWORD;
+export const CORS_ALLOWED_ORIGINS = process.env.HELPY_CORS_ALLOWED_ORIGINS || process.env.AIDER_DESK_CORS_ALLOWED_ORIGINS;
 
 export const PROBE_BINARY_PATH = path.join(
   RESOURCES_DIR,

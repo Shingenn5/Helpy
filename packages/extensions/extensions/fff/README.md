@@ -24,7 +24,7 @@ If the native library is not available on your platform, the extension will log 
 npx @aiderdesk/extensions install fff
 ```
 
-Or manually copy this directory to `~/.aider-desk/extensions/fff/`.
+Or manually copy this directory to `~/.helpy/extensions/fff/`.
 
 ## Usage
 
@@ -42,7 +42,7 @@ The `filePattern` glob is converted to FFF's inline constraint syntax:
 | Issue | Solution |
 |-------|----------|
 | `native library not available` | The FFF native library is not supported on your platform; the extension will be disabled |
-| `failed to index project` | Check the AiderDesk logs for details; ensure the project directory is accessible |
+| `failed to index project` | Check the Helpy logs for details; ensure the project directory is accessible |
 | Results look incomplete | The `maxResults` parameter limits output; increase it if needed |
 
 ## Technical Details

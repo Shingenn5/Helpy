@@ -85,6 +85,6 @@ npx @aiderdesk/extensions install programmatic-tool-calls
 
 1. Download the extension folder
 2. Copy to one of these locations:
-   - **Global**: `~/.aider-desk/extensions/`
-   - **Project**: `<project-folder>/.aider-desk/extensions/`
+   - **Global**: `~/.helpy/extensions/`
+   - **Project**: `<project-folder>/.helpy/extensions/`
 3. Run `npm install` in the extension folder to install dependencies

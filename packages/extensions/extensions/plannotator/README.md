@@ -10,7 +10,7 @@ The extension uses a **task-based state management** approach:
 
 - **State is tracked per task** using a `Map<taskId, TaskState>`
 - **Responds to mode changes** via `onAgentStarted` event
-- **Mode can be changed** via command or directly in AiderDesk UI
+- **Mode can be changed** via command or directly in Helpy UI
 - **Phase management** is independent of mode switching
 
 ## Features
@@ -53,7 +53,7 @@ The `/plannotator-review` command opens a browser-based code review UI for your 
 
 1. **Enter Plannotator Mode**:
    - Use `/plannotator` command, OR
-   - Switch to "Plannotator" mode in AiderDesk UI
+   - Switch to "Plannotator" mode in Helpy UI
 
 2. **Agent Creates Plan**:
    - Agent explores codebase (read-only tools)
@@ -100,7 +100,7 @@ If the plan is rejected:
 ## Mode vs Phase
 
 ### Mode
-- **What**: AiderDesk task mode (e.g., "plannotator", "agent", "architect")
+- **What**: Helpy task mode (e.g., "plannotator", "agent", "architect")
 - **Where**: Stored in `task.currentMode`
 - **Changed by**: UI mode selector or `/plannotator` command
 - **Detected by**: `onAgentStarted` event (`event.mode`)
@@ -298,4 +298,4 @@ The extension logs important events at the 'info' level:
 - Checklist parsing
 - Tool blocking
 
-To see these logs, check the AiderDesk console.
+To see these logs, check the Helpy console.

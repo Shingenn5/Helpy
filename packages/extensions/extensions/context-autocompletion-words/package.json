@@ -10,7 +10,7 @@
     "autocomplete",
     "symbols"
   ],
-  "author": "AiderDesk",
+  "author": "Helpy",
   "license": "MIT",
   "dependencies": {
     "@aiderdesk/tree-sitter-utils": "*"

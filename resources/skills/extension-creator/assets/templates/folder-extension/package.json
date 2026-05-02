@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "{DESCRIPTION}",
   "main": "index.ts",
-  "keywords": ["aiderdesk", "extension"],
+  "keywords": ["helpy", "extension"],
   "author": "{AUTHOR}",
   "license": "MIT",
   "dependencies": {

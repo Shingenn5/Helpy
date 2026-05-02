@@ -1,6 +1,6 @@
 # @aiderdesk/extensions
 
-TypeScript type definitions and examples for building [AiderDesk](https://aiderdesk.hotovo.com) extensions.
+TypeScript type definitions and examples for building [Helpy](https://github.com/Shingenn5/Helpy) extensions.
 
 ## Installation
 
@@ -35,18 +35,18 @@ export default class MyExtension implements Extension {
 
 ## Example Extensions
 
-This directory contains example extensions demonstrating various capabilities of the AiderDesk extension system.
+This directory contains example extensions demonstrating various capabilities of the Helpy extension system.
 
 ## Documentation
 
-For comprehensive documentation on creating and using extensions, see the [Extensions documentation](https://aiderdesk.hotovo.com/docs/extensions/):
+For comprehensive documentation on creating and using extensions, see the [Extensions documentation](https://github.com/Shingenn5/Helpy/docs/extensions/):
 
-- [Extensions Overview](https://aiderdesk.hotovo.com/docs/extensions/) - What extensions can do
-- [Creating Extensions](https://aiderdesk.hotovo.com/docs/extensions/creating-extensions) - How to build extensions
-- [Installation Guide](https://aiderdesk.hotovo.com/docs/extensions/installation) - Install extensions globally or per-project
-- [API Reference](https://aiderdesk.hotovo.com/docs/extensions/api-reference) - Complete API documentation
-- [Events Reference](https://aiderdesk.hotovo.com/docs/extensions/events) - All available events
-- [Examples Gallery](https://aiderdesk.hotovo.com/docs/extensions/examples) - Browse all examples
+- [Extensions Overview](https://github.com/Shingenn5/Helpy/docs/extensions/) - What extensions can do
+- [Creating Extensions](https://github.com/Shingenn5/Helpy/docs/extensions/creating-extensions) - How to build extensions
+- [Installation Guide](https://github.com/Shingenn5/Helpy/docs/extensions/installation) - Install extensions globally or per-project
+- [API Reference](https://github.com/Shingenn5/Helpy/docs/extensions/api-reference) - Complete API documentation
+- [Events Reference](https://github.com/Shingenn5/Helpy/docs/extensions/events) - All available events
+- [Examples Gallery](https://github.com/Shingenn5/Helpy/docs/extensions/examples) - Browse all examples
 
 ## Example Extensions
 
@@ -70,7 +70,7 @@ For comprehensive documentation on creating and using extensions, see the [Exten
 | **[seek/](./extensions/seek/)** | Fast ranked code search using seek (zoekt) — replaces the internal grep tool | `tools`, `search` |
 | **[sandbox/](./extensions/sandbox/)** | OS-level sandboxing for bash commands using `@anthropic-ai/sandbox-runtime` | `security` |
 | **[sound-notification.ts](./extensions/sound-notification.ts)** | Plays a "Jobs Done" sound when a prompt finishes | `notifications` |
-| **[theme.ts](./extensions/theme.ts)** | Adds `/theme` command to switch AiderDesk themes | `commands` |
+| **[theme.ts](./extensions/theme.ts)** | Adds `/theme` command to switch Helpy themes | `commands` |
 | **[tree-sitter-repo-map/](./extensions/tree-sitter-repo-map/)** | Enhanced repository map using tree-sitter parsing with PageRank-based symbol ranking | `context`, `commands` |
 | **[tps-counter/](./extensions/tps-counter/)** | Displays tokens per second for agent responses with UI components in usage info and message bar | `metrics`, `ui` |
 | **[ultrathink.ts](./extensions/ultrathink.ts)** | Detects prompts like "ultrathink" / "think hard" and increases OpenAI/OpenAI-compatible reasoning effort (`xhigh` for `-max` models, otherwise `high`) | `optimization` |
@@ -102,10 +102,10 @@ Alternatively, manually copy extension files:
 
 ```bash
 # Global extensions (available to all projects)
-cp extensions/sound-notification.ts ~/.aider-desk/extensions/
+cp extensions/sound-notification.ts ~/.helpy/extensions/
 
 # Project-specific extensions
-cp extensions/sound-notification.ts .aider-desk/extensions/
+cp extensions/sound-notification.ts .helpy/extensions/
 ```
 
 ### 2. Hot Reload

@@ -252,7 +252,7 @@ describe('Prompts with Handlebars', () => {
 
     beforeEach(async () => {
       // Create a temporary directory for global templates
-      tmpGlobalDir = path.join(os.tmpdir(), `aider-desk-test-prompts-${Date.now()}`);
+      tmpGlobalDir = path.join(os.tmpdir(), `helpy-test-prompts-${Date.now()}`);
       await fs.mkdir(tmpGlobalDir, { recursive: true });
 
       // Create global template files

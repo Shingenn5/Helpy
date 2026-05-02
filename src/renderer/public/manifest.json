@@ -1,7 +1,7 @@
 {
-  "name": "AiderDesk",
-  "short_name": "AiderDesk",
-  "description": "AI-powered coding assistant desktop application",
+  "name": "Helpy",
+  "short_name": "Helpy",
+  "description": "Local-first coding agent workbench",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

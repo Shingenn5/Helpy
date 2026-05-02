@@ -26,7 +26,7 @@ export default class WakaTimeExtension implements Extension {
     version: '1.0.0',
     description: 'Tracks coding activity by sending heartbeats to WakaTime',
     author: 'wladimiiir',
-    iconUrl: 'https://raw.githubusercontent.com/hotovo/aider-desk/refs/heads/main/packages/extensions/extensions/wakatime.png',
+    iconUrl: 'https://raw.githubusercontent.com/Shingenn5/Helpy/refs/heads/main/packages/extensions/extensions/wakatime.png',
     capabilities: ['tracking'],
   };
 
@@ -92,7 +92,7 @@ export default class WakaTimeExtension implements Extension {
       return;
     }
 
-    const args = ['--entity', entity, '--project', project, '--plugin', 'aider-desk-extension/1.0.0'];
+    const args = ['--entity', entity, '--project', project, '--plugin', 'helpy-extension/1.0.0'];
 
     if (isWrite) {
       args.push('--write');

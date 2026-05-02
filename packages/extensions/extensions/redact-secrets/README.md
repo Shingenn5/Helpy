@@ -1,6 +1,6 @@
 # Redact Secrets Extension
 
-An AiderDesk extension that automatically redacts secret values from `.env*` files when reading files.
+An Helpy extension that automatically redacts secret values from `.env*` files when reading files.
 
 ## What it does
 
@@ -10,24 +10,24 @@ An AiderDesk extension that automatically redacts secret values from `.env*` fil
 
 ## Installation
 
-1. Copy the extension directory to your AiderDesk extensions folder:
+1. Copy the extension directory to your Helpy extensions folder:
 
 ```bash
 # Global (available to all projects)
-cp -r redact-secrets ~/.aider-desk/extensions/
+cp -r redact-secrets ~/.helpy/extensions/
 
 # Or project-specific
-cp -r redact-secrets .aider-desk/extensions/
+cp -r redact-secrets .helpy/extensions/
 ```
 
 2. Install dependencies:
 
 ```bash
-cd ~/.aider-desk/extensions/redact-secrets
+cd ~/.helpy/extensions/redact-secrets
 npm install
 ```
 
-3. Restart AiderDesk
+3. Restart Helpy
 
 ## Example
 

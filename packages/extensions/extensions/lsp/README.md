@@ -1,6 +1,6 @@
 # LSP Integration Extension
 
-This extension provides Language Server Protocol (LSP) integration for AiderDesk, enabling automatic error detection after file edits and LSP-powered tools for the AI assistant.
+This extension provides Language Server Protocol (LSP) integration for Helpy, enabling automatic error detection after file edits and LSP-powered tools for the AI assistant.
 
 ## Features
 

@@ -1,11 +1,11 @@
 # In-Repo Installation Flow
 
-This flow covers developing extensions **inside the AiderDesk codebase** at `packages/extensions/extensions/`. These extensions ship with the application and are available to all users by default.
+This flow covers developing extensions **inside the Helpy codebase** at `packages/extensions/extensions/`. These extensions ship with the application and are available to all users by default.
 
 ## When to Use This Flow
 
 Only when:
-1. The current working project **is** the AiderDesk repository itself
+1. The current working project **is** the Helpy repository itself
 2. The user explicitly chooses "In-Repo" as the installation target
 3. The extension is meant to be a built-in feature, not a personal or project-specific tool
 

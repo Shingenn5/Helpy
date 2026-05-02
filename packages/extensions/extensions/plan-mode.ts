@@ -7,7 +7,7 @@
  *
  * Usage:
  * 1. This extension automatically registers the 'plan' mode
- * 2. Select 'Plan' mode from the mode selector in AiderDesk
+ * 2. Select 'Plan' mode from the mode selector in Helpy
  * 3. Enter your request - the extension will prepend planning instructions
  */
 
@@ -41,7 +41,7 @@ export default class PlanModeExtension implements Extension {
     version: '1.1.0',
     description: 'Adds a Plan mode that enforces planning and analysis before making code changes',
     author: 'wladimiiir',
-    iconUrl: 'https://raw.githubusercontent.com/hotovo/aider-desk/refs/heads/main/packages/extensions/extensions/plan-mode.png',
+    iconUrl: 'https://raw.githubusercontent.com/Shingenn5/Helpy/refs/heads/main/packages/extensions/extensions/plan-mode.png',
     capabilities: ['modes'],
   };
 

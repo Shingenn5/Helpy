@@ -5,11 +5,11 @@
  * Shows quota based on the active agent profile's provider.
  *
  * Setup:
- * 1. Copy this extension folder to ~/.aider-desk/extensions/providers-quota-extension/
+ * 1. Copy this extension folder to ~/.helpy/extensions/providers-quota-extension/
  * 2. Create a .env file in the extension folder with:
  *    SYNTHETIC_API_KEY=your_api_key_here
  *    ZAI_API_KEY=your_zai_api_key_here
- * 3. Restart AiderDesk
+ * 3. Restart Helpy
  *
  * The extension will display quota usage based on the active provider.
  */
@@ -215,7 +215,7 @@ export default class ProvidersQuotaExtension implements Extension {
     version: '1.3.0',
     description: 'Displays API quota information for Synthetic and Z.AI providers in the task status bar',
     author: 'wladimiiir',
-    iconUrl: 'https://raw.githubusercontent.com/hotovo/aider-desk/refs/heads/main/packages/extensions/extensions/providers-quota-extension/icon.png',
+    iconUrl: 'https://raw.githubusercontent.com/Shingenn5/Helpy/refs/heads/main/packages/extensions/extensions/providers-quota-extension/icon.png',
     capabilities: ['ui'],
   };
 

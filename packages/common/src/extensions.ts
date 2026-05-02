@@ -38,7 +38,7 @@ export { ContextMemoryMode, InvocationMode, ToolApprovalState };
 export type AgentStepResult = unknown;
 export type { ModeDefinition };
 
-export const AIDER_DESK_EXTENSIONS_REPO_URL = 'https://github.com/hotovo/aider-desk/tree/main/packages/extensions/extensions/';
+export const AIDER_DESK_EXTENSIONS_REPO_URL = 'https://github.com/Shingenn5/Helpy/tree/main/packages/extensions/extensions/';
 
 export interface ResponseMessage {
   id: string;
@@ -241,7 +241,7 @@ export interface UIComponentDefinition {
 }
 
 /**
- * Marker type for UI components provided by AiderDesk
+ * Marker type for UI components provided by Helpy
  * Actual component implementation is provided by renderer at runtime
  */
 export type UIComponent = object;
@@ -1167,7 +1167,7 @@ export interface ProjectContext {
 }
 
 /**
- * Context object passed to extension methods providing access to AiderDesk APIs.
+ * Context object passed to extension methods providing access to Helpy APIs.
  *
  * Availability depends on where the context is created:
  * - **Global context** (e.g., `onLoad` without project, `getAgents`, `getConfigComponent`):
@@ -1190,7 +1190,7 @@ export interface ProjectContext {
  */
 export interface ExtensionContext {
   /**
-   * Log a message prefixed with the extension name to the AiderDesk logger.
+   * Log a message prefixed with the extension name to the Helpy logger.
    * Messages appear in the console output and log files at the specified level.
    * @param message - Message to log
    * @param type - Log level: 'info' (default), 'error', 'warn', or 'debug'
@@ -1294,7 +1294,7 @@ export interface ExtensionContext {
 }
 
 /**
- * Memory context providing access to AiderDesk's memory system.
+ * Memory context providing access to Helpy's memory system.
  * Uses the same underlying vector store as the built-in memory MCP tools.
  */
 export interface MemoryContext {

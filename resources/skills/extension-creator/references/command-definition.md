@@ -46,7 +46,7 @@ const HELLO_COMMAND: CommandDefinition = {
 ```typescript
 const THEME_COMMAND: CommandDefinition = {
   name: 'theme',
-  description: 'Switch the AiderDesk theme',
+  description: 'Switch the Helpy theme',
   arguments: [
     {
       description: 'Name of the theme to apply',

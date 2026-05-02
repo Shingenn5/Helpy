@@ -19,8 +19,8 @@ function getVersion(): string {
 const program = new Command();
 
 program
-  .name('aiderdesk')
-  .description('AiderDesk - AI-Powered Development Platform')
+  .name('helpy')
+  .description('Helpy - Local-first coding agent workbench')
   .version(getVersion(), '-v, --version', 'show version number')
   .helpOption('-h, --help', 'show help');
 

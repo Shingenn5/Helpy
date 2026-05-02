@@ -6,10 +6,10 @@
  * bubblewrap on Linux).
  *
  * Config files (merged, project takes precedence):
- * - ~/.aider-desk/sandbox.json (global)
- * - <project>/.aider-desk/sandbox.json (project-local)
+ * - ~/.helpy/sandbox.json (global)
+ * - <project>/.helpy/sandbox.json (project-local)
  *
- * Example .aider-desk/sandbox.json:
+ * Example .helpy/sandbox.json:
  * ```json
  * {
  *   "enabled": true,
@@ -26,8 +26,8 @@
  * ```
  *
  * Setup:
- * 1. Copy this file to ~/.aider-desk/extensions/
- * 2. Run `npm install @anthropic-ai/sandbox-runtime` in ~/.aider-desk/extensions/
+ * 1. Copy this file to ~/.helpy/extensions/
+ * 2. Run `npm install @anthropic-ai/sandbox-runtime` in ~/.helpy/extensions/
  *
  * Linux also requires: bubblewrap, socat, ripgrep
  */
@@ -84,8 +84,8 @@ let SandboxManager: typeof import('@anthropic-ai/sandbox-runtime').SandboxManage
 let cleanupAfterCommand: (() => void) | null = null;
 
 function loadConfig(cwd: string): SandboxConfig {
-  const projectConfigPath = join(cwd, '.aider-desk', 'sandbox.json');
-  const globalConfigPath = join(homedir(), '.aider-desk', 'sandbox.json');
+  const projectConfigPath = join(cwd, '.helpy', 'sandbox.json');
+  const globalConfigPath = join(homedir(), '.helpy', 'sandbox.json');
 
   let globalConfig: Partial<SandboxConfig> = {};
   let projectConfig: Partial<SandboxConfig> = {};
@@ -298,7 +298,7 @@ export default class SandboxExtension implements Extension {
     version: '1.0.0',
     description: 'OS-level sandboxing for bash commands using @anthropic-ai/sandbox-runtime (sandbox-exec on macOS, bubblewrap on Linux)',
     author: 'wladimiiir',
-    iconUrl: 'https://raw.githubusercontent.com/hotovo/aider-desk/refs/heads/main/packages/extensions/extensions/sandbox/icon.png',
+    iconUrl: 'https://raw.githubusercontent.com/Shingenn5/Helpy/refs/heads/main/packages/extensions/extensions/sandbox/icon.png',
     capabilities: ['security'],
   };
 

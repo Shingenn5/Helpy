@@ -1,10 +1,10 @@
 {
   "name": "lsp-extension",
   "version": "1.0.0",
-  "description": "Language Server Protocol integration for AiderDesk",
+  "description": "Language Server Protocol integration for Helpy",
   "main": "index.ts",
   "keywords": ["aiderdesk", "extension", "lsp", "language-server", "diagnostics"],
-  "author": "AiderDesk",
+  "author": "Helpy",
   "license": "MIT",
   "dependencies": {
     "vscode-jsonrpc": "^8.2.0",

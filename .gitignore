@@ -6,10 +6,10 @@ out
 .DS_Store
 *.log*
 .aider*
-!.aider-desk/agents
-!.aider-desk/commands
-!.aider-desk/rules
-!.aider-desk/skills
+!.helpy/agents
+!.helpy/commands
+!.helpy/rules
+!.helpy/skills
 .junie*
 .env
 tsconfig.*.tsbuildinfo

@@ -1,7 +1,7 @@
 /**
  * UI Placement Demo Extension
  *
- * Demonstrates all available UI component placement locations in AiderDesk.
+ * Demonstrates all available UI component placement locations in Helpy.
  * Each placement renders a small chip showing the placement name.
  *
  * This extension is useful for:
@@ -64,7 +64,7 @@ export default class UIPlacementDemoExtension implements Extension {
   static metadata = {
     name: 'UI Placement Demo',
     version: '1.0.0',
-    description: 'Demonstrates all available UI component placement locations in AiderDesk for extension development',
+    description: 'Demonstrates all available UI component placement locations in Helpy for extension development',
     author: 'wladimiiir',
     capabilities: ['ui', 'example'],
   };

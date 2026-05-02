@@ -1,5 +1,5 @@
 /**
- * AiderDesk Extensions API
+ * Helpy Extensions API
  *
  * This module provides runtime values for TypeScript enums that are needed
  * when extensions are loaded at runtime.

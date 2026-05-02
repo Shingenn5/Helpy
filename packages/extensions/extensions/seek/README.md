@@ -40,7 +40,7 @@ This extension wraps the `seek` CLI binary and overrides the built-in `power---g
 npx @aiderdesk/extensions install seek
 ```
 
-Or manually copy this directory to `~/.aider-desk/extensions/seek/`.
+Or manually copy this directory to `~/.helpy/extensions/seek/`.
 
 ## Usage
 
