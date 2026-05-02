@@ -17,7 +17,7 @@ const __dirname = dirname(__filename);
 const EXTENSIONS_JSON_PATH = join(__dirname, '..', 'extensions.json');
 const EXTENSIONS_DIR = join(__dirname, '..', 'extensions');
 const PACKAGE_VERSION = require('../package.json').version;
-const CACHE_FILE = join(homedir(), '.helpy', 'extension-cache.json');
+const CACHE_FILE = join(homedir(), '.aider-desk', 'helpy-extension-cache.json');
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour in milliseconds
 const GITHUB_API_URL = 'https://api.github.com/repos/Shingenn5/Helpy/contents/packages/extensions/extensions';
 
@@ -222,11 +222,11 @@ function getInstallDirectory(options: { global?: boolean; directory?: string }):
   }
 
   if (options.global) {
-    return join(homedir(), '.helpy', 'extensions');
+    return join(homedir(), '.aider-desk', 'extensions');
   }
 
   // Default to project-local extensions
-  return join(process.cwd(), '.helpy', 'extensions');
+  return join(process.cwd(), '.aider-desk', 'extensions');
 }
 
 function isUrl(str: string): boolean {
@@ -343,8 +343,8 @@ async function installExtensionById(extId: string, extensions: Extension[], targ
     }
 
     console.log(chalk.cyan('\n✨ Installation complete!\n'));
-    console.log(chalk.gray('Extensions will be automatically loaded when you restart Helpy.'));
-    console.log(chalk.gray('Or they will hot-reload if Helpy is already running.\n'));
+    console.log(chalk.gray('Extensions will be automatically loaded when you restart AiderDesk.'));
+    console.log(chalk.gray('Or they will hot-reload if AiderDesk is already watching the extension folder.\n'));
   } catch (error) {
     spinner.fail(chalk.red(`✗ Failed to install ${ext.name}: ${error}`));
     process.exit(1);
@@ -529,7 +529,7 @@ async function main() {
     .command('install [extension]')
     .description('Install Helpy extensions interactively, by ID, or from a URL')
     .option('-d, --directory <path>', 'Custom installation directory')
-    .option('-g, --global', 'Install to global directory (~/.helpy/extensions)')
+    .option('-g, --global', 'Install to global AiderDesk directory (~/.aider-desk/extensions)')
     .action(async (extension: string | undefined, options: { directory?: string; global?: boolean }) => {
       const targetDir = getInstallDirectory(options);
       const examples = await loadExtensions();

@@ -1,6 +1,51 @@
 {
   "extensions": [
     {
+      "id": "helpy-vault-logger",
+      "name": "Helpy Vault Logger",
+      "description": "Streams AiderDesk sessions into Obsidian Markdown notes",
+      "folder": "helpy-vault-logger",
+      "type": "folder",
+      "hasDependencies": false,
+      "capabilities": ["obsidian", "markdown", "logging"]
+    },
+    {
+      "id": "helpy-graphify-export",
+      "name": "Helpy Graphify Export",
+      "description": "Writes Graphify-friendly Markdown indexes for projects, tasks, files, and models",
+      "folder": "helpy-graphify-export",
+      "type": "folder",
+      "hasDependencies": false,
+      "capabilities": ["graphify", "obsidian", "markdown"]
+    },
+    {
+      "id": "helpy-local-backend",
+      "name": "Helpy Local Backend",
+      "description": "Adds local llama.cpp status and Docker Compose commands",
+      "folder": "helpy-local-backend",
+      "type": "folder",
+      "hasDependencies": false,
+      "capabilities": ["local-backend", "docker", "ui", "commands"]
+    },
+    {
+      "id": "helpy-privacy-guard",
+      "name": "Helpy Privacy Guard",
+      "description": "Keeps AiderDesk workflows local unless explicitly allowed",
+      "folder": "helpy-privacy-guard",
+      "type": "folder",
+      "hasDependencies": false,
+      "capabilities": ["privacy", "security"]
+    },
+    {
+      "id": "helpy-rules-memory",
+      "name": "Helpy Rules Memory",
+      "description": "Injects persistent local personality and operating rules from an Obsidian Markdown file",
+      "folder": "helpy-rules-memory",
+      "type": "folder",
+      "hasDependencies": false,
+      "capabilities": ["rules", "memory", "obsidian"]
+    },
+    {
       "id": "wakatime",
       "name": "WakaTime",
       "description": "Tracks coding activity by sending heartbeats to WakaTime via wakatime-cli",
