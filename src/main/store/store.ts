@@ -39,6 +39,13 @@ import { migrateSettingsV17toV18 } from '@/store/migrations/v17-to-v18';
 import { migrateSettingsV18toV19 } from '@/store/migrations/v18-to-v19';
 
 const DEFAULT_HELPY_ENDPOINT = 'http://127.0.0.1:8080/v1';
+const OLD_AIDERDESK_TITLE_TEMPLATE = 'AiderDesk - {project}';
+const HELPY_TITLE_TEMPLATE = 'Helpy - {project}';
+
+export const getHelpyWindowTitleTemplate = (template?: string): string | undefined => {
+  // old config hangover, very fancy migration tech
+  return template === OLD_AIDERDESK_TITLE_TEMPLATE ? HELPY_TITLE_TEMPLATE : template;
+};
 
 export const HELPY_LOCAL_PROVIDER: ProviderProfile = {
   id: 'helpy-local',
@@ -84,7 +91,7 @@ export const DEFAULT_SETTINGS: SettingsData = {
   llmProviders: {},
   telemetryEnabled: false,
   telemetryInformed: true,
-  windowTitleTemplate: 'Helpy - {project}',
+  windowTitleTemplate: HELPY_TITLE_TEMPLATE,
   promptBehavior: {
     suggestionMode: SuggestionMode.Automatically,
     suggestionDelay: 100,
@@ -199,10 +206,13 @@ export class Store {
       return this.createDefaultSettings();
     }
 
+    const windowTitleTemplate = getHelpyWindowTitleTemplate(settings.windowTitleTemplate);
+
     // Ensure proper merging for nested objects
     return {
       ...DEFAULT_SETTINGS,
       ...settings,
+      windowTitleTemplate,
       aider: {
         ...DEFAULT_SETTINGS.aider,
         ...settings?.aider,

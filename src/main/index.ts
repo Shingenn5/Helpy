@@ -171,6 +171,7 @@ const initWindow = async (windowMgr: WindowManager, storeInstance: Store, projec
   }
 
   const newWindow = new BrowserWindow({
+    title: 'Helpy',
     width: lastWindowState.width,
     height: lastWindowState.height,
     x,
@@ -283,6 +284,7 @@ export const getCreateNewWindow = () => createNewWindow;
 
 app.whenReady().then(async () => {
   try {
+    app.setName('Helpy');
     electronApp.setAppUserModelId('ai.helpy.workbench');
 
     if (!HEADLESS_MODE) {
