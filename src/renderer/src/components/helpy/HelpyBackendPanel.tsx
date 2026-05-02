@@ -108,6 +108,7 @@ export const HelpyBackendPanel = () => {
   return (
     <div className="relative flex items-center gap-1.5 px-2 border-l border-border-default">
       <button
+        data-testid="helpy-backend-toggle"
         className="flex items-center gap-2 px-2.5 py-1.5 text-xs text-text-secondary hover:bg-bg-tertiary-emphasis rounded-md"
         onClick={() => setExpanded((value) => !value)}
       >
@@ -122,6 +123,7 @@ export const HelpyBackendPanel = () => {
         onClick={() => void runAction('start')}
         disabled={busyAction !== null}
         className="hidden xl:flex"
+        title="Start local backend"
       >
         <MdBolt className="h-4 w-4" />
         <span>Start</span>
@@ -129,6 +131,7 @@ export const HelpyBackendPanel = () => {
       <IconButton
         icon={<MdBolt className="h-5 w-5 text-text-secondary" />}
         tooltip="Start local backend"
+        data-testid="helpy-backend-start"
         onClick={() => void runAction('start')}
         disabled={busyAction !== null}
         className="xl:hidden px-2 py-2 hover:bg-bg-tertiary-emphasis transition-colors duration-200"
@@ -136,6 +139,7 @@ export const HelpyBackendPanel = () => {
       <IconButton
         icon={<MdPowerSettingsNew className="h-5 w-5 text-text-secondary" />}
         tooltip="Stop local backend"
+        data-testid="helpy-backend-stop"
         onClick={() => void runAction('stop')}
         disabled={busyAction !== null}
         className="px-2 py-2 hover:bg-bg-tertiary-emphasis transition-colors duration-200"
@@ -143,6 +147,7 @@ export const HelpyBackendPanel = () => {
       <IconButton
         icon={<MdSync className={`h-5 w-5 text-text-secondary ${busyAction ? 'animate-spin' : ''}`} />}
         tooltip="Check backend"
+        data-testid="helpy-backend-health"
         onClick={() => void runAction('health')}
         disabled={busyAction !== null}
         className="px-2 py-2 hover:bg-bg-tertiary-emphasis transition-colors duration-200"
@@ -150,13 +155,17 @@ export const HelpyBackendPanel = () => {
       <IconButton
         icon={<MdSubject className="h-5 w-5 text-text-secondary" />}
         tooltip="Show Docker logs"
+        data-testid="helpy-backend-logs"
         onClick={() => void runAction('logs')}
         disabled={busyAction !== null}
         className="px-2 py-2 hover:bg-bg-tertiary-emphasis transition-colors duration-200"
       />
 
       {expanded && (
-        <div className="absolute right-0 top-full mt-1 w-[min(760px,92vw)] max-h-[470px] overflow-hidden border border-border-default bg-bg-primary shadow-xl z-[80] rounded-md">
+        <div
+          data-testid="helpy-backend-popover"
+          className="absolute right-0 top-full mt-1 w-[min(760px,92vw)] max-h-[470px] overflow-hidden border border-border-default bg-bg-primary shadow-xl z-[80] rounded-md"
+        >
           <div className="flex items-center justify-between px-3 py-2 border-b border-border-default text-xs text-text-muted bg-bg-secondary">
             <span className="font-medium text-text-primary">Helpy backend</span>
             <button className="text-text-secondary hover:text-text-primary" onClick={() => setExpanded(false)}>
@@ -170,7 +179,10 @@ export const HelpyBackendPanel = () => {
             </div>
             <div className="rounded border border-border-default bg-bg-secondary p-2">
               <div className="text-text-muted">Status</div>
-              <div className="text-text-primary">{label}{lastChecked ? ` at ${lastChecked}` : ''}</div>
+              <div className="text-text-primary">
+                {label}
+                {lastChecked ? ` at ${lastChecked}` : ''}
+              </div>
             </div>
             <div className="rounded border border-border-default bg-bg-secondary p-2 md:col-span-2">
               <div className="text-text-muted">Model</div>
