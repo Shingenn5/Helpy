@@ -44,7 +44,7 @@ const ModalOverlayUrlHandler = () => {
 };
 
 const ThemeAndFontManager = () => {
-  const { theme, font = 'Sono', fontSize = 16 } = useSettings();
+  const { theme, font = 'Inter', fontSize = 15 } = useSettings();
 
   useEffect(() => {
     // Remove all theme classes first
@@ -55,9 +55,9 @@ const ThemeAndFontManager = () => {
     const newTheme = theme && THEMES.includes(theme) ? theme : 'dark';
     document.body.classList.add(`theme-${newTheme}`);
 
-    document.documentElement.style.setProperty('--font-family', `"${font}", monospace`);
+    document.documentElement.style.setProperty('--font-family', `"${font}", "Inter", system-ui, sans-serif`);
     document.documentElement.style.setProperty('font-size', `${fontSize}px`);
-    document.documentElement.style.setProperty('font-variation-settings', '"MONO" 1');
+    document.documentElement.style.setProperty('font-variation-settings', 'normal');
   }, [font, theme, fontSize]);
 
   return null;

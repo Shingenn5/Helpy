@@ -1,45 +1,45 @@
 .theme-dark {
 
-  --color-bg-primary: #141417;
-  --color-bg-primary-light: #191a22;
-  --color-bg-primary-light-strong: #191a2280;
-  --color-bg-secondary: #222431;
-  --color-bg-secondary-light: #2a2c3f;
-  --color-bg-secondary-light-strongest: #2a2c3ff2;
-  --color-bg-tertiary: #333652;
-  --color-bg-tertiary-emphasis: #3336524C;
-  --color-bg-tertiary-strong: #3336527F;
-  --color-bg-fourth: #3d4166;
-  --color-bg-fourth-muted: #3d416633;
-  --color-bg-fourth-emphasis: #3d41664c;
-  --color-bg-fifth: #585c75;
-  --color-bg-selection: #5d5f6e;
-  --color-bg-code-block: #171718;
+  --color-bg-primary: #0d1017;
+  --color-bg-primary-light: #121722;
+  --color-bg-primary-light-strong: #121722cc;
+  --color-bg-secondary: #171f2d;
+  --color-bg-secondary-light: #202b3c;
+  --color-bg-secondary-light-strongest: #202b3cf2;
+  --color-bg-tertiary: #29384e;
+  --color-bg-tertiary-emphasis: #29384e4C;
+  --color-bg-tertiary-strong: #29384e7F;
+  --color-bg-fourth: #35506b;
+  --color-bg-fourth-muted: #35506b33;
+  --color-bg-fourth-emphasis: #35506b4c;
+  --color-bg-fifth: #4e6f89;
+  --color-bg-selection: #1f6f7a80;
+  --color-bg-code-block: #0a0d12;
 
   --color-bg-diff-viewer-old-primary: #3f1d25;
   --color-bg-diff-viewer-old-secondary: #2c141a;
   --color-bg-diff-viewer-new-primary: #022c22;
   --color-bg-diff-viewer-new-secondary: #011f19;
 
-  --color-text-primary: #f1f3f5;
-  --color-text-secondary: #999ba3;
-  --color-text-tertiary: #8c8e95;
-  --color-text-muted-light: #7b7d86;
-  --color-text-muted: #585c75;
-  --color-text-muted-dark: #3d4166;
-  --color-text-dark: #333652;
+  --color-text-primary: #eef4f8;
+  --color-text-secondary: #a6b4c2;
+  --color-text-tertiary: #8495a7;
+  --color-text-muted-light: #708092;
+  --color-text-muted: #4e6074;
+  --color-text-muted-dark: #324255;
+  --color-text-dark: #253144;
 
-  --color-border-dark: #222431;
-  --color-border-dark-light: #2a2c3f;
-  --color-border-dark-light-strong: #2a2c3f80;
-  --color-border-default-dark: #333652;
-  --color-border-default: #3d4166;
-  --color-border-accent: #585c75;
-  --color-border-light: #999ba3;
+  --color-border-dark: #171f2d;
+  --color-border-dark-light: #202b3c;
+  --color-border-dark-light-strong: #202b3c80;
+  --color-border-default-dark: #29384e;
+  --color-border-default: #35506b;
+  --color-border-accent: #37a6a7;
+  --color-border-light: #a6b4c2;
 
-  --color-accent-primary: #585c75;
-  --color-accent-secondary: #7b7d86;
-  --color-accent-light: #999ba3;
+  --color-accent-primary: #37a6a7;
+  --color-accent-secondary: #77b7ff;
+  --color-accent-light: #a3e4e4;
 
   --color-success: #22c55e;
   --color-success-light: #4ade80;
@@ -72,11 +72,11 @@
   --color-info-light-emphasis: #2563eb4c;
 
   // Button-specific colors
-  --color-button-primary: #d97706;
-  --color-button-primary-light: #f59e0b;
-  --color-button-primary-subtle: #d9770619;
-  --color-button-primary-emphasis: #d977064c;
-  --color-button-primary-text: #1a1a1a;
+  --color-button-primary: #37a6a7;
+  --color-button-primary-light: #64d6d1;
+  --color-button-primary-subtle: #37a6a719;
+  --color-button-primary-emphasis: #37a6a74c;
+  --color-button-primary-text: #071014;
 
   --color-button-secondary: #2563eb;
   --color-button-secondary-light: #3b82f6;

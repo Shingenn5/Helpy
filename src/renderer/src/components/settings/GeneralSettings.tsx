@@ -206,7 +206,7 @@ export const GeneralSettings = ({ settings, setSettings, onLanguageChange, onZoo
           <Select
             label={<span className="text-xs">{t('settings.font')}</span>}
             options={fontOptions}
-            value={settings.font ?? 'sono'}
+            value={settings.font ?? 'Inter'}
             onChange={handleFontChange}
             size="sm"
           />

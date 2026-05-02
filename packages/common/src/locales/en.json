@@ -56,7 +56,7 @@
   },
   "onboarding": {
     "title": "Welcome to Helpy",
-    "description": "Helpy is your desktop companion for AI-assisted coding. This application brings the power of Aider's AI coding assistant to a user-friendly interface, helping you:",
+    "description": "Helpy is your local-first AI coding workstation. It gives you a clean desktop control plane for models, projects, context, diffs, tasks, and logs, helping you:",
     "skipForNow": "Skip for now",
     "finish": "Finish Setup",
     "features": {
@@ -66,12 +66,12 @@
       "4": "Visualize and manage your code files",
       "5": "Use agentic flow for automated coding tasks and connection to MCP servers"
     },
-    "getStarted": "Let's get started by configuring your Aider settings.",
+    "getStarted": "Let's get started by configuring your local coding runtime.",
     "steps": {
       "welcome": "Welcome",
       "connectModel": "Connect AI Model",
       "language": "Language",
-      "aider": "Aider",
+      "aider": "Runtime",
       "agent": "AI Agent",
       "providers": "Providers",
       "finish": "Finish"
@@ -81,25 +81,25 @@
       "description": "Select your preferred language for the application interface."
     },
     "aider": {
-      "title": "Configure Aider",
-      "description": "To get started, please configure your Aider settings. You'll need to:",
+      "title": "Configure Runtime",
+      "description": "To get started, configure your local coding runtime. You'll need to:",
       "options": {
         "1": "Add your API keys for the LLM provider you want to use",
-        "2": "Set any additional options for Aider",
-        "3": ".env and .aider.conf.yaml are also read as they would with Aider"
+        "2": "Set any additional runtime options",
+        "3": ".env and compatible config files are read when present"
       },
       "configureLater": "You can also do that later in the Settings.",
-      "fineTuneTitle": "Fine-Tune Aider (Optional)",
-      "fineTuneDescription": "Advanced users can configure additional Aider settings and environment variables. This step is completely optional and can be safely skipped.",
-      "fineTuneNote": "Note: These settings are for advanced users who want to customize Aider's behavior. Most users can skip this step and configure these later in Settings if needed."
+      "fineTuneTitle": "Fine-Tune Runtime (Optional)",
+      "fineTuneDescription": "Advanced users can configure additional runtime settings and environment variables. This step is completely optional and can be safely skipped.",
+      "fineTuneNote": "Note: These settings are for advanced users who want to customize Helpy's coding runtime. Most users can skip this step and configure these later in Settings if needed."
     },
     "providers": {
       "title": "Model Providers",
-      "description": "Configure your LLM providers for use with both Aider and Agent modes. You can set up API keys and additional settings for various providers.",
+      "description": "Configure your LLM providers for use with both coding and agent modes. You can set up API keys and additional settings for various providers.",
       "configureLater": "You can configure these later in the Settings if you prefer.",
       "connectTitle": "Connect Your AI Model",
       "connectDescription": "Helpy supports multiple AI providers including OpenAI, Anthropic, Google Gemini, and more. Your API keys are stored securely on your local machine and never shared.",
-      "advancedUsersNote": "Advanced users: You can also configure providers using environment variables in the next step's Aider configuration section.",
+      "advancedUsersNote": "Advanced users: You can also configure providers using environment variables in the runtime configuration section.",
       "advancedSettings": "Advanced settings",
       "order": "Order",
       "orderDescription": "List of provider slugs to try in order (e.g. [\"anthropic\", \"openai\"]).",
@@ -147,7 +147,7 @@
   },
   "noProjectsOpen": {
     "welcome": "Welcome to",
-    "description": "To begin, open a project directory. This will enable Aider to work with your code."
+    "description": "To begin, open a project directory. This lets Helpy work with your code."
   },
   "home": {
     "title": "Home",
@@ -440,7 +440,7 @@
     "title": "Settings",
     "tabs": {
       "general": "General",
-      "aider": "Aider",
+      "aider": "Runtime",
       "agents": "Agents",
       "tasks": "Tasks",
       "memory": "Memory",
@@ -653,8 +653,8 @@
       "editMcpServersConfig": "Edit MCP Servers Config",
       "reloadServers": "Reload",
       "powerToolsTooltip": "Allows the agent to use tools for direct file operations (read, write, edit), searching (glob, grep, semantic search), and executing shell commands (bash).",
-      "aiderToolsTooltip": "Agent can use Aider to perform add/drop context files actions and run prompts.",
-      "useAiderTools": "Use Aider tools",
+      "aiderToolsTooltip": "Agent can use the coding runtime to add or drop context files and run prompts.",
+      "useAiderTools": "Use runtime tools",
       "usePowerTools": "Use Power tools",
       "useTodoTools": "Use Todo tools",
       "useTaskTools": "Use Task tools",
@@ -663,7 +663,7 @@
       "includeContextFiles": "Include context files",
       "includeFilesTooltip": "Adds content of context files into the chat of agent. This will increase token usage.",
       "includeRepoMap": "Include repository map",
-      "includeRepoMapTooltip": "Include the repository map from Aider in the agent's context. This can help the agent understand the project structure, but will increase token usage.",
+      "includeRepoMapTooltip": "Include the repository map in the agent's context. This can help the agent understand the project structure, but will increase token usage.",
       "autoApprove": "Auto approve",
       "override": "Override",
       "clearOverride": "Clear Override",
@@ -733,15 +733,15 @@
       "restoreProfileTooltip": "Restore this default profile"
     },
     "aider": {
-      "options": "Options",
+      "options": "Runtime Options",
       "optionsPlaceholder": "e.g. --no-auto-commits --cache-prompts",
-      "autoCommits": "Auto commit of LLM changes",
+      "autoCommits": "Auto commit model changes",
       "cachingEnabled": "Enable prompt caching",
       "watchFiles": "Watch files for changes",
       "environmentVariables": "Environment Variables",
-      "envVarsPlaceholder": "#################\n# LLM parameters:\n#\n# Include xxx_API_KEY parameters and other params needed for your LLMs.\n# See https://aider.chat/docs/llms.html for details.\n\n## OpenAI\n#OPENAI_API_KEY=\n\n## Anthropic\n#ANTHROPIC_API_KEY=",
-      "optionsDocumentation": "Check the documentation for available options at",
-      "envVarsDocumentation": "Check the documentation for environment variables at",
+      "envVarsPlaceholder": "#################\n# LLM parameters:\n#\n# Include xxx_API_KEY parameters and other params needed for your LLMs.\n# Local llama.cpp defaults are handled by Helpy.\n\n## OpenAI-compatible\n#OPENAI_API_BASE=http://127.0.0.1:8080/v1\n#OPENAI_API_KEY=local\n\n## Anthropic\n#ANTHROPIC_API_KEY=",
+      "optionsDocumentation": "Compatible runtime options are documented at",
+      "envVarsDocumentation": "Runtime environment variables are documented at",
       "context": "Context",
       "addRuleFiles": "Add rule files from project's <file>.helpy/rules</file> directory as read-only files.",
       "confirmBeforeEdit": "Confirm before editing files"
@@ -756,7 +756,8 @@
     "font": "Font",
     "fontSize": "Font size",
     "fontOptions": {
-      "Sono": "Sono (Default)",
+      "Sono": "Sono",
+      "Inter": "Inter (Default)",
       "PlayfairDisplay": "Playfair Display",
       "SpaceGrotesk": "Space Grotesk",
       "GoogleSansCode": "Google Sans Code",
@@ -787,18 +788,18 @@
     },
     "aiderRestartConfirm": {
       "title": "Restart Required",
-      "message": "Changes to Aider options or environment variables require a restart of the Aider task to take effect. Would you like to restart now?",
+      "message": "Changes to runtime options or environment variables require a restart of the current task to take effect. Would you like to restart now?",
       "restartNow": "Restart now",
       "later": "I'll do it later"
     },
     "models": {
       "title": "Model Providers",
-      "description": "Configure your LLM providers for use with both Aider and Agent modes. Click on a provider card to configure API key and additional settings.",
+      "description": "Configure your LLM providers for use with both coding and agent modes. Click on a provider card to configure API key and additional settings.",
       "configured": "Configured",
       "notConfigured": "Not configured",
       "agentOnly": "Agent only",
       "showAllProviders": "Show All Providers",
-      "additionalProvidersInfo": "You can configure additional LLM providers for Aider by setting environment variables in the <aiderTab>Aider settings</aiderTab>."
+      "additionalProvidersInfo": "You can configure additional LLM providers by setting environment variables in <aiderTab>Runtime settings</aiderTab>."
     },
     "vertexAi": {
       "project": "Project",
@@ -812,7 +813,7 @@
       "version": "Version",
       "notAvailable": "N/A",
       "checkForUpdates": "Check for updates",
-      "newAiderVersionAvailable": "New Aider version ({{version}}) is available - restart Helpy to install.",
+      "newAiderVersionAvailable": "A compatible coding runtime update ({{version}}) is available - restart Helpy to install.",
       "updateAvailable": "Update is available",
       "downloadUpdate": "Download",
       "downloadingUpdate": "Downloading update",
@@ -969,8 +970,8 @@
     "deleteUpToHere": "Delete up to here"
   },
   "errors": {
-    "frozenTitle": "AIDER FROZEN?",
-    "frozenMessage": "Aider process seems to be frozen. Would you like to restart the task?",
+    "frozenTitle": "RUNTIME FROZEN?",
+    "frozenMessage": "The coding runtime seems to be frozen. Would you like to restart the task?",
     "removeMessageFailed": "Failed to remove message - please try again",
     "forkTaskFailed": "Failed to fork task - please try again",
     "removeMessagesUpToFailed": "Failed to remove messages - please try again"
@@ -996,7 +997,7 @@
     "agent": "Agent"
   },
   "modeTooltip": {
-    "code": "Direct code generation and editing with Aider AI assistant",
+    "code": "Direct code generation and editing with Helpy",
     "agent": "Autonomous AI agent with advanced reasoning and tool usage capabilities",
     "ask": "Ask questions about your codebase without making changes",
     "architect": "High-level project planning and architecture design",
@@ -1098,12 +1099,12 @@
     "empty": {
       "title": "No Context Files",
       "aiderMode": {
-        "description": "Add files here that you want to read or modify. Aider can only access files that are in the context.",
+        "description": "Add files here that you want to read or modify. The coding runtime only works with files that are in context.",
         "hint": "Tip: Add related files (imports, types) for better understanding."
       },
       "agentMode": {
         "description": "The agent can access any file in your project using tools. Adding files here is optional but can speed up tasks by providing immediate context.",
-        "hint": "Tip: Add files here when using Aider tools or when you want file contents included in the prompt.",
+        "hint": "Tip: Add files here when using runtime tools or when you want file contents included in the prompt.",
         "includeContextFiles": "When 'Include Context Files' is enabled in agent settings, file contents are embedded directly in the prompt for immediate access."
       }
     }
@@ -1176,7 +1177,7 @@
     "messages": "Messages",
     "clearMessages": "Clear message history",
     "agent": "Agent",
-    "aider": "Aider",
+    "aider": "Runtime",
     "total": "Total",
     "resetTask": "Reset",
     "tokenUsage": "{{usedTokens}} of {{maxTokens}}",
@@ -1259,12 +1260,12 @@
       "updatedAt": "Updated at"
     },
     "aider": {
-      "addContextFiles": "Add file(s) to Aider's context:\n{{paths}}",
-      "dropContextFiles": "Drop file(s) from Aider's context:\n{{paths}}",
-      "runPrompt": "Run prompt in Aider",
-      "working": "Aider is working...",
-      "finishedTask": "Aider finished the task.",
-      "noChanges": "Aider did not make any changes."
+      "addContextFiles": "Add file(s) to Helpy context:\n{{paths}}",
+      "dropContextFiles": "Drop file(s) from Helpy context:\n{{paths}}",
+      "runPrompt": "Run prompt in Helpy",
+      "working": "Helpy is working...",
+      "finishedTask": "Helpy finished the task.",
+      "noChanges": "Helpy did not make any changes."
     },
     "power": {
       "fileRead": {
@@ -1456,7 +1457,7 @@
   },
   "projectBar": {
     "editFormatTooltip": "This is the format used for editing code. Changing it might cause the model to not perform as expected.",
-    "aider": "Aider",
+    "aider": "Runtime",
     "toggleSidebar": "Toggle sidebar",
     "modelLibrary": "Model Library",
     "worktree": "Worktree",
@@ -1467,7 +1468,7 @@
     "downloadingUv": "Downloading uv...",
     "creatingVenv": "Creating Python environment...",
     "installingPackage": "Installing {{package}} ({{current}}/{{total}})...",
-    "settingUpConnector": "Setting up Aider connector...",
+    "settingUpConnector": "Starting Helpy runtime connector...",
     "settingUpMcp": "Setting up MCP server...",
     "failed": "Python setup failed: {{error}}"
   },
@@ -1504,7 +1505,7 @@
     "clear-logs": "Remove only log messages from chat",
     "code": "Switch to code mode. Ask for changes to your code",
     "commit": "Commit unstaged changes to the repo",
-    "context": "Switch to context mode. Ask for changes and Aider will add relevant files to the context",
+    "context": "Switch to context mode. Ask for changes and Helpy will add relevant files to the context",
     "compact": "Summarize the conversation",
     "copy-context": "Copy the current chat context as markdown, suitable to paste into a web UI",
     "drop": "Remove files from the context to free up context space",
@@ -1524,7 +1525,7 @@
     "test": "Run a predefined test command and add the output to the chat on non-zero exit code",
     "think-tokens": "Set the thinking token budget (supports formats like 8096, 8k, 10.5k, 0.5M)",
     "tokens": "Report on the number of tokens used by the current chat context",
-    "undo": "Undo the last git commit if it was done by Aider",
+    "undo": "Undo the last git commit if it was done by Helpy",
     "web": "Scrape a webpage and save it to a file. Use /web url [file] with optional [file].",
     "handoff": "Handoff conversation to new task with focus"
   },
@@ -1726,13 +1727,13 @@
   },
   "welcomeMessage": {
     "title": "Helpy",
-    "subtitle": "Your AI-powered coding assistant",
+    "subtitle": "Local model control, coding agents, context, diffs, and session memory",
     "features": {
       "title": "What you can do",
-      "aiCoding": "Generate and modify code with AI assistance",
+      "aiCoding": "Generate and modify code with local-first AI workflows",
       "contextManagement": "Add files to context for better results",
-      "multiModel": "Choose from multiple AI models and providers",
-      "commands": "Execute commands and run tests"
+      "multiModel": "Route work through local or remote model providers",
+      "commands": "Run commands, inspect logs, and keep sessions traceable"
     },
     "tips": {
       "title": "Getting started",
@@ -1755,7 +1756,7 @@
     "selectMode": "Select"
   },
   "aiderConnector": {
-    "starting": "Aider connector is starting up..."
+    "starting": "Helpy runtime connector is starting up..."
   },
   "showModelSelector": "Change model",
   "hideModelSelector": "Hide model selector",

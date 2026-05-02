@@ -19,7 +19,7 @@ export const NoProjectsOpen = ({ onOpenProject }: Props) => {
           {t('noProjectsOpen.welcome')} <span className="text-text-primary font-bold">Helpy</span>
         </h2>
         <p className="text-text-muted-light mb-6 text-sm">
-          Local-first coding workbench for Aider workflows, llama.cpp backends, and Markdown session history.
+          Local-first coding workbench for model backends, agent workflows, diffs, and Markdown session history.
         </p>
         <div className="space-y-4">
           <button

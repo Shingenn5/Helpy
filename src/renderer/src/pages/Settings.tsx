@@ -256,17 +256,22 @@ export const Settings = ({
   };
 
   return (
-    <div className="flex flex-1 h-full min-h-0 overflow-hidden">
+    <div className="flex flex-1 h-full min-h-0 overflow-hidden bg-bg-primary">
       {/* Sidebar */}
-      <div className="w-64 flex-shrink-0 overflow-y-auto pt-0 bg-bg-primary border-r border-border-default-dark scrollbar-thin scrollbar-track-transparent scrollbar-thumb-bg-tertiary">
-        <div className="p-2 space-y-0.5">
+      <div className="w-72 flex-shrink-0 overflow-y-auto pt-0 bg-bg-secondary border-r border-border-default-dark scrollbar-thin scrollbar-track-transparent scrollbar-thumb-bg-tertiary">
+        <div className="px-4 py-4 border-b border-border-default-dark">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-info-light">Helpy Control</div>
+          <div className="mt-1 text-lg font-semibold text-text-primary">Settings</div>
+          <div className="mt-1 text-xs text-text-muted">Local models, agents, memory, and runtime controls.</div>
+        </div>
+        <div className="p-3 space-y-1">
           {sidebarItems.map((item) => (
             <div key={item.id}>
               <div
                 className={clsx(
-                  'flex items-center px-3 py-1.5 text-sm font-medium rounded-md cursor-pointer transition-colors duration-150 select-none',
+                  'flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-pointer transition-colors duration-150 select-none',
                   activePage === item.pageId
-                    ? 'bg-bg-active text-text-primary bg-bg-secondary'
+                    ? 'bg-bg-active text-text-primary shadow-sm'
                     : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary',
                 )}
                 onClick={() => handleItemClick(item)}
@@ -282,13 +287,13 @@ export const Settings = ({
                   </div>
                 )}
                 {!item.children?.length && <span className="w-6" />} {/* Spacer for items without children */}
-                <span className="mr-3">{item.icon}</span>
-                <span className="flex-1 truncate uppercase">{item.label}</span>
+                <span className="mr-3 text-info-lighter">{item.icon}</span>
+                <span className="flex-1 truncate">{item.label}</span>
               </div>
 
               {/* Children */}
               {item.children && activePage === item.id && (
-                <div className="ml-9 space-y-0.5 mt-0.5 border-l border-border-default pl-2">
+                <div className="ml-9 space-y-1 mt-1 border-l border-border-default pl-2">
                   {item.children.map((child) => (
                     <div
                       key={child.id}
@@ -309,14 +314,14 @@ export const Settings = ({
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 bg-bg-primary">
         <div
           ref={contentRef}
           className={clsx(
             'flex-1 w-full mx-auto',
             activePage === 'agents'
               ? 'overflow-hidden p-0 h-full'
-              : 'overflow-y-auto p-8 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-bg-tertiary hover:scrollbar-thumb-bg-tertiary-strong max-w-[1024px]',
+              : 'overflow-y-auto px-8 py-7 xl:px-12 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-bg-tertiary hover:scrollbar-thumb-bg-tertiary-strong max-w-[1120px]',
           )}
         >
           {renderContent()}
