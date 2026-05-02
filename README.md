@@ -23,6 +23,8 @@ The current target stack is:
   - stop backend
   - health check `/v1/models`
   - show Docker logs
+- Backend health now distinguishes `loading model` from `offline`, which matters for large GGUF files that take a while to mmap and warm up.
+- The empty project screen and settings shell have been reshaped around the Helpy local-workstation workflow.
 - Root `docker-compose.yml` and `.env.example` are included for the local CUDA llama.cpp backend.
 
 ## Install In WSL

@@ -312,6 +312,11 @@ export interface HelpyBackendResult {
   endpoint?: string;
   composeFile?: string;
   envFile?: string;
+  composeExists?: boolean;
+  envExists?: boolean;
+  modelDir?: string;
+  modelFile?: string;
+  modelPath?: string;
 }
 
 export interface WindowState {
