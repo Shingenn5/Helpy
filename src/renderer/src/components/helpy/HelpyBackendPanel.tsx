@@ -16,11 +16,21 @@ const trimOutput = (text?: string) => {
 };
 
 const niceStatus = (result?: HelpyBackendResult | null) => {
-  if (!result) return 'checking';
-  if (result.ok) return 'online';
-  if (result.status === 'loading-model') return 'loading model';
-  if (result.status === 'missing-compose-file') return 'compose missing';
-  if (result.status === 'timeout') return 'health timeout';
+  if (!result) {
+    return 'checking';
+  }
+  if (result.ok) {
+    return 'online';
+  }
+  if (result.status === 'loading-model') {
+    return 'loading model';
+  }
+  if (result.status === 'missing-compose-file') {
+    return 'compose missing';
+  }
+  if (result.status === 'timeout') {
+    return 'health timeout';
+  }
   return result.status || 'offline';
 };
 

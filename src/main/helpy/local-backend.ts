@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
+
 import { HelpyBackendResult } from '@common/types';
 
 const execFileAsync = promisify(execFile);
@@ -24,15 +25,22 @@ const composeFile = process.env.HELPY_COMPOSE_FILE || path.join(repoRoot, 'docke
 const envFile = process.env.HELPY_ENV_FILE || path.join(repoRoot, '.env');
 
 const readEnvFile = () => {
-  if (!fs.existsSync(envFile)) return {};
+  if (!fs.existsSync(envFile)) {
+    return {};
+  }
   return fs
     .readFileSync(envFile, 'utf8')
     .split(/\r?\n/)
     .reduce<Record<string, string>>((values, line) => {
       const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('#') || !trimmed.includes('=')) return values;
+      if (!trimmed || trimmed.startsWith('#') || !trimmed.includes('=')) {
+        return values;
+      }
       const [key, ...rest] = trimmed.split('=');
-      values[key.trim()] = rest.join('=').trim().replace(/^["']|["']$/g, '');
+      values[key.trim()] = rest
+        .join('=')
+        .trim()
+        .replace(/^["']|["']$/g, '');
       return values;
     }, {});
 };

@@ -318,6 +318,9 @@ describe('AgentProfileManager', () => {
       // Simulate reload with empty directory
       (fs.readdir as any).mockResolvedValue([]);
       (fs.access as any).mockResolvedValue(undefined);
+      vi.spyOn(agentProfileManager as any, 'loadProfilesFromDirectory').mockImplementation(async () => {
+        (agentProfileManager as any).profiles.clear();
+      });
 
       await (agentProfileManager as any).reloadProfiles(globalAgentsDir);
 

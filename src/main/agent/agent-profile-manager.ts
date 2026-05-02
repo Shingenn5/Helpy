@@ -21,6 +21,7 @@ import { deriveDirName } from '@/utils';
 const getGlobalAgentsDir = (): string => path.join(homedir(), AIDER_DESK_AGENTS_DIR);
 const getProjectAgentsDir = (projectDir: string): string => path.join(projectDir, AIDER_DESK_AGENTS_DIR);
 const getAgentsDirForProfile = (profile: AgentProfile): string => (profile.projectDir ? getProjectAgentsDir(profile.projectDir) : getGlobalAgentsDir());
+const isSamePath = (left: string, right: string): boolean => path.resolve(left).toLowerCase() === path.resolve(right).toLowerCase();
 
 // Helper methods for rule file discovery
 const getAgentRulesDir = (agentsDir: string, agentDirName: string): string => path.join(agentsDir, agentDirName, AIDER_DESK_RULES_DIR);
@@ -288,7 +289,7 @@ export class AgentProfileManager {
     // Clear existing profiles from this directory
     const profilesToRemove: string[] = [];
     for (const [profileId, context] of this.profiles.entries()) {
-      if (getAgentsDirForProfile(context.agentProfile) === agentsDir) {
+      if (isSamePath(getAgentsDirForProfile(context.agentProfile), agentsDir)) {
         profilesToRemove.push(profileId);
       }
     }

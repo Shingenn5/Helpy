@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execSync } from 'node:child_process';
+import { build } from 'esbuild';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -16,23 +16,36 @@ if (!existsSync(distDir)) {
 
 // Build CLI with esbuild
 console.log('Building CLI with esbuild...');
-execSync('esbuild src/cli.ts --bundle --platform=node --outfile=dist/cli.js --format=esm --packages=external', {
-  cwd: rootDir,
-  stdio: 'inherit'
+await build({
+  entryPoints: [join(rootDir, 'src', 'cli.ts')],
+  bundle: true,
+  platform: 'node',
+  outfile: join(distDir, 'cli.js'),
+  format: 'esm',
+  packages: 'external',
+  logLevel: 'info'
 });
 
 // Build runtime module with esbuild
 console.log('Building runtime module with esbuild...');
-execSync('esbuild src/runtime.ts --bundle --platform=node --outfile=dist/runtime.js --format=esm', {
-  cwd: rootDir,
-  stdio: 'inherit'
+await build({
+  entryPoints: [join(rootDir, 'src', 'runtime.ts')],
+  bundle: true,
+  platform: 'node',
+  outfile: join(distDir, 'runtime.js'),
+  format: 'esm',
+  logLevel: 'info'
 });
 
 // Build index module with esbuild (unified entry point)
 console.log('Building index module with esbuild...');
-execSync('esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js --format=esm', {
-  cwd: rootDir,
-  stdio: 'inherit'
+await build({
+  entryPoints: [join(rootDir, 'src', 'index.ts')],
+  bundle: true,
+  platform: 'node',
+  outfile: join(distDir, 'index.js'),
+  format: 'esm',
+  logLevel: 'info'
 });
 
 // Copy extensions.d.ts to dist/index.d.ts for type definitions
