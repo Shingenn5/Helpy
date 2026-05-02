@@ -19,6 +19,8 @@ const DEFAULT_CONFIG: Config = {
   modelName: process.env.HELPY_MODEL_NAME || 'Qwen3.6-35B-A3B-UD-IQ2_M.gguf',
 };
 
+const configComponentJsx = readFileSync(join(__dirname, 'ConfigComponent.jsx'), 'utf-8');
+
 export default class HelpyLocalBackendExtension implements Extension {
   static metadata = {
     name: 'Helpy Local Backend',
@@ -34,6 +36,20 @@ export default class HelpyLocalBackendExtension implements Extension {
   async onLoad(context: ExtensionContext): Promise<void> {
     await this.refreshStatus(context);
     context.log(`Local backend extension loaded: ${this.lastStatus.label}`, 'info');
+  }
+
+  getConfigComponent(): string {
+    return configComponentJsx;
+  }
+
+  async getConfigData(): Promise<Config> {
+    return this.loadConfig();
+  }
+
+  async saveConfigData(configData: unknown): Promise<Config> {
+    const config = { ...DEFAULT_CONFIG, ...(configData as Partial<Config>) };
+    writeFileSync(this.configPath, JSON.stringify(config, null, 2), 'utf-8');
+    return config;
   }
 
   getCommands(): CommandDefinition[] {

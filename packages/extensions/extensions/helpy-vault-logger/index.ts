@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } from 'node:fs';
+import { homedir } from 'node:os';
 import { basename, join } from 'node:path';
 
 import type {
@@ -21,11 +22,13 @@ type Config = {
 };
 
 const DEFAULT_CONFIG: Config = {
-  vaultRoot: process.env.HELPY_VAULT_ROOT || '/home/shingen/HelpyVault/Helpy',
+  vaultRoot: process.env.HELPY_VAULT_ROOT || join(homedir(), 'HelpyVault', 'Helpy'),
   sessionsDir: 'Sessions',
   appendToolEvents: true,
   appendFileEvents: true,
 };
+
+const configComponentJsx = readFileSync(join(__dirname, 'ConfigComponent.jsx'), 'utf-8');
 
 export default class HelpyVaultLoggerExtension implements Extension {
   static metadata = {
@@ -42,6 +45,21 @@ export default class HelpyVaultLoggerExtension implements Extension {
     const config = this.loadConfig();
     this.ensureDir(this.sessionRoot(config));
     context.log(`Vault logger ready at ${this.sessionRoot(config)}`, 'info');
+  }
+
+  getConfigComponent(): string {
+    return configComponentJsx;
+  }
+
+  async getConfigData(): Promise<Config> {
+    return this.loadConfig();
+  }
+
+  async saveConfigData(configData: unknown): Promise<Config> {
+    const config = { ...DEFAULT_CONFIG, ...(configData as Partial<Config>) };
+    writeFileSync(this.configPath, JSON.stringify(config, null, 2), 'utf-8');
+    this.ensureDir(this.sessionRoot(config));
+    return config;
   }
 
   getCommands(): CommandDefinition[] {
