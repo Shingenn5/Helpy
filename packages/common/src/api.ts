@@ -66,6 +66,7 @@ import {
   ExtensionUIComponent,
   ExtensionUIRefreshData,
   HelpyBackendResult,
+  HelpyLocalConfig,
   ModalOverlayUrlData,
   AiderConnectorStatus,
   ChangeRequestItem,
@@ -83,6 +84,7 @@ export interface ApplicationAPI {
   stopCloudflareTunnel: () => Promise<void>;
   getCloudflareTunnelStatus: () => Promise<CloudflareTunnelStatus>;
   getHelpyBackendConfig: () => Promise<HelpyBackendResult>;
+  configureHelpyBackend: (config: HelpyLocalConfig) => Promise<HelpyBackendResult>;
   startHelpyBackend: () => Promise<HelpyBackendResult>;
   stopHelpyBackend: () => Promise<HelpyBackendResult>;
   getHelpyBackendStatus: () => Promise<HelpyBackendResult>;

@@ -319,6 +319,14 @@ export interface HelpyBackendResult {
   modelPath?: string;
 }
 
+export interface HelpyLocalConfig {
+  modelPath: string;
+  vaultPath: string;
+  projectsRoot: string;
+  endpoint: string;
+  autoStartBackend: boolean;
+}
+
 export interface WindowState {
   width: number;
   height: number;
@@ -678,6 +686,7 @@ export interface SettingsData {
     enabled: boolean;
     url: string;
   };
+  helpy?: HelpyLocalConfig;
 }
 
 export interface ProviderProfile {

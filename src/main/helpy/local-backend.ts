@@ -3,11 +3,11 @@ import path from 'path';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-import { HelpyBackendResult } from '@common/types';
+import { HelpyBackendResult, HelpyLocalConfig } from '@common/types';
 
 const execFileAsync = promisify(execFile);
 
-const ENDPOINT = process.env.HELPY_BACKEND_ENDPOINT || 'http://127.0.0.1:8080/v1';
+const DEFAULT_ENDPOINT = 'http://127.0.0.1:8080/v1';
 
 const findRepoRoot = () => {
   let dir = process.cwd();
@@ -45,8 +45,9 @@ const readEnvFile = () => {
     }, {});
 };
 
-const localEnv = readEnvFile();
-const getEnv = (key: string, fallback: string) => process.env[key] || localEnv[key] || fallback;
+const getLocalEnv = () => readEnvFile();
+const getEnv = (key: string, fallback: string) => process.env[key] || getLocalEnv()[key] || fallback;
+const getEndpoint = () => getEnv('HELPY_BACKEND_ENDPOINT', DEFAULT_ENDPOINT);
 
 const baseResult = () => ({
   ...(() => {
@@ -60,7 +61,7 @@ const baseResult = () => ({
   })(),
   composeFile,
   envFile,
-  endpoint: ENDPOINT,
+  endpoint: getEndpoint(),
   composeExists: fs.existsSync(composeFile),
   envExists: fs.existsSync(envFile),
 });
@@ -107,7 +108,64 @@ const runDockerCompose = async (args: string[]): Promise<HelpyBackendResult> => 
   }
 };
 
+const envLine = (key: string, value: string) => `${key}=${JSON.stringify(value)}`;
+
+const writeEnvConfig = (config: HelpyLocalConfig) => {
+  const modelDir = path.dirname(config.modelPath);
+  const modelFile = path.basename(config.modelPath);
+  const content = [
+    '# Helpy local runtime config',
+    '# edited by the setup wizard',
+    envLine('LLAMA_MODEL_DIR', modelDir),
+    envLine('LLAMA_MODEL_FILE', modelFile),
+    envLine('HELPY_BACKEND_ENDPOINT', config.endpoint || DEFAULT_ENDPOINT),
+    envLine('HELPY_VAULT_PATH', config.vaultPath),
+    envLine('HELPY_PROJECTS_ROOT', config.projectsRoot),
+    '',
+  ].join('\n');
+
+  fs.writeFileSync(envFile, content, 'utf8');
+};
+
 export const helpyLocalBackend = {
+  async configure(config: HelpyLocalConfig): Promise<HelpyBackendResult> {
+    try {
+      if (!config.modelPath || !fs.existsSync(config.modelPath)) {
+        return {
+          ok: false,
+          status: 'missing-model',
+          error: `Could not find model file at ${config.modelPath || '(not set)'}`,
+          ...baseResult(),
+          modelPath: config.modelPath,
+        };
+      }
+
+      // lazy mkdirs for the local-first stuff
+      if (config.vaultPath) {
+        fs.mkdirSync(config.vaultPath, { recursive: true });
+      }
+      if (config.projectsRoot) {
+        fs.mkdirSync(config.projectsRoot, { recursive: true });
+      }
+
+      writeEnvConfig(config);
+
+      return {
+        ok: true,
+        status: 'configured',
+        output: `Saved Helpy runtime config to ${envFile}`,
+        ...baseResult(),
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        status: 'configure-error',
+        error: error instanceof Error ? error.message : String(error),
+        ...baseResult(),
+      };
+    }
+  },
+
   config(): HelpyBackendResult {
     return {
       ok: fs.existsSync(composeFile),
@@ -137,7 +195,7 @@ export const helpyLocalBackend = {
     const timer = setTimeout(() => controller.abort(), 4500);
 
     try {
-      const response = await fetch(`${ENDPOINT}/models`, { signal: controller.signal });
+      const response = await fetch(`${getEndpoint()}/models`, { signal: controller.signal });
       const text = await response.text();
       const isLoading = response.status === 503 || /loading|model/i.test(text);
       return {

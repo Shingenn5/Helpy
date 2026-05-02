@@ -15,6 +15,7 @@ import {
   TodoItem,
   AgentProfile,
   ChangeRequestItem,
+  HelpyLocalConfig,
 } from '@common/types';
 import { ipcMain, clipboard } from 'electron';
 
@@ -539,6 +540,10 @@ export const setupIpcHandlers = (eventsHandler: EventsHandler, serverController:
 
   ipcMain.handle('helpy-backend-config', () => {
     return helpyLocalBackend.config();
+  });
+
+  ipcMain.handle('helpy-backend-configure', async (_, config: HelpyLocalConfig) => {
+    return await helpyLocalBackend.configure(config);
   });
 
   ipcMain.handle('helpy-backend-start', async () => {

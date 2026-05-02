@@ -64,6 +64,7 @@ import {
   ExtensionConfigComponent,
   ExtensionUIComponent,
   HelpyBackendResult,
+  HelpyLocalConfig,
   ModalOverlayUrlData,
   AiderConnectorStatus,
   ChangeRequestItem,
@@ -984,6 +985,16 @@ export class BrowserApi implements ApplicationAPI {
 
   getHelpyBackendConfig(): Promise<HelpyBackendResult> {
     return Promise.resolve({ ok: false, status: 'desktop-only', endpoint: 'http://127.0.0.1:8080/v1' });
+  }
+
+  configureHelpyBackend(config: HelpyLocalConfig): Promise<HelpyBackendResult> {
+    return Promise.resolve({
+      ok: false,
+      status: 'desktop-only',
+      endpoint: config.endpoint,
+      modelPath: config.modelPath,
+      error: 'Helpy backend setup only works in the Electron app',
+    });
   }
 
   startHelpyBackend(): Promise<HelpyBackendResult> {

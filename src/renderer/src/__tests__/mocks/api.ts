@@ -57,6 +57,7 @@ export const createMockApi = (overrides: Partial<ApplicationAPI> = {}): MockedOb
     stopCloudflareTunnel: vi.fn((): Promise<void> => Promise.resolve()),
     getCloudflareTunnelStatus: vi.fn((): Promise<CloudflareTunnelStatus> => Promise.resolve({ isRunning: false })),
     getHelpyBackendConfig: vi.fn((): Promise<HelpyBackendResult> => Promise.resolve({ ok: true, status: 'mock' })),
+    configureHelpyBackend: vi.fn((config): Promise<HelpyBackendResult> => Promise.resolve({ ok: true, status: 'configured', modelPath: config.modelPath })),
     startHelpyBackend: vi.fn((): Promise<HelpyBackendResult> => Promise.resolve({ ok: true, status: 'started' })),
     stopHelpyBackend: vi.fn((): Promise<HelpyBackendResult> => Promise.resolve({ ok: true, status: 'stopped' })),
     getHelpyBackendStatus: vi.fn((): Promise<HelpyBackendResult> => Promise.resolve({ ok: true, status: 'running' })),

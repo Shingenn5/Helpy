@@ -58,6 +58,7 @@ const api: ApplicationAPI = {
   stopCloudflareTunnel: () => ipcRenderer.invoke('stop-cloudflare-tunnel'),
   getCloudflareTunnelStatus: () => ipcRenderer.invoke('get-cloudflare-tunnel-status'),
   getHelpyBackendConfig: () => ipcRenderer.invoke('helpy-backend-config'),
+  configureHelpyBackend: (config) => ipcRenderer.invoke('helpy-backend-configure', config),
   startHelpyBackend: () => ipcRenderer.invoke('helpy-backend-start'),
   stopHelpyBackend: () => ipcRenderer.invoke('helpy-backend-stop'),
   getHelpyBackendStatus: () => ipcRenderer.invoke('helpy-backend-status'),

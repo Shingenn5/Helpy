@@ -123,6 +123,13 @@ export const DEFAULT_SETTINGS: SettingsData = {
     enabled: false,
     url: '',
   },
+  helpy: {
+    modelPath: '/home/shingen/AI_Core/models/Qwen3.6-35B-A3B-UD-IQ2_M.gguf',
+    vaultPath: '/home/shingen/HelpyVault',
+    projectsRoot: '/home/shingen/Tech Projects',
+    endpoint: 'http://127.0.0.1:8080/v1',
+    autoStartBackend: false,
+  },
 };
 
 const compareBaseDirs = (baseDir1: string, baseDir2: string): boolean => {
@@ -215,6 +222,10 @@ export class Store {
         ...DEFAULT_SETTINGS.taskSettings,
         ...settings?.taskSettings,
         worktreeSymlinkFolders: settings?.taskSettings?.worktreeSymlinkFolders || DEFAULT_SETTINGS.taskSettings.worktreeSymlinkFolders,
+      },
+      helpy: {
+        ...DEFAULT_SETTINGS.helpy,
+        ...settings?.helpy,
       },
     };
   }

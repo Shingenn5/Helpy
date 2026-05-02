@@ -1,322 +1,354 @@
-import { useCallback, useEffect, useState } from 'react';
-import { HiArrowRight, HiArrowLeft } from 'react-icons/hi2';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { isEqual } from 'lodash';
-import { SettingsData } from '@common/types';
+import { HelpyBackendResult, HelpyLocalConfig, SettingsData } from '@common/types';
+import { MdBolt, MdCheckCircle, MdFolderOpen, MdMemory, MdNotes, MdRocketLaunch, MdTerminal } from 'react-icons/md';
 
-import { useSettings } from '@/contexts/SettingsContext';
-import { useAgents } from '@/contexts/AgentsContext';
-import { AiderSettings } from '@/components/settings/AiderSettings';
-import { LanguageSelector } from '@/components/settings/LanguageSelector';
-import { OnboardingProviderSetup } from '@/components/onboarding/OnboardingProviderSetup';
-import { AgentSettings } from '@/components/settings/agent/AgentSettings';
+import type { ReactNode } from 'react';
+
 import { Button } from '@/components/common/Button';
+import { Checkbox } from '@/components/common/Checkbox';
 import { OnboardingStepper } from '@/components/onboarding/OnboardingStepper';
+import { useApi } from '@/contexts/ApiContext';
+import { useSettings } from '@/contexts/SettingsContext';
 import { ROUTES } from '@/utils/routes';
 import { showErrorNotification, showInfoNotification } from '@/utils/notifications';
 
-export const Onboarding = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { settings: originalSettings, saveSettings } = useSettings();
-  const { profiles: originalAgentProfiles, createProfile, updateProfile, deleteProfile, updateProfilesOrder } = useAgents();
-  const [localSettings, setLocalSettings] = useState<SettingsData | null>(originalSettings);
-  const [agentProfiles, setAgentProfiles] = useState(originalAgentProfiles);
-  const [step, setStep] = useState(1);
-  const [isNavigating, setIsNavigating] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+const defaultHelpyConfig: HelpyLocalConfig = {
+  modelPath: '/home/shingen/AI_Core/models/Qwen3.6-35B-A3B-UD-IQ2_M.gguf',
+  vaultPath: '/home/shingen/HelpyVault',
+  projectsRoot: '/home/shingen/Tech Projects',
+  endpoint: 'http://127.0.0.1:8080/v1',
+  autoStartBackend: false,
+};
 
-  useEffect(() => {
-    if (originalSettings) {
-      setLocalSettings(originalSettings);
-    }
-  }, [originalSettings]);
+const modelNameFromPath = (modelPath: string) => modelPath.split(/[\\/]/).pop() || 'local-model.gguf';
 
-  useEffect(() => {
-    setAgentProfiles(originalAgentProfiles);
-  }, [originalAgentProfiles]);
+const updateEnvValue = (envText: string, key: string, value: string) => {
+  const lines = envText ? envText.split(/\r?\n/) : [];
+  const nextLine = `${key}=${value}`;
+  const index = lines.findIndex((line) => line.trim().startsWith(`${key}=`));
+  if (index >= 0) {
+    lines[index] = nextLine;
+  } else {
+    lines.push(nextLine);
+  }
+  return lines.filter(Boolean).join('\n');
+};
 
-  const steps = [
-    { title: t('onboarding.steps.welcome') },
-    { title: t('onboarding.steps.connectModel') },
-    { title: t('onboarding.steps.aider') },
-    { title: t('onboarding.steps.agent') },
-  ];
+const mergeRuntimeSettings = (settings: SettingsData, helpy: HelpyLocalConfig): SettingsData => {
+  const modelName = modelNameFromPath(helpy.modelPath);
+  const envWithBase = updateEnvValue(settings.aider.environmentVariables, 'OPENAI_API_BASE', helpy.endpoint);
+  const envWithKey = updateEnvValue(envWithBase, 'OPENAI_API_KEY', 'local');
 
-  const handleNext = async () => {
-    if (isNavigating || isSaving) {
-      return;
-    }
-
-    try {
-      setIsNavigating(true);
-
-      if (step < 5) {
-        setStep(step + 1);
-      } else {
-        await handleFinish();
-      }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Navigation error:', error);
-      showErrorNotification(t('onboarding.errors.navigationFailed'));
-    } finally {
-      setIsNavigating(false);
-    }
-  };
-
-  const handleBack = () => {
-    if (isNavigating || isSaving || step <= 1) {
-      return;
-    }
-
-    try {
-      setIsNavigating(true);
-      setStep(step - 1);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Navigation error:', error);
-      showErrorNotification(t('onboarding.errors.navigationFailed'));
-    } finally {
-      setIsNavigating(false);
-    }
-  };
-
-  const handleFinish = async () => {
-    if (isSaving || isNavigating) {
-      return;
-    }
-
-    try {
-      setIsSaving(true);
-
-      if (!localSettings) {
-        throw new Error('Settings not available');
-      }
-
-      await saveSettings({
-        ...localSettings,
-        onboardingFinished: true,
-      });
-
-      // Save agent profile changes
-      try {
-        // Find profiles that were added, updated, or deleted
-        const originalProfileIds = new Set(originalAgentProfiles.map((p) => p.id));
-        const currentProfileIds = new Set(agentProfiles.map((p) => p.id));
-
-        // Handle deleted profiles
-        for (const profileId of originalProfileIds) {
-          if (!currentProfileIds.has(profileId)) {
-            await deleteProfile(profileId);
-          }
-        }
-
-        // Handle added and updated profiles
-        for (const profile of agentProfiles) {
-          if (!originalProfileIds.has(profile.id)) {
-            // New profile
-            await createProfile(profile);
-          } else {
-            // Updated profile - check if it actually changed
-            const originalProfile = originalAgentProfiles.find((p) => p.id === profile.id);
-            if (originalProfile && !isEqual(originalProfile, profile)) {
-              await updateProfile(profile);
-            }
-          }
-        }
-
-        // Update profile order if needed
-        if (
-          !isEqual(
-            agentProfiles.map((p) => p.id),
-            originalAgentProfiles.map((p) => p.id),
-          )
-        ) {
-          await updateProfilesOrder(agentProfiles);
-        }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to save agent profiles:', error);
-      }
-
-      showInfoNotification(t('onboarding.complete.success'));
-      navigate(ROUTES.Home);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to finish onboarding:', error);
-      showErrorNotification(t('onboarding.errors.finishFailed'));
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleLanguageChange = useCallback(
-    async (language: string) => {
-      const newSettings = { ...localSettings!, language };
-      setLocalSettings(newSettings);
-      await saveSettings(newSettings);
+  return {
+    ...settings,
+    onboardingFinished: true,
+    helpy,
+    preferredModels: [`helpy-local/${modelName}`, ...settings.preferredModels.filter((model) => !model.startsWith('helpy-local/'))],
+    aider: {
+      ...settings.aider,
+      environmentVariables: envWithKey,
+      watchFiles: true,
+      confirmBeforeEdit: false,
     },
-    [saveSettings, localSettings],
-  );
-
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <div className="flex flex-col space-y-4 relative">
-            {/* Language Selector in top-right corner */}
-            <div className="absolute top-0 right-0">
-              <LanguageSelector language={localSettings?.language || 'en'} onChange={handleLanguageChange} hideLabel />
-            </div>
-
-            <h1 className="text-xl font-bold text-text-primary uppercase">{t('onboarding.title')}</h1>
-            <p className="text-text-tertiary text-sm">{t('onboarding.description')}</p>
-            <ul className="list-disc list-inside text-text-tertiary space-y-2 text-sm">
-              <li>{t('onboarding.features.1')}</li>
-              <li>{t('onboarding.features.2')}</li>
-              <li>{t('onboarding.features.3')}</li>
-              <li>{t('onboarding.features.4')}</li>
-              <li>{t('onboarding.features.5')}</li>
-            </ul>
-            <p className="text-text-tertiary text-sm">{t('onboarding.getStarted')}</p>
-          </div>
-        );
-      case 2:
-        return (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold text-text-primary uppercase">{t('onboarding.providers.connectTitle')}</h2>
-            <p className="text-text-tertiary text-sm">{t('onboarding.providers.connectDescription')}</p>
-            <OnboardingProviderSetup />
-            <div className="flex justify-center mt-4">
-              <button
-                onClick={handleNext}
-                disabled={isNavigating || isSaving}
-                className="text-sm text-text-muted-light hover:text-text-secondary underline transition-colors duration-200"
-              >
-                {t('onboarding.skipForNow')}
-              </button>
-            </div>
-            <div className="p-3 bg-info-subtle rounded-lg border border-info-light-emphasis">
-              <p className="text-xs text-info-lightest">{t('onboarding.providers.setupLater')}</p>
-            </div>
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-6">
-            <h2 className="text-xl font-bold text-text-primary uppercase !mb-4">{t('onboarding.aider.fineTuneTitle')}</h2>
-            <div className="p-3 bg-info-subtle rounded-lg border border-info-light-emphasis">
-              <p className="text-xs text-info-lightest">{t('onboarding.aider.fineTuneNote')}</p>
-            </div>
-            <AiderSettings settings={localSettings!} setSettings={setLocalSettings} initialShowEnvVars={true} />
-          </div>
-        );
-      case 4:
-        return (
-          <div className="space-y-6">
-            <div className="">
-              <h2 className="text-xl font-bold text-text-primary uppercase">{t('onboarding.agent.title')}</h2>
-              <p className="text-text-tertiary text-sm mt-2">{t('onboarding.agent.description')}</p>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-text-primary">{t('onboarding.agent.capabilities')}</h3>
-              <ul className="space-y-3">
-                <li className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-info-lighter rounded-full mt-2 flex-shrink-0"></div>
-                  <div>
-                    <span className="text-text-primary font-medium">{t('onboarding.agent.autonomousPlanning')}</span>
-                    <p className="text-text-tertiary text-sm">{t('onboarding.agent.autonomousPlanningDesc')}</p>
-                  </div>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-success-light rounded-full mt-2 flex-shrink-0"></div>
-                  <div>
-                    <span className="text-text-primary font-medium">{t('onboarding.agent.toolUse')}</span>
-                    <p className="text-text-tertiary text-sm">{t('onboarding.agent.toolUseDesc')}</p>
-                  </div>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-agent-power-tools rounded-full mt-2 flex-shrink-0"></div>
-                  <div>
-                    <span className="text-text-primary font-medium">{t('onboarding.agent.extensible')}</span>
-                    <p className="text-text-tertiary text-sm">{t('onboarding.agent.extensibleDesc')}</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-
-            <div className="flex flex-col items-center space-y-5 pt-4">
-              <Button onClick={handleNext} className="gap-2" disabled={isNavigating || isSaving} size="sm" color="secondary">
-                {isNavigating ? t('common.loading') : t('onboarding.agent.configureAgent')}
-                {!isNavigating && <HiArrowRight className="w-4 h-4" />}
-              </Button>
-            </div>
-          </div>
-        );
-      case 5:
-        return (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold text-text-primary uppercase">{t('onboarding.agent.configureTitle')}</h2>
-            <p className="text-text-tertiary text-sm">{t('onboarding.agent.configureDescription')}</p>
-            <AgentSettings settings={localSettings!} setSettings={setLocalSettings} agentProfiles={agentProfiles} setAgentProfiles={setAgentProfiles} />
-          </div>
-        );
-      case 6:
-        return (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold text-text-primary uppercase">{t('onboarding.complete.title')}</h2>
-            <p className="text-text-tertiary text-sm">{t('onboarding.complete.description')}</p>
-            <p className="text-text-tertiary text-sm">{t('onboarding.complete.ready')}</p>
-          </div>
-        );
-      default:
-        return null;
-    }
+    telemetryEnabled: false,
+    telemetryInformed: true,
+    windowTitleTemplate: settings.windowTitleTemplate || 'Helpy - {project}',
   };
+};
+
+const Field = ({
+  icon,
+  label,
+  value,
+  onChange,
+  onBrowse,
+  placeholder,
+}: {
+  icon: ReactNode;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  onBrowse?: () => void;
+  placeholder?: string;
+}) => (
+  <label className="block">
+    <div className="mb-1.5 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-text-muted">
+      {icon}
+      {label}
+    </div>
+    <div className="flex min-w-0 rounded-md border border-border-default bg-bg-secondary">
+      <input
+        className="min-w-0 flex-1 bg-transparent px-3 py-2.5 text-sm text-text-primary outline-none placeholder:text-text-muted"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        spellCheck={false}
+      />
+      {onBrowse && (
+        <button
+          type="button"
+          className="border-l border-border-default px-3 text-xs font-medium text-info-lighter hover:bg-bg-tertiary hover:text-info-lightest"
+          onClick={onBrowse}
+        >
+          Browse
+        </button>
+      )}
+    </div>
+  </label>
+);
+
+const StatusPill = ({ result }: { result: HelpyBackendResult | null }) => {
+  const ok = result?.ok;
+  const label = result ? (ok ? 'Ready' : result.status || 'Needs setup') : 'Not checked';
 
   return (
-    <div className="flex flex-col h-full p-[4px] bg-bg-primary-light">
-      <div className="flex flex-col flex-1 border-2 border-border-default relative overflow-y-auto scrollbar-thin scrollbar-track-bg-secondary scrollbar-thumb-bg-tertiary hover:scrollbar-thumb-bg-fourth">
-        <div className="flex-1 flex flex-col justify-center items-center p-4">
-          <div className="max-w-3xl w-full">
-            {/* Stepper */}
-            <div className="mb-8">
-              <OnboardingStepper steps={steps} currentStep={step === 5 ? 4 : step} />
+    <div className="inline-flex items-center gap-2 rounded-full border border-border-default bg-bg-secondary px-3 py-1.5 text-xs text-text-secondary">
+      {ok ? <MdCheckCircle className="text-success-light" /> : <MdTerminal className="text-info-light" />}
+      {label}
+    </div>
+  );
+};
+
+export const Onboarding = () => {
+  const api = useApi();
+  const navigate = useNavigate();
+  const { settings, saveSettings } = useSettings();
+  const [step, setStep] = useState(1);
+  const [localConfig, setLocalConfig] = useState<HelpyLocalConfig>(settings?.helpy || defaultHelpyConfig);
+  const [backendResult, setBackendResult] = useState<HelpyBackendResult | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (settings?.helpy) {
+      setLocalConfig({ ...defaultHelpyConfig, ...settings.helpy });
+    }
+  }, [settings]);
+
+  useEffect(() => {
+    void api.getHelpyBackendConfig().then(setBackendResult);
+  }, [api]);
+
+  const steps = useMemo(() => [{ title: 'Welcome' }, { title: 'Local model' }, { title: 'Vault' }, { title: 'Backend' }], []);
+
+  const choosePath = async (kind: 'model' | 'vault' | 'projects') => {
+    const result = await api.showOpenDialog({
+      properties: kind === 'model' ? ['openFile'] : ['openDirectory'],
+      defaultPath: kind === 'model' ? localConfig.modelPath : kind === 'vault' ? localConfig.vaultPath : localConfig.projectsRoot,
+    });
+
+    if (result.canceled || !result.filePaths[0]) {
+      return;
+    }
+
+    const picked = result.filePaths[0];
+    setLocalConfig((current) => ({
+      ...current,
+      ...(kind === 'model' ? { modelPath: picked } : kind === 'vault' ? { vaultPath: picked } : { projectsRoot: picked }),
+    }));
+  };
+
+  const configureBackend = async () => {
+    setBusy(true);
+    try {
+      const result = await api.configureHelpyBackend(localConfig);
+      setBackendResult(result);
+      if (!result.ok) {
+        showErrorNotification(result.error || 'Helpy backend setup failed');
+        return result;
+      }
+      showInfoNotification('Helpy runtime config saved.');
+      return result;
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const finish = async () => {
+    if (!settings) {
+      return;
+    }
+
+    setBusy(true);
+    try {
+      const configured = await api.configureHelpyBackend(localConfig);
+      setBackendResult(configured);
+      if (!configured.ok) {
+        showErrorNotification(configured.error || 'Helpy backend setup failed');
+        return;
+      }
+
+      await saveSettings(mergeRuntimeSettings(settings, localConfig));
+
+      if (localConfig.autoStartBackend) {
+        setBackendResult(await api.startHelpyBackend());
+      }
+
+      showInfoNotification('Helpy is ready.');
+      navigate(ROUTES.Home);
+    } catch (error) {
+      showErrorNotification(error instanceof Error ? error.message : 'Failed to finish Helpy setup');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const renderStep = () => {
+    if (step === 1) {
+      return (
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 rounded-full border border-info-light-emphasis bg-info-subtle px-3 py-1 text-xs text-info-lightest">
+              <MdRocketLaunch />
+              Local-first AI workbench
             </div>
-
-            {/* Step Content */}
-            {renderStep()}
-
-            {/* Navigation Buttons */}
-            <div className="mt-10 flex justify-between">
-              <div>
-                {step > 1 && (
-                  <Button onClick={handleBack} variant="outline" className="gap-2" disabled={isNavigating || isSaving}>
-                    <HiArrowLeft className="w-4 h-4" />
-                    {t('common.back')}
-                  </Button>
-                )}
+            <h1 className="text-3xl font-semibold text-text-primary">Set up Helpy</h1>
+            <p className="max-w-2xl text-sm leading-6 text-text-secondary">
+              Helpy runs your local coding agent stack, keeps project work close to your machine, and writes the useful bits to a Markdown vault.
+            </p>
+          </div>
+          <div className="grid gap-3 md:grid-cols-3">
+            {[
+              ['Model control', 'Pick the GGUF model Helpy should boot through llama.cpp.'],
+              ['Markdown memory', 'Choose the Obsidian-compatible vault where sessions become searchable notes.'],
+              ['Project cockpit', 'Point Helpy at your development workspace and keep backend status visible.'],
+            ].map(([title, body]) => (
+              <div key={title} className="rounded-md border border-border-default bg-bg-secondary p-4">
+                <div className="mb-2 text-sm font-medium text-text-primary">{title}</div>
+                <p className="text-xs leading-5 text-text-muted">{body}</p>
               </div>
-              {step !== 4 && step !== 5 && (
-                <Button onClick={handleNext} className="gap-2" disabled={isNavigating || isSaving}>
-                  {isNavigating || isSaving ? t('common.loading') : step === 6 ? t('onboarding.finish') : t('common.next')}
-                  {!(isNavigating || isSaving) && <HiArrowRight className="w-4 h-4" />}
-                </Button>
-              )}
-              {(step === 4 || step === 5) && (
-                <div className="flex gap-3">
-                  <Button onClick={handleFinish} className="gap-2" disabled={isNavigating || isSaving}>
-                    {isSaving ? t('common.loading') : t('onboarding.finish')}
-                  </Button>
-                </div>
-              )}
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (step === 2) {
+      return (
+        <div className="space-y-5">
+          <h2 className="text-2xl font-semibold text-text-primary">Local Model</h2>
+          <p className="text-sm text-text-secondary">Choose the GGUF file that the Docker llama.cpp backend should serve.</p>
+          <Field
+            icon={<MdMemory />}
+            label="GGUF model file"
+            value={localConfig.modelPath}
+            onChange={(modelPath) => setLocalConfig((current) => ({ ...current, modelPath }))}
+            onBrowse={() => void choosePath('model')}
+          />
+          <Field
+            icon={<MdBolt />}
+            label="OpenAI-compatible endpoint"
+            value={localConfig.endpoint}
+            onChange={(endpoint) => setLocalConfig((current) => ({ ...current, endpoint }))}
+          />
+        </div>
+      );
+    }
+
+    if (step === 3) {
+      return (
+        <div className="space-y-5">
+          <h2 className="text-2xl font-semibold text-text-primary">Workspace Memory</h2>
+          <p className="text-sm text-text-secondary">Pick where Helpy should keep Markdown sessions and where it should look for projects.</p>
+          <Field
+            icon={<MdNotes />}
+            label="Markdown vault"
+            value={localConfig.vaultPath}
+            onChange={(vaultPath) => setLocalConfig((current) => ({ ...current, vaultPath }))}
+            onBrowse={() => void choosePath('vault')}
+          />
+          <Field
+            icon={<MdFolderOpen />}
+            label="Projects root"
+            value={localConfig.projectsRoot}
+            onChange={(projectsRoot) => setLocalConfig((current) => ({ ...current, projectsRoot }))}
+            onBrowse={() => void choosePath('projects')}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-5">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-semibold text-text-primary">Backend Control</h2>
+            <p className="mt-2 max-w-2xl text-sm text-text-secondary">Save the runtime config and optionally boot the local model backend from Helpy.</p>
+          </div>
+          <StatusPill result={backendResult} />
+        </div>
+        <div className="rounded-md border border-border-default bg-bg-secondary p-4 text-xs text-text-secondary">
+          <div className="grid gap-3 md:grid-cols-2">
+            <div>
+              <div className="text-text-muted">Model</div>
+              <div className="truncate text-text-primary">{localConfig.modelPath}</div>
+            </div>
+            <div>
+              <div className="text-text-muted">Endpoint</div>
+              <div className="truncate text-text-primary">{localConfig.endpoint}</div>
+            </div>
+            <div>
+              <div className="text-text-muted">Vault</div>
+              <div className="truncate text-text-primary">{localConfig.vaultPath}</div>
+            </div>
+            <div>
+              <div className="text-text-muted">Projects</div>
+              <div className="truncate text-text-primary">{localConfig.projectsRoot}</div>
             </div>
           </div>
         </div>
+        <Checkbox
+          label="Start the local backend when setup finishes"
+          checked={localConfig.autoStartBackend}
+          onChange={(autoStartBackend) => setLocalConfig((current) => ({ ...current, autoStartBackend }))}
+        />
+        <Button color="secondary" variant="outline" onClick={() => void configureBackend()} disabled={busy} size="sm">
+          Save runtime config
+        </Button>
       </div>
+    );
+  };
+
+  return (
+    <div className="flex h-full bg-bg-primary text-text-primary">
+      <aside className="hidden w-72 border-r border-border-default bg-bg-secondary p-6 lg:block">
+        <div className="mb-8 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-info-subtle text-info-lightest">
+            <MdRocketLaunch className="h-6 w-6" />
+          </div>
+          <div>
+            <div className="text-lg font-semibold">Helpy</div>
+            <div className="text-xs text-text-muted">Local AI control plane</div>
+          </div>
+        </div>
+        <div className="space-y-3 text-xs leading-5 text-text-secondary">
+          <p>Setup writes your local runtime config and keeps Helpy pointed at your own model, vault, and projects.</p>
+          <p>No API keys are required for the default local backend.</p>
+        </div>
+      </aside>
+
+      <main className="flex min-w-0 flex-1 flex-col">
+        <div className="border-b border-border-default px-6 py-5">
+          <OnboardingStepper steps={steps} currentStep={step} />
+        </div>
+        <div className="flex min-h-0 flex-1 items-center justify-center overflow-auto p-6">
+          <div className="w-full max-w-4xl">{renderStep()}</div>
+        </div>
+        <div className="flex items-center justify-between border-t border-border-default px-6 py-4">
+          <Button variant="outline" color="secondary" onClick={() => setStep((current) => Math.max(1, current - 1))} disabled={step === 1 || busy}>
+            Back
+          </Button>
+          {step < steps.length ? (
+            <Button onClick={() => setStep((current) => Math.min(steps.length, current + 1))} disabled={busy}>
+              Next
+            </Button>
+          ) : (
+            <Button onClick={() => void finish()} disabled={busy}>
+              {busy ? 'Finishing...' : 'Finish setup'}
+            </Button>
+          )}
+        </div>
+      </main>
     </div>
   );
 };
