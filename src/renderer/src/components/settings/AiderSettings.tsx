@@ -94,12 +94,7 @@ export const AiderSettings = ({ settings, setSettings, initialShowEnvVars = fals
           />
           <p className="text-xs text-text-secondary px-1">
             {t('settings.aider.optionsDocumentation')}{' '}
-            <a
-              href="https://github.com/Shingenn5/Helpy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-info-lighter hover:text-info-lightest"
-            >
+            <a href="https://github.com/Shingenn5/Helpy" target="_blank" rel="noopener noreferrer" className="text-info-lighter hover:text-info-lightest">
               Helpy runtime reference
             </a>
           </p>
@@ -134,12 +129,7 @@ export const AiderSettings = ({ settings, setSettings, initialShowEnvVars = fals
           </div>
           <p className="text-xs text-text-secondary px-1">
             {t('settings.aider.envVarsDocumentation')}{' '}
-            <a
-              href="https://github.com/Shingenn5/Helpy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-info-lighter hover:text-info-lightest"
-            >
+            <a href="https://github.com/Shingenn5/Helpy" target="_blank" rel="noopener noreferrer" className="text-info-lighter hover:text-info-lightest">
               Helpy environment reference
             </a>
           </p>

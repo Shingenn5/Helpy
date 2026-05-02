@@ -270,9 +270,7 @@ export const Settings = ({
               <div
                 className={clsx(
                   'flex items-center px-3 py-2 text-sm font-medium rounded-md cursor-pointer transition-colors duration-150 select-none',
-                  activePage === item.pageId
-                    ? 'bg-bg-active text-text-primary shadow-sm'
-                    : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary',
+                  activePage === item.pageId ? 'bg-bg-active text-text-primary shadow-sm' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary',
                 )}
                 onClick={() => handleItemClick(item)}
               >
