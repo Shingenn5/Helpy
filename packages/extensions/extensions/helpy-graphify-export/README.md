@@ -32,3 +32,11 @@ graphify extract .
 graphify extract . --update
 graphify watch .
 ```
+
+Helpy probes a few Graphify CLI shapes because the `graphifyy` package has changed command syntax across releases. The preferred commands are:
+
+```text
+graphify .
+graphify . --update
+graphify . --watch
+```

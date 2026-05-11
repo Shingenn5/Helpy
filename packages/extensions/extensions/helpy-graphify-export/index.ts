@@ -21,6 +21,8 @@ type Config = {
   autoUpdateOnPrompt: boolean;
 };
 
+type GraphifyMode = 'build' | 'update';
+
 const DEFAULT_CONFIG: Config = {
   vaultRoot: process.env.HELPY_VAULT_ROOT || join(homedir(), 'HelpyVault', 'Helpy'),
   graphDir: 'Graph',
@@ -86,16 +88,16 @@ export default class HelpyGraphifyExportExtension implements Extension {
         description: 'Run graphify against the configured Helpy memory folder',
         execute: async (_args, context) => {
           await this.writeProjectGraph(context, 'graphify build requested');
-          const output = await this.runGraphify(['extract', '.'], context);
+          const output = await this.runGraphify('build', context);
           context.getTaskContext()?.addLogMessage('info', output || 'Graphify build finished.');
         },
       },
       {
         name: 'helpy-graphify-update',
-        description: 'Run graphify extract . --update against the configured Helpy memory folder',
+        description: 'Run Graphify update against the configured Helpy memory folder',
         execute: async (_args, context) => {
           await this.writeProjectGraph(context, 'graphify update requested');
-          const output = await this.runGraphify(['extract', '.', '--update'], context);
+          const output = await this.runGraphify('update', context);
           context.getTaskContext()?.addLogMessage('info', output || 'Graphify update finished.');
         },
       },
@@ -147,7 +149,7 @@ export default class HelpyGraphifyExportExtension implements Extension {
     await this.writeProjectGraph(context, 'prompt finished');
     const config = this.loadConfig();
     if (config.autoUpdateOnPrompt) {
-      const output = await this.runGraphify(['extract', '.', '--update'], context).catch((error) => String(error));
+      const output = await this.runGraphify('update', context).catch((error) => String(error));
       context.getTaskContext()?.addLogMessage('info', `Graphify auto-update: ${output.slice(0, 1200)}`);
     }
   }
@@ -262,13 +264,25 @@ export default class HelpyGraphifyExportExtension implements Extension {
     writeFileSync(ignorePath, body, 'utf-8');
   }
 
-  private async runGraphify(args: string[], context: ExtensionContext, timeout = 120000): Promise<string> {
+  private async runGraphify(mode: GraphifyMode, context: ExtensionContext, timeout = 120000): Promise<string> {
     const config = this.loadConfig();
     this.ensureDir(config.vaultRoot);
     this.ensureGraphifyIgnore(config);
-    const command = [config.graphifyCommand, ...args].join(' ').trim();
-    context.log(`Running Graphify: ${command} in ${config.vaultRoot}`, 'info');
-    return this.execCommand(command, config.vaultRoot, timeout);
+    const commands = this.graphifyCommands(config.graphifyCommand, mode);
+    const errors: string[] = [];
+
+    for (const command of commands) {
+      context.log(`Trying Graphify: ${command} in ${config.vaultRoot}`, 'info');
+      try {
+        const output = await this.execCommand(command, config.vaultRoot, timeout);
+        return [`Graphify command: ${command}`, output].filter(Boolean).join('\n');
+      } catch (error) {
+        errors.push(this.formatCommandError(command, error));
+      }
+    }
+
+    const help = await this.graphifyDoctor(config).catch((error) => this.formatCommandError('graphify doctor', error));
+    throw new Error(['Graphify command probing failed.', ...errors, '', help].join('\n\n'));
   }
 
   private startWatch(context: ExtensionContext): string {
@@ -280,7 +294,10 @@ export default class HelpyGraphifyExportExtension implements Extension {
     this.ensureDir(config.vaultRoot);
     this.ensureGraphifyIgnore(config);
 
-    this.watchProcess = spawn(`${config.graphifyCommand} watch .`, {
+    const command = `${config.graphifyCommand} . --watch`;
+    context.log(`Starting Graphify watch: ${command} in ${config.vaultRoot}`, 'info');
+
+    this.watchProcess = spawn(command, {
       cwd: config.vaultRoot,
       shell: true,
       stdio: 'ignore',
@@ -293,6 +310,42 @@ export default class HelpyGraphifyExportExtension implements Extension {
     });
 
     return `Graphify watch started for ${config.vaultRoot}.`;
+  }
+
+  private graphifyCommands(command: string, mode: GraphifyMode): string[] {
+    if (mode === 'build') {
+      return [
+        `${command} .`,
+        `${command} build .`,
+        `${command} run .`,
+        `${command} extract .`,
+      ];
+    }
+
+    return [
+      `${command} . --update`,
+      `${command} --update .`,
+      `${command} update .`,
+      `${command} build . --update`,
+      `${command} run . --update`,
+      `${command} extract . --update`,
+    ];
+  }
+
+  private async graphifyDoctor(config: Config): Promise<string> {
+    const locator = await this.execCommand(`command -v ${config.graphifyCommand} || which ${config.graphifyCommand}`, config.vaultRoot, 10000).catch(() => '');
+    const help = await this.execCommand(`${config.graphifyCommand} --help`, config.vaultRoot, 10000).catch((error) => this.outputFromError(error));
+    return [`Graphify binary: ${locator || 'not found on PATH'}`, 'Graphify help:', help || '(no help output)'].join('\n');
+  }
+
+  private formatCommandError(command: string, error: unknown): string {
+    const output = this.outputFromError(error);
+    return `$ ${command}\n${output || String(error)}`.slice(0, 4000);
+  }
+
+  private outputFromError(error: unknown): string {
+    const maybe = error as { stdout?: string; stderr?: string; message?: string };
+    return [maybe.stdout, maybe.stderr, maybe.message].filter(Boolean).join('\n').trim();
   }
 
   private stopWatch(): boolean {
