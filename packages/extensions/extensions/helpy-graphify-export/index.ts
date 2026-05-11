@@ -86,16 +86,16 @@ export default class HelpyGraphifyExportExtension implements Extension {
         description: 'Run graphify against the configured Helpy memory folder',
         execute: async (_args, context) => {
           await this.writeProjectGraph(context, 'graphify build requested');
-          const output = await this.runGraphify([], context);
+          const output = await this.runGraphify(['extract', '.'], context);
           context.getTaskContext()?.addLogMessage('info', output || 'Graphify build finished.');
         },
       },
       {
         name: 'helpy-graphify-update',
-        description: 'Run graphify --update against the configured Helpy memory folder',
+        description: 'Run graphify extract . --update against the configured Helpy memory folder',
         execute: async (_args, context) => {
           await this.writeProjectGraph(context, 'graphify update requested');
-          const output = await this.runGraphify(['--update'], context);
+          const output = await this.runGraphify(['extract', '.', '--update'], context);
           context.getTaskContext()?.addLogMessage('info', output || 'Graphify update finished.');
         },
       },
@@ -147,7 +147,7 @@ export default class HelpyGraphifyExportExtension implements Extension {
     await this.writeProjectGraph(context, 'prompt finished');
     const config = this.loadConfig();
     if (config.autoUpdateOnPrompt) {
-      const output = await this.runGraphify(['--update', '--no-viz'], context).catch((error) => String(error));
+      const output = await this.runGraphify(['extract', '.', '--update'], context).catch((error) => String(error));
       context.getTaskContext()?.addLogMessage('info', `Graphify auto-update: ${output.slice(0, 1200)}`);
     }
   }
@@ -280,7 +280,7 @@ export default class HelpyGraphifyExportExtension implements Extension {
     this.ensureDir(config.vaultRoot);
     this.ensureGraphifyIgnore(config);
 
-    this.watchProcess = spawn(`${config.graphifyCommand} --watch`, {
+    this.watchProcess = spawn(`${config.graphifyCommand} watch .`, {
       cwd: config.vaultRoot,
       shell: true,
       stdio: 'ignore',

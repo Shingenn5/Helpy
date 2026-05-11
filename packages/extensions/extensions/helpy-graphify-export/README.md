@@ -24,3 +24,11 @@ Commands:
 ```
 
 Use `Vault Root` as the working directory Graphify scans. Obsidian is only a viewer/editor for that folder; Graphify builds `graphify-out/graph.json`, `GRAPH_REPORT.md`, and `graph.html`.
+
+CLI calls:
+
+```text
+graphify extract .
+graphify extract . --update
+graphify watch .
+```
