@@ -1,18 +1,26 @@
 # Helpy Graphify Export
 
-Creates Graphify-friendly Markdown notes for projects and context files.
+Creates Graphify-friendly Markdown notes and runs the real `graphify` CLI against the configured Helpy memory folder.
 
 Outputs:
 
 ```text
 Graph/Projects/
 Graph/Files/
+graphify-out/
 ```
 
-The notes include YAML frontmatter, tags, and Obsidian wikilinks so Graphify has real structure to chew on.
+The notes include YAML frontmatter, tags, headings, relationships, and wikilinks so Graphify has clean source material to extract.
 
-Command:
+Commands:
 
 ```text
 /helpy-graphify-refresh
+/helpy-graphify-build
+/helpy-graphify-update
+/helpy-graphify-watch
+/helpy-graphify-query
+/helpy-graphify-open-report
 ```
+
+Use `Vault Root` as the folder Graphify scans. Obsidian is only a viewer/editor for that folder; Graphify builds `graphify-out/graph.json`, `GRAPH_REPORT.md`, and `graph.html`.

@@ -1,5 +1,5 @@
 ({ config, updateConfig, ui }) => {
-  const { Input } = ui;
+  const { Input, Checkbox } = ui;
 
   return (
     <div className="flex flex-col gap-4">
@@ -15,8 +15,25 @@
         onChange={(e) => updateConfig({ ...config, graphDir: e.target.value })}
         placeholder="Graph"
       />
+      <Input
+        label="Graphify Command"
+        value={config?.graphifyCommand || 'graphify'}
+        onChange={(e) => updateConfig({ ...config, graphifyCommand: e.target.value })}
+        placeholder="graphify"
+      />
+      <Input
+        label="Graphify Output Folder"
+        value={config?.graphifyOutDir || 'graphify-out'}
+        onChange={(e) => updateConfig({ ...config, graphifyOutDir: e.target.value })}
+        placeholder="graphify-out"
+      />
+      <Checkbox
+        label="Auto-update Graphify after prompts"
+        checked={config?.autoUpdateOnPrompt ?? false}
+        onChange={(checked) => updateConfig({ ...config, autoUpdateOnPrompt: checked })}
+      />
       <p className="text-xs text-text-secondary">
-        Graphify notes will be written under this folder using project and file subfolders.
+        Helpy writes graph-friendly Markdown, then runs the real Graphify CLI against Vault Root.
       </p>
     </div>
   );
