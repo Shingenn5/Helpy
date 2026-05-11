@@ -23,4 +23,4 @@ Commands:
 /helpy-graphify-open-report
 ```
 
-Use `Vault Root` as the folder Graphify scans. Obsidian is only a viewer/editor for that folder; Graphify builds `graphify-out/graph.json`, `GRAPH_REPORT.md`, and `graph.html`.
+Use `Vault Root` as the working directory Graphify scans. Obsidian is only a viewer/editor for that folder; Graphify builds `graphify-out/graph.json`, `GRAPH_REPORT.md`, and `graph.html`.
