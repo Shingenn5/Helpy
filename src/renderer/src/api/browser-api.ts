@@ -65,6 +65,11 @@ import {
   ExtensionUIComponent,
   HelpyBackendResult,
   HelpyLocalConfig,
+  HelpyMemoryGraphStats,
+  HelpyOpenClawConfig,
+  HelpyProcessResult,
+  HelpyVoiceConfig,
+  HelpyVoiceResult,
   ModalOverlayUrlData,
   AiderConnectorStatus,
   ChangeRequestItem,
@@ -1015,6 +1020,72 @@ export class BrowserApi implements ApplicationAPI {
 
   checkHelpyBackendHealth(): Promise<HelpyBackendResult> {
     return Promise.resolve({ ok: false, status: 'desktop-only', endpoint: 'http://127.0.0.1:8080/v1' });
+  }
+
+  getHelpyOpenClawConfig(): Promise<HelpyProcessResult> {
+    return Promise.resolve({ ok: false, status: 'desktop-only', configured: false, error: 'OpenClaw control only works in the Electron app' });
+  }
+
+  configureHelpyOpenClaw(config: HelpyOpenClawConfig): Promise<HelpyProcessResult> {
+    return Promise.resolve({
+      ok: false,
+      status: 'desktop-only',
+      executablePath: config.executablePath,
+      workingDirectory: config.workingDirectory,
+      env: config.env,
+      configured: !!config.executablePath,
+      error: 'OpenClaw control only works in the Electron app',
+    });
+  }
+
+  startHelpyOpenClaw(): Promise<HelpyProcessResult> {
+    return Promise.resolve({ ok: false, status: 'desktop-only', error: 'OpenClaw control only works in the Electron app' });
+  }
+
+  stopHelpyOpenClaw(): Promise<HelpyProcessResult> {
+    return Promise.resolve({ ok: false, status: 'desktop-only', error: 'OpenClaw control only works in the Electron app' });
+  }
+
+  getHelpyOpenClawStatus(): Promise<HelpyProcessResult> {
+    return Promise.resolve({ ok: false, status: 'desktop-only', error: 'OpenClaw control only works in the Electron app' });
+  }
+
+  getHelpyOpenClawLogs(): Promise<HelpyProcessResult> {
+    return Promise.resolve({ ok: false, status: 'desktop-only', error: 'OpenClaw control only works in the Electron app' });
+  }
+
+  getHelpyVoiceConfig(): Promise<HelpyVoiceResult> {
+    return Promise.resolve({ ok: false, status: 'desktop-only', configured: false, error: 'Local voice only works in the Electron app' });
+  }
+
+  configureHelpyVoice(config: HelpyVoiceConfig): Promise<HelpyVoiceResult> {
+    return Promise.resolve({
+      ok: false,
+      status: 'desktop-only',
+      configured: !!config.sttCommand,
+      sttCommand: config.sttCommand,
+      ttsCommand: config.ttsCommand,
+      error: 'Local voice only works in the Electron app',
+    });
+  }
+
+  getHelpyVoiceStatus(): Promise<HelpyVoiceResult> {
+    return Promise.resolve({ ok: false, status: 'desktop-only', configured: false, error: 'Local voice only works in the Electron app' });
+  }
+
+  startHelpyPushToTalk(): Promise<HelpyVoiceResult> {
+    return Promise.resolve({ ok: false, status: 'voice-not-configured', configured: false, error: 'Voice not configured.' });
+  }
+
+  getHelpyMemoryGraphStats(): Promise<HelpyMemoryGraphStats> {
+    return Promise.resolve({
+      ok: false,
+      status: 'desktop-only',
+      vaultRoot: '/home/shingen/ObsidianVault',
+      graphPath: '/home/shingen/ObsidianVault/graphify-out/graph.json',
+      nodes: 0,
+      edges: 0,
+    });
   }
 
   // Worktree merge operations

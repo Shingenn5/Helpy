@@ -81,6 +81,8 @@ import { AgentProfileManager } from '@/agent/agent-profile-manager';
 import { ExtensionManager } from '@/extensions/extension-manager';
 
 const MAX_RETRIES = 3;
+const HELPY_MAX_CONTEXT_FILE_CHARS = Number(process.env.HELPY_MAX_CONTEXT_FILE_CHARS || 45000);
+const HELPY_MAX_CONTEXT_TOTAL_CHARS = Number(process.env.HELPY_MAX_CONTEXT_TOTAL_CHARS || 90000);
 
 export class Agent {
   private abortControllers: Map<string, AbortController> = new Map();
@@ -147,10 +149,14 @@ export class Agent {
           const lines = fileContent.split('\n');
           const numberedLines = lines.map((line, index) => `${index + 1} | ${line}`);
           const content = numberedLines.join('\n');
+          const limitedContent =
+            content.length > HELPY_MAX_CONTEXT_FILE_CHARS
+              ? `${content.slice(0, HELPY_MAX_CONTEXT_FILE_CHARS)}\n\n[Helpy truncated this file for local context budget. Add a narrower file or ask for a targeted read.]`
+              : content;
 
           return {
             path: file.path,
-            content,
+            content: limitedContent,
             readOnly: file.readOnly,
             isImage: false,
           };
@@ -165,7 +171,9 @@ export class Agent {
     );
 
     // Process the results and separate text files from images
-    fileInfos.filter(Boolean).forEach((file) => {
+    let remainingTextBudget = HELPY_MAX_CONTEXT_TOTAL_CHARS;
+
+    for (const file of fileInfos.filter(Boolean)) {
       if (file!.isImage && file!.imageBase64) {
         // Add to imageParts array
         imageParts.push({
@@ -179,11 +187,20 @@ export class Agent {
         });
       } else if (!file!.isImage && file!.content) {
         // Add to textFileContents array
+        if (remainingTextBudget <= 0) {
+          logger.warn('Skipping context file because Helpy local context budget is exhausted', { path: file!.path });
+          continue;
+        }
         const filePath = path.isAbsolute(file!.path) ? path.relative(task.getTaskDir(), file!.path) : file!.path;
-        const textContent = `<file>\n  <path>${filePath}</path>\n  <content-with-line-numbers>\n${file!.content}</content-with-line-numbers>\n</file>`;
+        const content =
+          file!.content.length > remainingTextBudget
+            ? `${file!.content.slice(0, remainingTextBudget)}\n\n[Helpy stopped here to keep the local model under its context window.]`
+            : file!.content;
+        remainingTextBudget -= content.length;
+        const textContent = `<file>\n  <path>${filePath}</path>\n  <content-with-line-numbers>\n${content}</content-with-line-numbers>\n</file>`;
         textFileContents.push(textContent);
       }
-    });
+    }
 
     return { textFileContents, imageParts };
   }

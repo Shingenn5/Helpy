@@ -16,6 +16,8 @@ import {
   AgentProfile,
   ChangeRequestItem,
   HelpyLocalConfig,
+  HelpyOpenClawConfig,
+  HelpyVoiceConfig,
 } from '@common/types';
 import { ipcMain, clipboard } from 'electron';
 
@@ -24,6 +26,9 @@ import { EventsHandler } from './events-handler';
 import { PythonDependenciesInstaller } from '@/python-dependencies-installer';
 import { ServerController } from '@/server';
 import { helpyLocalBackend } from '@/helpy/local-backend';
+import { helpyOpenClaw } from '@/helpy/openclaw';
+import { helpyVoice } from '@/helpy/voice-scaffold';
+import { helpyMemoryGraph } from '@/helpy/memory-graph';
 
 export const setupIpcHandlers = (eventsHandler: EventsHandler, serverController: ServerController, pythonInstaller: PythonDependenciesInstaller) => {
   // Voice handlers
@@ -564,6 +569,50 @@ export const setupIpcHandlers = (eventsHandler: EventsHandler, serverController:
 
   ipcMain.handle('helpy-backend-health', async () => {
     return await helpyLocalBackend.health();
+  });
+
+  ipcMain.handle('helpy-openclaw-config', () => {
+    return helpyOpenClaw.config();
+  });
+
+  ipcMain.handle('helpy-openclaw-configure', (_, config: HelpyOpenClawConfig) => {
+    return helpyOpenClaw.configure(config);
+  });
+
+  ipcMain.handle('helpy-openclaw-start', () => {
+    return helpyOpenClaw.start();
+  });
+
+  ipcMain.handle('helpy-openclaw-stop', () => {
+    return helpyOpenClaw.stop();
+  });
+
+  ipcMain.handle('helpy-openclaw-status', () => {
+    return helpyOpenClaw.status();
+  });
+
+  ipcMain.handle('helpy-openclaw-logs', () => {
+    return helpyOpenClaw.logs();
+  });
+
+  ipcMain.handle('helpy-voice-config', () => {
+    return helpyVoice.config();
+  });
+
+  ipcMain.handle('helpy-voice-configure', (_, config: HelpyVoiceConfig) => {
+    return helpyVoice.configure(config);
+  });
+
+  ipcMain.handle('helpy-voice-status', () => {
+    return helpyVoice.status();
+  });
+
+  ipcMain.handle('helpy-voice-push-to-talk', () => {
+    return helpyVoice.pushToTalk();
+  });
+
+  ipcMain.handle('helpy-memory-graph-stats', () => {
+    return helpyMemoryGraph.stats();
   });
 
   ipcMain.handle('get-provider-models', async (_, reload = false) => {

@@ -64,6 +64,8 @@ const baseResult = () => ({
   endpoint: getEndpoint(),
   composeExists: fs.existsSync(composeFile),
   envExists: fs.existsSync(envFile),
+  vaultPath: getEnv('HELPY_VAULT_PATH', '/home/shingen/ObsidianVault'),
+  projectsRoot: getEnv('HELPY_PROJECTS_ROOT', '/home/shingen/Tech Projects'),
 });
 
 const runDockerCompose = async (args: string[]): Promise<HelpyBackendResult> => {

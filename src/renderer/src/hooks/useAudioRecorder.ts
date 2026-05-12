@@ -36,7 +36,7 @@ export const useAudioRecorder = (): UseAudioRecorderType => {
     return providers.find((p) => p.provider.voiceEnabled);
   }, [providers]);
 
-  const voiceAvailable = !!getVoiceProvider();
+  const voiceAvailable = true;
   const mediaDevicesAvailable = typeof navigator !== 'undefined' && navigator.mediaDevices !== undefined;
 
   const createVoiceProvider = useCallback((providerName: string): VoiceProvider => {
@@ -88,7 +88,8 @@ export const useAudioRecorder = (): UseAudioRecorderType => {
     const voiceProviderProfile = getVoiceProvider();
 
     if (!voiceProviderProfile) {
-      setError('No voice-enabled provider found. Please configure one in the Model Library.');
+      const result = await api.startHelpyPushToTalk();
+      setError(result.error || 'Voice not configured. Add a local STT command in Helpy voice settings.');
       return;
     }
 

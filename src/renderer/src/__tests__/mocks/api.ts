@@ -31,6 +31,9 @@ import {
   SystemLogsResponse,
   AiderConnectorStatus,
   HelpyBackendResult,
+  HelpyMemoryGraphStats,
+  HelpyProcessResult,
+  HelpyVoiceResult,
 } from '@common/types';
 
 /**
@@ -63,6 +66,27 @@ export const createMockApi = (overrides: Partial<ApplicationAPI> = {}): MockedOb
     getHelpyBackendStatus: vi.fn((): Promise<HelpyBackendResult> => Promise.resolve({ ok: true, status: 'running' })),
     getHelpyBackendLogs: vi.fn((): Promise<HelpyBackendResult> => Promise.resolve({ ok: true, output: '' })),
     checkHelpyBackendHealth: vi.fn((): Promise<HelpyBackendResult> => Promise.resolve({ ok: true, status: 'online' })),
+    getHelpyOpenClawConfig: vi.fn((): Promise<HelpyProcessResult> => Promise.resolve({ ok: false, status: 'not-configured' })),
+    configureHelpyOpenClaw: vi.fn((): Promise<HelpyProcessResult> => Promise.resolve({ ok: true, status: 'configured' })),
+    startHelpyOpenClaw: vi.fn((): Promise<HelpyProcessResult> => Promise.resolve({ ok: true, status: 'started' })),
+    stopHelpyOpenClaw: vi.fn((): Promise<HelpyProcessResult> => Promise.resolve({ ok: true, status: 'stopped' })),
+    getHelpyOpenClawStatus: vi.fn((): Promise<HelpyProcessResult> => Promise.resolve({ ok: false, status: 'not-configured' })),
+    getHelpyOpenClawLogs: vi.fn((): Promise<HelpyProcessResult> => Promise.resolve({ ok: true, status: 'logs', output: '' })),
+    getHelpyVoiceConfig: vi.fn((): Promise<HelpyVoiceResult> => Promise.resolve({ ok: false, status: 'voice-not-configured' })),
+    configureHelpyVoice: vi.fn((): Promise<HelpyVoiceResult> => Promise.resolve({ ok: true, status: 'configured' })),
+    getHelpyVoiceStatus: vi.fn((): Promise<HelpyVoiceResult> => Promise.resolve({ ok: false, status: 'voice-not-configured' })),
+    startHelpyPushToTalk: vi.fn((): Promise<HelpyVoiceResult> => Promise.resolve({ ok: false, status: 'voice-not-configured' })),
+    getHelpyMemoryGraphStats: vi.fn(
+      (): Promise<HelpyMemoryGraphStats> =>
+        Promise.resolve({
+          ok: true,
+          status: 'ready',
+          vaultRoot: '/home/shingen/ObsidianVault',
+          graphPath: '/home/shingen/ObsidianVault/graphify-out/graph.json',
+          nodes: 0,
+          edges: 0,
+        }),
+    ),
 
     // Project operations
     startProject: vi.fn((): Promise<void> => Promise.resolve()),

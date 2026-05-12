@@ -317,6 +317,8 @@ export interface HelpyBackendResult {
   modelDir?: string;
   modelFile?: string;
   modelPath?: string;
+  vaultPath?: string;
+  projectsRoot?: string;
 }
 
 export interface HelpyLocalConfig {
@@ -325,6 +327,52 @@ export interface HelpyLocalConfig {
   projectsRoot: string;
   endpoint: string;
   autoStartBackend: boolean;
+}
+
+export interface HelpyOpenClawConfig {
+  executablePath: string;
+  workingDirectory: string;
+  env: Record<string, string>;
+}
+
+export interface HelpyProcessResult {
+  ok: boolean;
+  status: string;
+  command?: string;
+  output?: string;
+  error?: string;
+  pid?: number;
+  executablePath?: string;
+  workingDirectory?: string;
+  configured?: boolean;
+  env?: Record<string, string>;
+}
+
+export interface HelpyVoiceConfig {
+  enabled: boolean;
+  sttCommand: string;
+  ttsCommand: string;
+}
+
+export interface HelpyVoiceResult {
+  ok: boolean;
+  status: string;
+  output?: string;
+  error?: string;
+  configured?: boolean;
+  sttCommand?: string;
+  ttsCommand?: string;
+}
+
+export interface HelpyMemoryGraphStats {
+  ok: boolean;
+  status: string;
+  vaultRoot: string;
+  graphPath: string;
+  nodes: number;
+  edges: number;
+  updatedAt?: string;
+  error?: string;
 }
 
 export interface WindowState {

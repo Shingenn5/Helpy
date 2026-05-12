@@ -29,6 +29,7 @@ import { ModelLibrary } from '@/components/ModelLibrary';
 import { URL_PARAMS, encodeBaseDir, decodeBaseDir, ROUTES } from '@/utils/routes';
 import { useBooleanState } from '@/hooks/useBooleanState';
 import { HelpyBackendPanel } from '@/components/helpy/HelpyBackendPanel';
+import { HelpyDashboardPanel } from '@/components/helpy/HelpyDashboardPanel';
 
 let hasShownUpdateNotification = false;
 
@@ -557,6 +558,7 @@ export const Home = () => {
           />
           <div className="flex items-center flex-shrink-0">
             <HelpyBackendPanel />
+            <HelpyDashboardPanel activeProject={optimisticActiveProject} />
             <ExtensionComponentWrapper placement="header-right" />
             {showUpdateIcon && (
               <IconButton

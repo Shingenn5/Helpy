@@ -67,6 +67,11 @@ import {
   ExtensionUIRefreshData,
   HelpyBackendResult,
   HelpyLocalConfig,
+  HelpyMemoryGraphStats,
+  HelpyOpenClawConfig,
+  HelpyProcessResult,
+  HelpyVoiceConfig,
+  HelpyVoiceResult,
   ModalOverlayUrlData,
   AiderConnectorStatus,
   ChangeRequestItem,
@@ -90,6 +95,17 @@ export interface ApplicationAPI {
   getHelpyBackendStatus: () => Promise<HelpyBackendResult>;
   getHelpyBackendLogs: () => Promise<HelpyBackendResult>;
   checkHelpyBackendHealth: () => Promise<HelpyBackendResult>;
+  getHelpyOpenClawConfig: () => Promise<HelpyProcessResult>;
+  configureHelpyOpenClaw: (config: HelpyOpenClawConfig) => Promise<HelpyProcessResult>;
+  startHelpyOpenClaw: () => Promise<HelpyProcessResult>;
+  stopHelpyOpenClaw: () => Promise<HelpyProcessResult>;
+  getHelpyOpenClawStatus: () => Promise<HelpyProcessResult>;
+  getHelpyOpenClawLogs: () => Promise<HelpyProcessResult>;
+  getHelpyVoiceConfig: () => Promise<HelpyVoiceResult>;
+  configureHelpyVoice: (config: HelpyVoiceConfig) => Promise<HelpyVoiceResult>;
+  getHelpyVoiceStatus: () => Promise<HelpyVoiceResult>;
+  startHelpyPushToTalk: () => Promise<HelpyVoiceResult>;
+  getHelpyMemoryGraphStats: () => Promise<HelpyMemoryGraphStats>;
   startProject: (baseDir: string) => Promise<void>;
   stopProject: (baseDir: string) => void;
   restartProject: (baseDir: string) => void;
