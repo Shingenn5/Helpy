@@ -1,7 +1,7 @@
 import { exec, spawn, ChildProcess } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync, readdirSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { basename, join } from 'node:path';
+import { basename, join, relative } from 'node:path';
 import { promisify } from 'node:util';
 
 import type {
@@ -22,6 +22,19 @@ type Config = {
 };
 
 type GraphifyMode = 'build' | 'update';
+
+type MiniGraphNode = {
+  id: string;
+  label: string;
+  type: string;
+  path?: string;
+};
+
+type MiniGraphEdge = {
+  source: string;
+  target: string;
+  relation: string;
+};
 
 const DEFAULT_CONFIG: Config = {
   vaultRoot: process.env.HELPY_VAULT_ROOT || join(homedir(), 'HelpyVault', 'Helpy'),
@@ -277,6 +290,10 @@ export default class HelpyGraphifyExportExtension implements Extension {
         const output = await this.execCommand(command, config.vaultRoot, timeout);
         return [`Graphify command: ${command}`, output].filter(Boolean).join('\n');
       } catch (error) {
+        if (this.isNoCodeGraphifyRun(error)) {
+          const fallback = this.writeMarkdownGraph(config);
+          return [`Graphify command: ${command}`, this.outputFromError(error), fallback].filter(Boolean).join('\n');
+        }
         errors.push(this.formatCommandError(command, error));
       }
     }
@@ -315,21 +332,138 @@ export default class HelpyGraphifyExportExtension implements Extension {
   private graphifyCommands(command: string, mode: GraphifyMode): string[] {
     if (mode === 'build') {
       return [
+        `${command} update .`,
+        `${command} watch .`,
         `${command} .`,
-        `${command} build .`,
-        `${command} run .`,
-        `${command} extract .`,
       ];
     }
 
     return [
+      `${command} update .`,
       `${command} . --update`,
       `${command} --update .`,
-      `${command} update .`,
       `${command} build . --update`,
       `${command} run . --update`,
       `${command} extract . --update`,
     ];
+  }
+
+  private writeMarkdownGraph(config: Config): string {
+    const outDir = join(config.vaultRoot, config.graphifyOutDir);
+    this.ensureDir(outDir);
+
+    const files = this.collectMarkdownFiles(config.vaultRoot, config);
+    const nodes = new Map<string, MiniGraphNode>();
+    const edges: MiniGraphEdge[] = [];
+
+    nodes.set('helpy-vault', { id: 'helpy-vault', label: 'Helpy Vault', type: 'vault', path: config.vaultRoot });
+
+    for (const file of files) {
+      const rel = relative(config.vaultRoot, file).replace(/\\/g, '/');
+      const body = readFileSync(file, 'utf-8');
+      const title = this.extractTitle(body, basename(file, '.md'));
+      const type = rel.split('/')[0]?.toLowerCase() || 'note';
+      nodes.set(rel, { id: rel, label: title, type, path: rel });
+      edges.push({ source: 'helpy-vault', target: rel, relation: 'contains' });
+
+      for (const link of this.extractWikiLinks(body)) {
+        const target = `wiki:${link}`;
+        if (!nodes.has(target)) nodes.set(target, { id: target, label: link, type: 'wikilink' });
+        edges.push({ source: rel, target, relation: 'links_to' });
+      }
+    }
+
+    const graph = {
+      tool: 'Helpy',
+      generator: 'helpy-graphify-export',
+      generated_at: new Date().toISOString(),
+      note: 'Fallback graph created from Markdown because this Graphify CLI only updates code files.',
+      nodes: [...nodes.values()],
+      edges,
+    };
+
+    writeFileSync(join(outDir, 'graph.json'), JSON.stringify(graph, null, 2), 'utf-8');
+    writeFileSync(join(outDir, 'GRAPH_REPORT.md'), this.markdownGraphReport(config, files, nodes.size, edges.length), 'utf-8');
+    writeFileSync(join(outDir, 'graph.html'), this.markdownGraphHtml(nodes.size, edges.length), 'utf-8');
+
+    return `Helpy Markdown graph fallback wrote ${nodes.size} nodes and ${edges.length} edges to ${outDir}.`;
+  }
+
+  private collectMarkdownFiles(root: string, config: Config): string[] {
+    const files: string[] = [];
+    const walk = (dir: string) => {
+      for (const entry of readdirSync(dir)) {
+        if (entry === '.git' || entry === config.graphifyOutDir || entry === 'node_modules') continue;
+        const full = join(dir, entry);
+        const stat = statSync(full);
+        if (stat.isDirectory()) {
+          walk(full);
+        } else if (entry.toLowerCase().endsWith('.md')) {
+          files.push(full);
+        }
+      }
+    };
+    walk(root);
+    return files;
+  }
+
+  private extractTitle(body: string, fallback: string): string {
+    const frontmatterTitle = body.match(/^title:\s*["']?(.+?)["']?\s*$/m)?.[1];
+    const heading = body.match(/^#\s+(.+)$/m)?.[1];
+    return (frontmatterTitle || heading || fallback).trim();
+  }
+
+  private extractWikiLinks(body: string): string[] {
+    const links = new Set<string>();
+    const matcher = /\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g;
+    let match = matcher.exec(body);
+    while (match) {
+      links.add(match[1].trim());
+      match = matcher.exec(body);
+    }
+    return [...links];
+  }
+
+  private markdownGraphReport(config: Config, files: string[], nodes: number, edges: number): string {
+    return [
+      '# Helpy Graph Report',
+      '',
+      `Generated: ${new Date().toISOString()}`,
+      `Vault: \`${config.vaultRoot}\``,
+      '',
+      'This report was generated by Helpy because the installed Graphify CLI only supports code-file updates.',
+      '',
+      '## Summary',
+      '',
+      `- Markdown files scanned: ${files.length}`,
+      `- Nodes: ${nodes}`,
+      `- Edges: ${edges}`,
+      '',
+      '## Source Folders',
+      '',
+      '- Sessions',
+      '- Rules',
+      '- Graph',
+      '',
+    ].join('\n');
+  }
+
+  private markdownGraphHtml(nodes: number, edges: number): string {
+    return [
+      '<!doctype html>',
+      '<meta charset="utf-8">',
+      '<title>Helpy Graph</title>',
+      '<body style="font-family: system-ui; background: #0f172a; color: #dbeafe; padding: 32px;">',
+      '<h1>Helpy Graph</h1>',
+      `<p>Fallback Markdown graph generated with ${nodes} nodes and ${edges} edges.</p>`,
+      '<p>Open <code>graph.json</code> for structured data and <code>GRAPH_REPORT.md</code> for the summary.</p>',
+      '</body>',
+    ].join('\n');
+  }
+
+  private isNoCodeGraphifyRun(error: unknown): boolean {
+    const output = this.outputFromError(error).toLowerCase();
+    return output.includes('no code files found') || output.includes('nothing to update');
   }
 
   private async graphifyDoctor(config: Config): Promise<string> {

@@ -40,3 +40,12 @@ graphify .
 graphify . --update
 graphify . --watch
 ```
+
+Some `graphifyy` releases only expose code-update commands:
+
+```text
+graphify update .
+graphify watch .
+```
+
+If that CLI reports "No code files found" for a Markdown-only Helpy vault, the extension writes a small fallback graph to `graphify-out/` from the Markdown notes so the memory folder still has queryable artifacts.
