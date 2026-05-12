@@ -48,4 +48,6 @@ graphify update .
 graphify watch .
 ```
 
-If that CLI reports "No code files found" for a Markdown-only Helpy vault, the extension writes a small fallback graph to `graphify-out/` from the Markdown notes so the memory folder still has queryable artifacts.
+If that CLI reports "No code files found" for a Markdown-only Helpy vault, the extension writes a semantic fallback graph to `graphify-out/` from the Markdown notes so the memory folder still has queryable artifacts.
+
+The semantic fallback extracts typed nodes for sessions, prompts, assistant responses, agent starts, tasks, projects, rules, tags, models, providers, modes, filesystem paths, and wikilinks.

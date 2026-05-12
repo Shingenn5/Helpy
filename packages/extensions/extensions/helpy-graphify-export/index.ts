@@ -28,6 +28,7 @@ type MiniGraphNode = {
   label: string;
   type: string;
   path?: string;
+  metadata?: Record<string, string | number | boolean>;
 };
 
 type MiniGraphEdge = {
@@ -41,7 +42,7 @@ const DEFAULT_CONFIG: Config = {
   graphDir: 'Graph',
   graphifyCommand: process.env.HELPY_GRAPHIFY_COMMAND || 'graphify',
   graphifyOutDir: 'graphify-out',
-  autoUpdateOnPrompt: false,
+  autoUpdateOnPrompt: process.env.HELPY_GRAPHIFY_AUTO_UPDATE !== 'false',
 };
 
 const configComponentJsx = readFileSync(join(__dirname, 'ConfigComponent.jsx'), 'utf-8');
@@ -251,12 +252,12 @@ export default class HelpyGraphifyExportExtension implements Extension {
   private loadConfig(): Config {
     try {
       if (existsSync(this.configPath)) {
-        return { ...DEFAULT_CONFIG, ...JSON.parse(readFileSync(this.configPath, 'utf-8')) };
+        return { ...DEFAULT_CONFIG, ...this.sharedVaultConfig(), ...JSON.parse(readFileSync(this.configPath, 'utf-8')) };
       }
     } catch {
       // defaults are fine
     }
-    return { ...DEFAULT_CONFIG };
+    return { ...DEFAULT_CONFIG, ...this.sharedVaultConfig() };
   }
 
   private ensureDir(path: string): void {
@@ -362,9 +363,23 @@ export default class HelpyGraphifyExportExtension implements Extension {
       const rel = relative(config.vaultRoot, file).replace(/\\/g, '/');
       const body = readFileSync(file, 'utf-8');
       const title = this.extractTitle(body, basename(file, '.md'));
-      const type = rel.split('/')[0]?.toLowerCase() || 'note';
-      nodes.set(rel, { id: rel, label: title, type, path: rel });
+      const frontmatter = this.extractFrontmatter(body);
+      const type = frontmatter.type || this.semanticFileType(rel);
+      nodes.set(rel, {
+        id: rel,
+        label: title,
+        type,
+        path: rel,
+        metadata: {
+          folder: rel.split('/')[0] || 'root',
+          project: frontmatter.project || '',
+          created: frontmatter.created || '',
+        },
+      });
       edges.push({ source: 'helpy-vault', target: rel, relation: 'contains' });
+
+      this.addTags(rel, frontmatter.tags || '', nodes, edges);
+      this.addSemanticMarkdownNodes(rel, rel, body, frontmatter, nodes, edges);
 
       for (const link of this.extractWikiLinks(body)) {
         const target = `wiki:${link}`;
@@ -377,16 +392,16 @@ export default class HelpyGraphifyExportExtension implements Extension {
       tool: 'Helpy',
       generator: 'helpy-graphify-export',
       generated_at: new Date().toISOString(),
-      note: 'Fallback graph created from Markdown because this Graphify CLI only updates code files.',
+      note: 'Semantic graph created from Helpy Markdown because this Graphify CLI only updates code files.',
       nodes: [...nodes.values()],
       edges,
     };
 
     writeFileSync(join(outDir, 'graph.json'), JSON.stringify(graph, null, 2), 'utf-8');
-    writeFileSync(join(outDir, 'GRAPH_REPORT.md'), this.markdownGraphReport(config, files, nodes.size, edges.length), 'utf-8');
+    writeFileSync(join(outDir, 'GRAPH_REPORT.md'), this.markdownGraphReport(config, files, [...nodes.values()], edges), 'utf-8');
     writeFileSync(join(outDir, 'graph.html'), this.markdownGraphHtml(nodes.size, edges.length), 'utf-8');
 
-    return `Helpy Markdown graph fallback wrote ${nodes.size} nodes and ${edges.length} edges to ${outDir}.`;
+    return `Helpy semantic Markdown graph wrote ${nodes.size} nodes and ${edges.length} edges to ${outDir}.`;
   }
 
   private collectMarkdownFiles(root: string, config: Config): string[] {
@@ -413,6 +428,194 @@ export default class HelpyGraphifyExportExtension implements Extension {
     return (frontmatterTitle || heading || fallback).trim();
   }
 
+  private semanticFileType(rel: string): string {
+    const first = rel.split('/')[0]?.toLowerCase() || 'note';
+    if (first === 'sessions') return 'session';
+    if (first === 'rules') return 'rules-file';
+    if (first === 'graph') return 'graph-note';
+    return first;
+  }
+
+  private extractFrontmatter(body: string): Record<string, string> {
+    const block = body.match(/^---\n([\s\S]*?)\n---/);
+    if (!block) return {};
+    const data: Record<string, string> = {};
+    const lines = block[1].split('\n');
+    let current = '';
+
+    for (const line of lines) {
+      const pair = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+      if (pair) {
+        current = pair[1];
+        data[current] = pair[2].replace(/^["']|["']$/g, '').trim();
+        continue;
+      }
+      const item = line.match(/^\s+-\s+(.+)$/);
+      if (item && current) {
+        data[current] = [data[current], item[1].trim()].filter(Boolean).join(',');
+      }
+    }
+
+    return data;
+  }
+
+  private addSemanticMarkdownNodes(
+    fileId: string,
+    rel: string,
+    body: string,
+    frontmatter: Record<string, string>,
+    nodes: Map<string, MiniGraphNode>,
+    edges: MiniGraphEdge[],
+  ): void {
+    if (frontmatter.project) {
+      const projectId = `project:${frontmatter.project}`;
+      this.upsertNode(nodes, projectId, frontmatter.project, 'project');
+      edges.push({ source: fileId, target: projectId, relation: 'about_project' });
+    }
+
+    const taskId = frontmatter.task_id || this.firstMatch(body, /Task:\s+\[\[([^\]]+)\]\]/);
+    if (taskId) {
+      const nodeId = `task:${taskId}`;
+      this.upsertNode(nodes, nodeId, taskId, 'task');
+      edges.push({ source: fileId, target: nodeId, relation: 'records_task' });
+    }
+
+    const projectPath = this.firstMatch(body, /project:\s*"([^"]+)"/i) || this.firstMatch(body, /Path:\s+`([^`]+)`/);
+    if (projectPath) {
+      const nodeId = `path:${projectPath}`;
+      this.upsertNode(nodes, nodeId, projectPath, 'filesystem-path');
+      edges.push({ source: fileId, target: nodeId, relation: 'uses_path' });
+    }
+
+    if (rel.startsWith('Sessions/')) this.addSessionNodes(fileId, body, nodes, edges);
+    if (rel.startsWith('Rules/')) this.addRuleNodes(fileId, body, nodes, edges);
+    if (rel.startsWith('Graph/Projects/')) this.addProjectNoteNodes(fileId, body, nodes, edges);
+  }
+
+  private addSessionNodes(fileId: string, body: string, nodes: Map<string, MiniGraphNode>, edges: MiniGraphEdge[]): void {
+    const sections = this.extractSections(body);
+    let count = 0;
+
+    for (const section of sections) {
+      count += 1;
+      const kind = this.sectionKind(section.heading);
+      const label = this.preview(section.content, section.heading);
+      const nodeId = `${fileId}#${kind}-${count}`;
+      this.upsertNode(nodes, nodeId, label, kind, { heading: section.heading });
+      edges.push({ source: fileId, target: nodeId, relation: 'has_event' });
+
+      if (kind === 'user-prompt') edges.push({ source: nodeId, target: fileId, relation: 'prompted_session' });
+      if (kind === 'assistant-response') edges.push({ source: fileId, target: nodeId, relation: 'received_response' });
+
+      const mode = this.firstMatch(section.content, /^Mode:\s*(.+)$/m);
+      const model = this.firstMatch(section.content, /^Model:\s*(.+)$/m);
+      const provider = this.firstMatch(section.content, /^Provider:\s*(.+)$/m);
+
+      if (mode) {
+        const modeId = `mode:${mode}`;
+        this.upsertNode(nodes, modeId, mode, 'mode');
+        edges.push({ source: nodeId, target: modeId, relation: 'ran_in_mode' });
+      }
+      if (model) {
+        const modelId = `model:${model}`;
+        this.upsertNode(nodes, modelId, model, 'model');
+        edges.push({ source: nodeId, target: modelId, relation: 'used_model' });
+      }
+      if (provider) {
+        const providerId = `provider:${provider}`;
+        this.upsertNode(nodes, providerId, provider, 'provider');
+        edges.push({ source: nodeId, target: providerId, relation: 'used_provider' });
+      }
+    }
+  }
+
+  private addRuleNodes(fileId: string, body: string, nodes: Map<string, MiniGraphNode>, edges: MiniGraphEdge[]): void {
+    const sections = this.extractSections(body);
+    let ruleCount = 0;
+    for (const section of sections) {
+      const sectionId = `${fileId}#rules-${this.slug(section.heading)}`;
+      this.upsertNode(nodes, sectionId, section.heading, 'rule-section');
+      edges.push({ source: fileId, target: sectionId, relation: 'has_rule_section' });
+
+      for (const rule of section.content.matchAll(/^\s*-\s+(.+)$/gm)) {
+        ruleCount += 1;
+        const ruleId = `${fileId}#rule-${ruleCount}`;
+        this.upsertNode(nodes, ruleId, rule[1].trim(), 'rule');
+        edges.push({ source: sectionId, target: ruleId, relation: 'contains_rule' });
+      }
+    }
+  }
+
+  private addProjectNoteNodes(fileId: string, body: string, nodes: Map<string, MiniGraphNode>, edges: MiniGraphEdge[]): void {
+    const mode = this.firstMatch(body, /- Mode:\s*(.+)/);
+    const status = this.firstMatch(body, /- Status:\s*(.+)/);
+
+    if (mode) {
+      const nodeId = `mode:${mode}`;
+      this.upsertNode(nodes, nodeId, mode, 'mode');
+      edges.push({ source: fileId, target: nodeId, relation: 'current_mode' });
+    }
+    if (status) {
+      const nodeId = `status:${status}`;
+      this.upsertNode(nodes, nodeId, status, 'status');
+      edges.push({ source: fileId, target: nodeId, relation: 'current_status' });
+    }
+  }
+
+  private addTags(fileId: string, tags: string, nodes: Map<string, MiniGraphNode>, edges: MiniGraphEdge[]): void {
+    for (const tag of tags.split(',').map((tag) => tag.trim()).filter(Boolean)) {
+      const nodeId = `tag:${tag}`;
+      this.upsertNode(nodes, nodeId, tag, 'tag');
+      edges.push({ source: fileId, target: nodeId, relation: 'tagged' });
+    }
+  }
+
+  private extractSections(body: string): Array<{ heading: string; content: string }> {
+    const sections: Array<{ heading: string; content: string }> = [];
+    const matcher = /^##\s+(.+)$/gm;
+    const matches = [...body.matchAll(matcher)];
+    for (let i = 0; i < matches.length; i += 1) {
+      const start = (matches[i].index || 0) + matches[i][0].length;
+      const end = i + 1 < matches.length ? matches[i + 1].index || body.length : body.length;
+      sections.push({ heading: matches[i][1].trim(), content: body.slice(start, end).trim() });
+    }
+    return sections;
+  }
+
+  private sectionKind(heading: string): string {
+    const clean = heading.toLowerCase();
+    if (clean.includes('user')) return 'user-prompt';
+    if (clean.includes('assistant')) return 'assistant-response';
+    if (clean.includes('agent started')) return 'agent-started';
+    if (clean.includes('agent finished')) return 'agent-finished';
+    if (clean.includes('tool')) return 'tool-event';
+    if (clean.includes('context files')) return 'context-files';
+    return 'session-event';
+  }
+
+  private upsertNode(
+    nodes: Map<string, MiniGraphNode>,
+    id: string,
+    label: string,
+    type: string,
+    metadata?: Record<string, string | number | boolean>,
+  ): void {
+    if (!nodes.has(id)) nodes.set(id, { id, label, type, metadata });
+  }
+
+  private firstMatch(body: string, pattern: RegExp): string {
+    return body.match(pattern)?.[1]?.trim() || '';
+  }
+
+  private preview(value: string, fallback: string): string {
+    const clean = value.replace(/```[\s\S]*?```/g, '').replace(/\s+/g, ' ').trim();
+    return (clean || fallback).slice(0, 140);
+  }
+
+  private slug(value: string): string {
+    return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'section';
+  }
+
   private extractWikiLinks(body: string): string[] {
     const links = new Set<string>();
     const matcher = /\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g;
@@ -424,28 +627,41 @@ export default class HelpyGraphifyExportExtension implements Extension {
     return [...links];
   }
 
-  private markdownGraphReport(config: Config, files: string[], nodes: number, edges: number): string {
+  private markdownGraphReport(config: Config, files: string[], nodes: MiniGraphNode[], edges: MiniGraphEdge[]): string {
+    const nodeTypes = this.countBy(nodes, (node) => node.type);
+    const edgeTypes = this.countBy(edges, (edge) => edge.relation);
+
     return [
       '# Helpy Graph Report',
       '',
       `Generated: ${new Date().toISOString()}`,
       `Vault: \`${config.vaultRoot}\``,
       '',
-      'This report was generated by Helpy because the installed Graphify CLI only supports code-file updates.',
+      'This semantic graph was generated by Helpy from Markdown because the installed Graphify CLI only supports code-file updates.',
       '',
       '## Summary',
       '',
       `- Markdown files scanned: ${files.length}`,
-      `- Nodes: ${nodes}`,
-      `- Edges: ${edges}`,
+      `- Nodes: ${nodes.length}`,
+      `- Edges: ${edges.length}`,
       '',
-      '## Source Folders',
+      '## Node Types',
       '',
-      '- Sessions',
-      '- Rules',
-      '- Graph',
+      ...Object.entries(nodeTypes).sort().map(([type, count]) => `- ${type}: ${count}`),
+      '',
+      '## Edge Types',
+      '',
+      ...Object.entries(edgeTypes).sort().map(([type, count]) => `- ${type}: ${count}`),
       '',
     ].join('\n');
+  }
+
+  private countBy<T>(items: T[], picker: (item: T) => string): Record<string, number> {
+    return items.reduce<Record<string, number>>((counts, item) => {
+      const key = picker(item) || 'unknown';
+      counts[key] = (counts[key] || 0) + 1;
+      return counts;
+    }, {});
   }
 
   private markdownGraphHtml(nodes: number, edges: number): string {
@@ -464,6 +680,19 @@ export default class HelpyGraphifyExportExtension implements Extension {
   private isNoCodeGraphifyRun(error: unknown): boolean {
     const output = this.outputFromError(error).toLowerCase();
     return output.includes('no code files found') || output.includes('nothing to update');
+  }
+
+  private sharedVaultConfig(): Partial<Config> {
+    try {
+      const siblingConfig = join(__dirname, '..', 'helpy-vault-logger', 'config.json');
+      if (existsSync(siblingConfig)) {
+        const config = JSON.parse(readFileSync(siblingConfig, 'utf-8')) as Partial<Config>;
+        return config.vaultRoot ? { vaultRoot: config.vaultRoot } : {};
+      }
+    } catch {
+      // not worth drama
+    }
+    return {};
   }
 
   private async graphifyDoctor(config: Config): Promise<string> {
