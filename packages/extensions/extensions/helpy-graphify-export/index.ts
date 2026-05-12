@@ -50,6 +50,8 @@ const DEFAULT_CONFIG: Config = {
   autoUpdateOnPrompt: process.env.HELPY_GRAPHIFY_AUTO_UPDATE !== 'false',
 };
 
+const NOISY_NODE_TYPES = new Set(['wikilink']);
+
 const configComponentJsx = readFileSync(join(__dirname, 'ConfigComponent.jsx'), 'utf-8');
 const execAsync = promisify(exec);
 
@@ -435,13 +437,13 @@ export default class HelpyGraphifyExportExtension implements Extension {
       return `No Helpy memory graph found at ${graphPath}. Run /helpy-graphify-update first.`;
     }
 
-    const graph = JSON.parse(readFileSync(graphPath, 'utf-8')) as MiniGraph;
+    const graph = this.sanitizeGraph(JSON.parse(readFileSync(graphPath, 'utf-8')) as MiniGraph);
     const terms = question.toLowerCase().split(/\s+/).filter(Boolean);
     const nodeById = new Map(graph.nodes.map((node) => [node.id, node]));
     const scoredNodes = graph.nodes
       .map((node) => ({ node, score: this.scoreNode(node, terms) }))
       .filter((item) => item.score > 0)
-      .sort((a, b) => b.score - a.score)
+      .sort((a, b) => b.score - a.score || this.typeRank(a.node.type) - this.typeRank(b.node.type))
       .slice(0, 12);
     const matchedIds = new Set(scoredNodes.map((item) => item.node.id));
 
@@ -474,7 +476,7 @@ export default class HelpyGraphifyExportExtension implements Extension {
     if (scoredNodes.length) {
       lines.push('## Nodes', '');
       for (const { node, score } of scoredNodes) {
-        lines.push(`- [${node.type}] ${node.label} (${score})`);
+        lines.push(`- [${node.type}] ${this.displayLabel(node.label)} (${score})`);
         if (node.path) lines.push(`  path: ${node.path}`);
       }
       lines.push('');
@@ -483,8 +485,8 @@ export default class HelpyGraphifyExportExtension implements Extension {
     if (edgeHits.length) {
       lines.push('## Relationships', '');
       for (const edge of edgeHits) {
-        const source = nodeById.get(edge.source)?.label || edge.source;
-        const target = nodeById.get(edge.target)?.label || edge.target;
+        const source = this.displayLabel(nodeById.get(edge.source)?.label || edge.source);
+        const target = this.displayLabel(nodeById.get(edge.target)?.label || edge.target);
         lines.push(`- ${source} --${edge.relation}--> ${target}`);
       }
       lines.push('');
@@ -496,12 +498,42 @@ export default class HelpyGraphifyExportExtension implements Extension {
   private scoreNode(node: MiniGraphNode, terms: string[]): number {
     const metadata = node.metadata ? Object.values(node.metadata).join(' ') : '';
     const haystack = `${node.id} ${node.label} ${node.type} ${node.path || ''} ${metadata}`.toLowerCase();
+    const penalty = NOISY_NODE_TYPES.has(node.type) ? -6 : 0;
     return terms.reduce((score, term) => {
-      if (node.label.toLowerCase().includes(term)) return score + 8;
+      if (node.label.toLowerCase().includes(term)) return score + 8 + penalty;
       if (node.type.toLowerCase().includes(term)) return score + 5;
-      if (haystack.includes(term)) return score + 2;
+      if (haystack.includes(term)) return score + 2 + penalty;
       return score;
     }, 0);
+  }
+
+  private sanitizeGraph(graph: MiniGraph): MiniGraph {
+    const nodes = graph.nodes.filter((node) => this.isUsefulNode(node));
+    const nodeIds = new Set(nodes.map((node) => node.id));
+    const edges = graph.edges.filter((edge) => nodeIds.has(edge.source) && nodeIds.has(edge.target));
+    return { nodes, edges };
+  }
+
+  private isUsefulNode(node: MiniGraphNode): boolean {
+    if (node.type !== 'wikilink') return true;
+    return this.isUsefulWikiLink(node.label);
+  }
+
+  private typeRank(type: string): number {
+    const ranks: Record<string, number> = {
+      rule: 1,
+      project: 2,
+      task: 3,
+      'coding-agent-session': 4,
+      'user-prompt': 5,
+      'assistant-response': 6,
+      model: 7,
+      provider: 8,
+      mode: 9,
+      tag: 10,
+      wikilink: 90,
+    };
+    return ranks[type] || 50;
   }
 
   private collectMarkdownFiles(root: string, config: Config): string[] {
@@ -708,8 +740,21 @@ export default class HelpyGraphifyExportExtension implements Extension {
   }
 
   private preview(value: string, fallback: string): string {
-    const clean = value.replace(/```[\s\S]*?```/g, '').replace(/\s+/g, ' ').trim();
+    const clean = this.cleanMemoryText(value).replace(/\s+/g, ' ').trim();
     return (clean || fallback).slice(0, 140);
+  }
+
+  private displayLabel(value: string): string {
+    return this.preview(value, value).replace(/\n/g, ' ').slice(0, 180);
+  }
+
+  private cleanMemoryText(value: string): string {
+    return value
+      .replace(/```[\s\S]*?```/g, '')
+      .replace(/\[\[([\s\S]*?)\]\]/g, (_match, inner: string) => {
+        if (inner.includes('\n') || inner.length > 120) return '';
+        return inner.split('|')[0].trim();
+      });
   }
 
   private slug(value: string): string {
@@ -718,13 +763,22 @@ export default class HelpyGraphifyExportExtension implements Extension {
 
   private extractWikiLinks(body: string): string[] {
     const links = new Set<string>();
-    const matcher = /\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g;
+    const matcher = /\[\[([^\]\|\n\r]{1,120})(?:\|[^\]\n\r]{1,80})?\]\]/g;
     let match = matcher.exec(body);
     while (match) {
-      links.add(match[1].trim());
+      const link = match[1].trim();
+      if (this.isUsefulWikiLink(link)) links.add(link);
       match = matcher.exec(body);
     }
     return [...links];
+  }
+
+  private isUsefulWikiLink(link: string): boolean {
+    if (!link || link.length > 120) return false;
+    if (/[\n\r{}<>]/.test(link)) return false;
+    if (link.includes('```')) return false;
+    if (link.split(/\s+/).length > 10) return false;
+    return true;
   }
 
   private markdownGraphReport(config: Config, files: string[], nodes: MiniGraphNode[], edges: MiniGraphEdge[]): string {
