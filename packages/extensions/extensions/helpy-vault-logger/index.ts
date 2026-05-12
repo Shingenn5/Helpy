@@ -22,7 +22,7 @@ type Config = {
 };
 
 const DEFAULT_CONFIG: Config = {
-  vaultRoot: process.env.HELPY_VAULT_ROOT || join(homedir(), 'HelpyVault', 'Helpy'),
+  vaultRoot: process.env.HELPY_VAULT_ROOT || join(homedir(), 'ObsidianVault'),
   sessionsDir: 'Sessions',
   appendToolEvents: true,
   appendFileEvents: true,

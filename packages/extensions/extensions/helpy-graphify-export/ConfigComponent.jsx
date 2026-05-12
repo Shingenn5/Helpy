@@ -7,7 +7,7 @@
         label="Vault Root"
         value={config?.vaultRoot || ''}
         onChange={(e) => updateConfig({ ...config, vaultRoot: e.target.value })}
-        placeholder="/home/you/Obsidian/Helpy"
+        placeholder="/home/you/ObsidianVault"
       />
       <Input
         label="Graph Folder"
@@ -33,7 +33,7 @@
         onChange={(checked) => updateConfig({ ...config, autoUpdateOnPrompt: checked })}
       />
       <p className="text-xs text-text-secondary">
-        Helpy writes graph-friendly Markdown, then runs the real Graphify CLI against Vault Root.
+        Helpy writes semantic Markdown memory, then searches graphify-out/graph.json locally.
       </p>
     </div>
   );

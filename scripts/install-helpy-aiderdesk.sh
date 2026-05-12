@@ -3,12 +3,12 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TARGET_DIR="${AIDERDESK_EXTENSIONS_DIR:-$HOME/.aider-desk/extensions}"
+VAULT_ROOT="${HELPY_VAULT_ROOT:-$HOME/ObsidianVault}"
 
 mkdir -p "$TARGET_DIR"
 cp -R "$ROOT_DIR"/packages/extensions/extensions/helpy-* "$TARGET_DIR"/
 
-if [[ -n "${HELPY_VAULT_ROOT:-}" ]]; then
-  node - "$TARGET_DIR" "$HELPY_VAULT_ROOT" <<'NODE'
+node - "$TARGET_DIR" "$VAULT_ROOT" <<'NODE'
 const fs = require('fs');
 const path = require('path');
 
@@ -32,8 +32,7 @@ for (const [extension, defaults] of configs) {
   fs.writeFileSync(configPath, JSON.stringify({ ...defaults, ...current, vaultRoot }, null, 2));
 }
 NODE
-  echo "Synced Helpy vault root to: $HELPY_VAULT_ROOT"
-fi
+echo "Synced Helpy vault root to: $VAULT_ROOT"
 
 echo "Helpy extensions installed to: $TARGET_DIR"
 echo "Restart AiderDesk, or wait for extension hot reload."

@@ -37,8 +37,13 @@ type MiniGraphEdge = {
   relation: string;
 };
 
+type MiniGraph = {
+  nodes: MiniGraphNode[];
+  edges: MiniGraphEdge[];
+};
+
 const DEFAULT_CONFIG: Config = {
-  vaultRoot: process.env.HELPY_VAULT_ROOT || join(homedir(), 'HelpyVault', 'Helpy'),
+  vaultRoot: process.env.HELPY_VAULT_ROOT || join(homedir(), 'ObsidianVault'),
   graphDir: 'Graph',
   graphifyCommand: process.env.HELPY_GRAPHIFY_COMMAND || 'graphify',
   graphifyOutDir: 'graphify-out',
@@ -129,6 +134,20 @@ export default class HelpyGraphifyExportExtension implements Extension {
         execute: async (_args, context) => {
           const stopped = this.stopWatch();
           context.getTaskContext()?.addLogMessage('info', stopped ? 'Graphify watch stopped.' : 'Graphify watch was not running.');
+        },
+      },
+      {
+        name: 'helpy-memory-query',
+        description: 'Search the local Helpy semantic memory graph',
+        arguments: [{ description: 'Search terms', required: true }],
+        execute: async (args, context) => {
+          const question = args.join(' ').trim();
+          if (!question) {
+            context.getTaskContext()?.addLogMessage('warning', 'Usage: /helpy-memory-query backend errors');
+            return;
+          }
+          const output = this.queryMemory(question);
+          context.getTaskContext()?.addLogMessage('info', output);
         },
       },
       {
@@ -402,6 +421,87 @@ export default class HelpyGraphifyExportExtension implements Extension {
     writeFileSync(join(outDir, 'graph.html'), this.markdownGraphHtml(nodes.size, edges.length), 'utf-8');
 
     return `Helpy semantic Markdown graph wrote ${nodes.size} nodes and ${edges.length} edges to ${outDir}.`;
+  }
+
+  private queryMemory(question: string): string {
+    const config = this.loadConfig();
+    const graphPath = join(config.vaultRoot, config.graphifyOutDir, 'graph.json');
+
+    if (!existsSync(graphPath)) {
+      this.writeMarkdownGraph(config);
+    }
+
+    if (!existsSync(graphPath)) {
+      return `No Helpy memory graph found at ${graphPath}. Run /helpy-graphify-update first.`;
+    }
+
+    const graph = JSON.parse(readFileSync(graphPath, 'utf-8')) as MiniGraph;
+    const terms = question.toLowerCase().split(/\s+/).filter(Boolean);
+    const nodeById = new Map(graph.nodes.map((node) => [node.id, node]));
+    const scoredNodes = graph.nodes
+      .map((node) => ({ node, score: this.scoreNode(node, terms) }))
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 12);
+    const matchedIds = new Set(scoredNodes.map((item) => item.node.id));
+
+    const edgeHits = graph.edges
+      .filter((edge) => {
+        const source = nodeById.get(edge.source);
+        const target = nodeById.get(edge.target);
+        const haystack = `${edge.relation} ${source?.label || ''} ${target?.label || ''}`.toLowerCase();
+        return matchedIds.has(edge.source) || matchedIds.has(edge.target) || terms.some((term) => haystack.includes(term));
+      })
+      .slice(0, 16);
+
+    if (!scoredNodes.length && !edgeHits.length) {
+      return [
+        `No direct Helpy memory hits for: ${question}`,
+        '',
+        `Graph: ${graph.nodes.length} nodes, ${graph.edges.length} edges`,
+        `Path: ${graphPath}`,
+      ].join('\n');
+    }
+
+    const lines = [
+      `# Helpy Memory Query`,
+      '',
+      `Query: ${question}`,
+      `Graph: ${graph.nodes.length} nodes, ${graph.edges.length} edges`,
+      '',
+    ];
+
+    if (scoredNodes.length) {
+      lines.push('## Nodes', '');
+      for (const { node, score } of scoredNodes) {
+        lines.push(`- [${node.type}] ${node.label} (${score})`);
+        if (node.path) lines.push(`  path: ${node.path}`);
+      }
+      lines.push('');
+    }
+
+    if (edgeHits.length) {
+      lines.push('## Relationships', '');
+      for (const edge of edgeHits) {
+        const source = nodeById.get(edge.source)?.label || edge.source;
+        const target = nodeById.get(edge.target)?.label || edge.target;
+        lines.push(`- ${source} --${edge.relation}--> ${target}`);
+      }
+      lines.push('');
+    }
+
+    return lines.join('\n').slice(0, 6000);
+  }
+
+  private scoreNode(node: MiniGraphNode, terms: string[]): number {
+    const metadata = node.metadata ? Object.values(node.metadata).join(' ') : '';
+    const haystack = `${node.id} ${node.label} ${node.type} ${node.path || ''} ${metadata}`.toLowerCase();
+    return terms.reduce((score, term) => {
+      if (node.label.toLowerCase().includes(term)) return score + 8;
+      if (node.type.toLowerCase().includes(term)) return score + 5;
+      if (haystack.includes(term)) return score + 2;
+      return score;
+    }, 0);
   }
 
   private collectMarkdownFiles(root: string, config: Config): string[] {

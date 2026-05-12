@@ -20,6 +20,7 @@ Commands:
 /helpy-graphify-update
 /helpy-graphify-watch
 /helpy-graphify-query
+/helpy-memory-query
 /helpy-graphify-open-report
 ```
 
@@ -51,3 +52,5 @@ graphify watch .
 If that CLI reports "No code files found" for a Markdown-only Helpy vault, the extension writes a semantic fallback graph to `graphify-out/` from the Markdown notes so the memory folder still has queryable artifacts.
 
 The semantic fallback extracts typed nodes for sessions, prompts, assistant responses, agent starts, tasks, projects, rules, tags, models, providers, modes, filesystem paths, and wikilinks.
+
+`/helpy-memory-query` searches the local semantic `graphify-out/graph.json` directly, so it still works when the installed Graphify CLI only supports code-file update commands.
