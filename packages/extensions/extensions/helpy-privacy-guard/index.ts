@@ -17,7 +17,7 @@ type Config = {
 };
 
 const DEFAULT_CONFIG: Config = {
-  blockCloudProviders: true,
+  blockCloudProviders: false,
   allowedProviderWords: ['local', 'llama', 'openai-compatible', 'ollama', 'lm-studio', 'gpustack'],
   blockedToolWords: ['cloudflare', 'tunnel', 'telemetry', 'posthog', 'langfuse'],
 };

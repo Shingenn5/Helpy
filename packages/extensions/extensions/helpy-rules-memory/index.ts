@@ -36,6 +36,7 @@ const DEFAULT_CONFIG: Config = {
   rulesFile: 'Rules/Helpy Model Rules.md',
 };
 
+const RULES_MARKER = '<!-- HELPY_PERSISTENT_RULES -->';
 const configComponentJsx = readFileSync(join(__dirname, 'ConfigComponent.jsx'), 'utf-8');
 
 export default class HelpyRulesMemoryExtension implements Extension {
@@ -100,17 +101,19 @@ export default class HelpyRulesMemoryExtension implements Extension {
   }
 
   async onImportantReminders(event: ImportantRemindersEvent): Promise<void | Partial<ImportantRemindersEvent>> {
+    if ((event.remindersContent || '').includes(RULES_MARKER)) return undefined;
     const rules = this.readRules();
     return {
-      remindersContent: `${event.remindersContent || ''}\n\n# Persistent Helpy Rules\n\n${rules}`.trim(),
+      remindersContent: `${event.remindersContent || ''}\n\n${RULES_MARKER}\n# Persistent Helpy Rules\n\n${rules}`.trim(),
     };
   }
 
   async onPromptTemplate(event: PromptTemplateEvent): Promise<void | Partial<PromptTemplateEvent>> {
     if (!event.name.toLowerCase().includes('system')) return undefined;
+    if (event.prompt.includes(RULES_MARKER)) return undefined;
     const rules = this.readRules();
     return {
-      prompt: `${event.prompt}\n\n# Persistent Helpy Rules\n\n${rules}`,
+      prompt: `${event.prompt}\n\n${RULES_MARKER}\n# Persistent Helpy Rules\n\n${rules}`,
     };
   }
 

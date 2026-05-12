@@ -47,7 +47,7 @@ const DEFAULT_CONFIG: Config = {
   graphDir: 'Graph',
   graphifyCommand: process.env.HELPY_GRAPHIFY_COMMAND || 'graphify',
   graphifyOutDir: 'graphify-out',
-  autoUpdateOnPrompt: process.env.HELPY_GRAPHIFY_AUTO_UPDATE !== 'false',
+  autoUpdateOnPrompt: process.env.HELPY_GRAPHIFY_AUTO_UPDATE === 'true',
 };
 
 const NOISY_NODE_TYPES = new Set(['wikilink']);
@@ -184,8 +184,12 @@ export default class HelpyGraphifyExportExtension implements Extension {
     await this.writeProjectGraph(context, 'prompt finished');
     const config = this.loadConfig();
     if (config.autoUpdateOnPrompt) {
-      const output = await this.runGraphify('update', context).catch((error) => String(error));
-      context.getTaskContext()?.addLogMessage('info', `Graphify auto-update: ${output.slice(0, 1200)}`);
+      try {
+        this.writeMarkdownGraph(config);
+        context.log('Helpy semantic graph auto-refreshed.', 'info');
+      } catch (error) {
+        context.log(`Helpy semantic graph auto-refresh failed: ${String(error)}`, 'warn');
+      }
     }
   }
 

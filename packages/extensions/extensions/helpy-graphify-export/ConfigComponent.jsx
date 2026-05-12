@@ -28,7 +28,7 @@
         placeholder="graphify-out"
       />
       <Checkbox
-        label="Auto-update Graphify after prompts"
+        label="Auto-refresh semantic graph after prompts"
         checked={config?.autoUpdateOnPrompt ?? false}
         onChange={(checked) => updateConfig({ ...config, autoUpdateOnPrompt: checked })}
       />
