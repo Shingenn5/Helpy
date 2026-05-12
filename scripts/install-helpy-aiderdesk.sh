@@ -16,7 +16,7 @@ const [targetDir, vaultRoot] = process.argv.slice(2);
 const configs = [
   ['helpy-vault-logger', { vaultRoot, sessionsDir: 'Sessions', appendToolEvents: true, appendFileEvents: true }],
   ['helpy-graphify-export', { vaultRoot, graphDir: 'Graph', graphifyCommand: 'graphify', graphifyOutDir: 'graphify-out', autoUpdateOnPrompt: false }],
-  ['helpy-rules-memory', { vaultRoot, rulesFile: 'Rules/Helpy Model Rules.md' }],
+  ['helpy-rules-memory', { vaultRoot, rulesFile: 'Rules/Helpy Model Rules.md', injectIntoPrompts: false }],
   ['helpy-privacy-guard', { blockCloudProviders: false }],
 ];
 
@@ -33,6 +33,7 @@ for (const [extension, defaults] of configs) {
   const next = { ...defaults, ...current };
   if ('vaultRoot' in defaults) next.vaultRoot = vaultRoot;
   if (extension === 'helpy-graphify-export') next.autoUpdateOnPrompt = false;
+  if (extension === 'helpy-rules-memory') next.injectIntoPrompts = false;
   if (extension === 'helpy-privacy-guard') next.blockCloudProviders = false;
   fs.writeFileSync(configPath, JSON.stringify(next, null, 2));
 }

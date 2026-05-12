@@ -13,6 +13,7 @@ import type {
 type Config = {
   vaultRoot: string;
   rulesFile: string;
+  injectIntoPrompts: boolean;
 };
 
 const DEFAULT_RULES = [
@@ -34,6 +35,7 @@ const DEFAULT_RULES = [
 const DEFAULT_CONFIG: Config = {
   vaultRoot: process.env.HELPY_VAULT_ROOT || join(homedir(), 'ObsidianVault'),
   rulesFile: 'Rules/Helpy Model Rules.md',
+  injectIntoPrompts: process.env.HELPY_RULES_INJECT === 'true',
 };
 
 const RULES_MARKER = '<!-- HELPY_PERSISTENT_RULES -->';
@@ -101,6 +103,8 @@ export default class HelpyRulesMemoryExtension implements Extension {
   }
 
   async onImportantReminders(event: ImportantRemindersEvent): Promise<void | Partial<ImportantRemindersEvent>> {
+    const config = this.loadConfig();
+    if (!config.injectIntoPrompts) return undefined;
     if ((event.remindersContent || '').includes(RULES_MARKER)) return undefined;
     const rules = this.readRules();
     return {
@@ -109,6 +113,8 @@ export default class HelpyRulesMemoryExtension implements Extension {
   }
 
   async onPromptTemplate(event: PromptTemplateEvent): Promise<void | Partial<PromptTemplateEvent>> {
+    const config = this.loadConfig();
+    if (!config.injectIntoPrompts) return undefined;
     if (!event.name.toLowerCase().includes('system')) return undefined;
     if (event.prompt.includes(RULES_MARKER)) return undefined;
     const rules = this.readRules();

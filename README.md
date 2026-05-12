@@ -1,184 +1,198 @@
 # Helpy
 
-Helpy is an AiderDesk extension pack that turns an existing AiderDesk install into a local-first AI workstation.
+Helpy is a local-first extension pack for AiderDesk. It keeps upstream AiderDesk as the GUI and agent runner, while Helpy adds Markdown memory, local backend controls, rules storage, privacy defaults, and a semantic graph layer for Obsidian/Graphify workflows.
 
-The goal is simple: keep getting upstream AiderDesk improvements while Helpy adds the local workflow this machine actually needs.
+## What Helpy Adds
 
-- local llama.cpp backend controls
-- Obsidian Markdown session logging
-- Graphify-ready project/file/entity notes
-- persistent model rules and personality memory
-- privacy guardrails that prefer local models and block cloud-ish behavior
-
-This repo contains everything needed to install Helpy into AiderDesk. The important product surface is the extension pack in:
-
-```text
-packages/extensions/extensions/helpy-*
-```
-
-## Extensions
-
-| Extension | What it does |
+| Extension | Purpose |
 |---|---|
-| `helpy-vault-logger` | Appends prompts, responses, agent events, files, and tool events into Obsidian Markdown sessions. |
-| `helpy-graphify-export` | Writes Graphify-friendly project and context-file notes with frontmatter, tags, and wikilinks. |
-| `helpy-local-backend` | Adds status UI and commands for your local llama.cpp Docker Compose backend. |
-| `helpy-privacy-guard` | Warns or blocks workflows that look non-local, telemetry-ish, or tunnel/cloud related. |
-| `helpy-rules-memory` | Injects persistent rules/personality from an Obsidian Markdown note into model reminders/system prompts. |
+| `helpy-vault-logger` | Logs AiderDesk prompts, responses, agent events, tool events, and context files into Markdown. |
+| `helpy-graphify-export` | Builds project notes and a semantic `graphify-out/graph.json` from the Markdown vault. |
+| `helpy-local-backend` | Adds commands/status for the local llama.cpp Docker backend. |
+| `helpy-rules-memory` | Stores personality and workflow rules in Markdown. Prompt injection is off by default for context safety. |
+| `helpy-privacy-guard` | Warns about cloud/telemetry wording. Provider blocking is off by default for stability. |
 
-## Target Local Setup
+## Target Setup
 
-Your current working stack is:
+Current production target:
 
 ```text
 WSL2 Ubuntu
-Docker Compose
-llama.cpp CUDA server
-http://127.0.0.1:8080/v1
-/home/shingen/AI_Core/models/Qwen3.6-35B-A3B-UD-IQ2_M.gguf
-/home/shingen/HelpyVault/Helpy
+AiderDesk AppImage installed separately
+Helpy repo: /home/shingen/Tech Projects/Helpy
+Obsidian vault: /home/shingen/ObsidianVault
+Windows vault path: \\wsl.localhost\Ubuntu\home\shingen\ObsidianVault
+llama.cpp endpoint: http://127.0.0.1:8080/v1
+model: /home/shingen/AI_Core/models/Qwen3.6-35B-A3B-UD-IQ2_M.gguf
 ```
 
-The backend Compose file in this repo is still useful as the local model runtime:
+## Install AiderDesk
+
+Download the Linux AppImage from the AiderDesk releases page:
+
+```text
+https://github.com/hotovo/aider-desk/releases
+```
+
+For WSL, the x86_64 AppImage is usually the right one. Example:
 
 ```bash
-docker compose -f docker-compose.yml up -d
-docker compose -f docker-compose.yml ps
-docker compose -f docker-compose.yml logs --tail 120
+mkdir -p "$HOME/Applications/AiderDesk"
+cd "$HOME/Applications/AiderDesk"
+wget -O AiderDesk.AppImage "https://github.com/hotovo/aider-desk/releases/download/v0.63.0/aider-desk-0.63.0-x86_64.AppImage"
+chmod +x AiderDesk.AppImage
+./AiderDesk.AppImage
 ```
 
-## Install Extensions Into AiderDesk
+## Install Helpy Extensions
 
-### Option 1: Install From The AiderDesk Extensions UI
+Clone or update this repo:
 
-In AiderDesk:
-
-1. Open Settings.
-2. Go to Extensions.
-3. Add this repository URL:
-
-```text
-https://github.com/Shingenn5/Helpy/tree/main/packages/extensions/extensions
+```bash
+mkdir -p "$HOME/Tech Projects"
+cd "$HOME/Tech Projects"
+git clone https://github.com/Shingenn5/Helpy.git
+cd Helpy
 ```
 
-4. Refresh available extensions.
-5. Click install for the Helpy extensions:
-
-```text
-Helpy Vault Logger
-Helpy Graphify Export
-Helpy Local Backend
-Helpy Privacy Guard
-Helpy Rules Memory
-```
-
-That is the button-based install path. AiderDesk clones the repo, scans this folder, and installs each selected extension.
-
-### Option 2: One-Command Local Install
-
-From this repo in WSL:
+Install the extension pack into AiderDesk:
 
 ```bash
 bash scripts/install-helpy-aiderdesk.sh
 ```
 
-From PowerShell:
-
-```powershell
-.\scripts\install-helpy-aiderdesk.ps1
-```
-
-Restart AiderDesk, or wait for extension hot reload if it is already watching the folder.
-
-The scripts install to upstream AiderDesk's global extension directory:
+The installer copies extensions into:
 
 ```text
 ~/.aider-desk/extensions
 ```
 
-Set `AIDERDESK_EXTENSIONS_DIR` if your install uses a custom extension folder.
-
-### Option 3: Build The Installer CLI
-
-The package still includes the AiderDesk extension CLI:
-
-```bash
-npm install
-npm run build:extensions
-npx @aiderdesk/extensions install helpy-vault-logger --global
-```
-
-The CLI now defaults global installs to:
+It also maps the Helpy vault to:
 
 ```text
-~/.aider-desk/extensions
+/home/shingen/ObsidianVault
 ```
 
-Project-specific install is also supported:
+Override if needed:
 
 ```bash
-mkdir -p .aider-desk/extensions
-cp -r /path/to/Helpy/packages/extensions/extensions/helpy-* .aider-desk/extensions/
+HELPY_VAULT_ROOT="/path/to/your/vault" bash scripts/install-helpy-aiderdesk.sh
 ```
 
-## Useful Commands In AiderDesk
+Restart AiderDesk after installing.
 
-After installation, these slash commands become available inside AiderDesk:
+## Local Backend
+
+Start the bundled llama.cpp Docker backend:
+
+```bash
+cd "/home/shingen/Tech Projects/Helpy"
+docker compose -f docker-compose.yml up -d
+curl http://127.0.0.1:8080/v1/models
+```
+
+In AiderDesk, use an OpenAI-compatible provider pointed at:
+
+```text
+http://127.0.0.1:8080/v1
+```
+
+## AiderDesk Commands
+
+Use these inside AiderDesk:
 
 ```text
 /helpy-open-vault
 /helpy-log-snapshot
-/helpy-graphify-refresh
 /helpy-backend-status
 /helpy-backend-start
 /helpy-backend-stop
 /helpy-backend-logs
-/helpy-privacy-status
+/helpy-graphify-refresh
+/helpy-graphify-update
+/helpy-memory-query backend model
 /helpy-rules-show
-/helpy-rules-add
+/helpy-rules-add Always prefer local-first workflows
 /helpy-rules-open
+/helpy-privacy-status
 ```
 
-## Persistent Rules
+## Testing Checklist
 
-The rules extension creates this file on first load:
+1. Start AiderDesk.
+2. Create a new task.
+3. Send:
 
 ```text
-/home/shingen/HelpyVault/Helpy/Rules/Helpy Model Rules.md
+hello can you read this
 ```
 
-Put personality, coding preferences, privacy rules, and project habits there. The extension injects that Markdown into model reminders/system prompts so your local assistant keeps the same operating style across sessions.
+4. Confirm the model answers normally.
+5. Run:
 
-Example:
-
-```markdown
-## Personality
-
-- Be direct, practical, and privacy-first.
-- Prefer small tested changes over broad rewrites.
-
-## Local Workflow
-
-- Use the local llama.cpp backend by default.
-- Write durable session knowledge into Obsidian.
-- Keep Graphify links and YAML frontmatter useful.
+```text
+/helpy-graphify-update
+/helpy-memory-query backend model
 ```
 
-## Environment Overrides
-
-Defaults are tuned for this WSL machine, but you can override them before launching AiderDesk:
+6. Confirm files exist:
 
 ```bash
-export HELPY_VAULT_ROOT="/home/shingen/HelpyVault/Helpy"
-export HELPY_BACKEND_ENDPOINT="http://127.0.0.1:8080/v1"
-export HELPY_COMPOSE_FILE="/home/shingen/Tech Projects/Helpy/docker-compose.yml"
-export HELPY_MODEL_NAME="Qwen3.6-35B-A3B-UD-IQ2_M.gguf"
+find "/home/shingen/ObsidianVault" -maxdepth 3 -type f | sort | tail -80
+cat "/home/shingen/ObsidianVault/graphify-out/GRAPH_REPORT.md"
 ```
 
-## Design Decision
+## Production Safety Defaults
 
-Helpy should be maintained as an extension pack first. Core AiderDesk changes should stay rare, small, and upstream-friendly. That is the best way to get the workstation you want without becoming the long-term maintainer of a full desktop fork.
+Helpy is intentionally conservative by default:
+
+```text
+Graph auto-update after prompts: off
+Rules injection into prompts: off
+Privacy provider blocking: off
+Markdown logging: on
+Manual semantic graph update: on
+Manual memory query: on
+```
+
+This prevents local 32k context models from being flooded by rules, logs, or graph content. Use the rules file as durable memory, then enable prompt injection only after the basic workflow is stable.
+
+## Context Overflow Notes
+
+If you see an error like:
+
+```text
+request exceeds the available context size
+```
+
+reduce AiderDesk context files, clear huge task history, or use a smaller project/task. Helpy no longer injects rules or graph content by default, so this error usually means the active AiderDesk task/project context is too large for the model.
+
+## Graphify Reality
+
+The installed `graphify` CLI on this machine supports:
+
+```text
+graphify update <path>
+graphify watch <path>
+graphify query "<question>"
+```
+
+For Markdown-only Helpy vaults, `graphify update .` may report no code files. Helpy handles that by generating its own semantic graph:
+
+```text
+/home/shingen/ObsidianVault/graphify-out/graph.json
+/home/shingen/ObsidianVault/graphify-out/GRAPH_REPORT.md
+/home/shingen/ObsidianVault/graphify-out/graph.html
+```
+
+## Development
+
+```bash
+npm install
+npm run typecheck:helpy --workspace=packages/extensions
+npm run build:extensions
+```
 
 ## License
 
-The upstream app code keeps its MIT license. The Helpy extension additions are intended to stay local-first, free, and account-free.
+Helpy is intended to stay free, local-first, and account-free.
