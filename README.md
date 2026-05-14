@@ -47,7 +47,19 @@ dist/
 
 For GitHub releases, attach the Linux AppImage or package from `dist/`, include the matching checksum if generated, and copy the release checklist from the bottom of this README.
 
-## Install AiderDesk Extension Pack
+Full WSL install guide:
+
+```text
+docs/INSTALL-WSL.md
+```
+
+After an AppImage exists in `dist/`, install it locally with:
+
+```bash
+bash scripts/install-helpy-appimage.sh
+```
+
+## Install AiderDesk Extension Pack Fallback
 
 Download the Linux AppImage from the AiderDesk releases page:
 
@@ -64,8 +76,6 @@ wget -O AiderDesk.AppImage "https://github.com/hotovo/aider-desk/releases/downlo
 chmod +x AiderDesk.AppImage
 ./AiderDesk.AppImage
 ```
-
-If you want to keep using upstream AiderDesk and install Helpy as an extension pack, download the Linux AppImage from the AiderDesk releases page:
 
 Then clone or update this repo:
 
