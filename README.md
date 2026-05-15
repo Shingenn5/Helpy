@@ -53,6 +53,19 @@ Full WSL install guide:
 docs/INSTALL-WSL.md
 ```
 
+If you only want to upgrade upstream AiderDesk with Helpy extensions, build a one-download extension pack:
+
+```bash
+npm run build:extensions
+bash scripts/package-helpy-aiderdesk-pack.sh
+```
+
+Guide:
+
+```text
+docs/AIDERDESK-EXTENSION-PACK.md
+```
+
 After an AppImage exists in `dist/`, install it locally with:
 
 ```bash

@@ -22,6 +22,7 @@
     "dev:no-hmr": "NO_HMR=true electron-vite dev",
     "build:mcp": "esbuild src/mcp-server/helpy-mcp-server.ts --bundle --platform=node --outdir=out/mcp-server",
     "build:extensions": "npm run build --workspace=packages/extensions",
+    "package:aiderdesk-pack": "bash scripts/package-helpy-aiderdesk-pack.sh",
     "publish:extensions": "npm publish --workspace=packages/extensions",
     "build:tree-sitter-utils": "npm run build --workspace=packages/tree-sitter-utils",
     "publish:tree-sitter-utils": "npm publish --workspace=packages/tree-sitter-utils",
